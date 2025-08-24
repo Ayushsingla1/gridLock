@@ -1,11 +1,21 @@
 import axios from "axios";
-import { Request, Response } from "express";
+import { raw, Request, Response } from "express";
 import { token } from "../../config";
+import { screenNameZod } from "../../zodTypes";
 
 export const getFollowers = async (req: Request, res: Response) => {
-    const screenName = req.body;
+    const rawScreenName = req.body;
     //should add some zod checks
-
+    const parsedData = screenNameZod.safeParse(rawScreenName);
+    
+    if(!parsedData.success){
+        res.status(403).json({
+            success: false,
+            message: `invalid screen name: ${parsedData.error}` 
+        })
+        return;
+    }
+    const screenName = parsedData.data;
     try {
         const input = {
             cursor: '-1',
