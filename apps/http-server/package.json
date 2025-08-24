@@ -12,14 +12,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@repo/db" : "workspace:*"
+    "@repo/db": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
     "@types/axios": "^0.14.4",
     "@types/express": "^5.0.3",
     "axios": "^1.11.0",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "zod": "^4.1.1"
   }
 }
