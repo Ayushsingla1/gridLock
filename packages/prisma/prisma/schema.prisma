@@ -12,3 +12,44 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  name           String
+  username       String  @unique
+  matchesAsUser1 Match[] @relation("challenger")
+  matchesAsUser2 Match[] @relation("challenged")
+}
+
+model Match {
+  id        String   @id @default(uuid())
+  user1     User     @relation("challenger", fields: [user1_Id], references: [username])
+  user1_Id  String
+  user2     User     @relation("challenged", fields: [user2_Id], references: [username])
+  user2_Id  String
+  createdAt DateTime @default(now())
+  status    Status   @default(Pending)
+  ExpiresAt DateTime
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
+}
+
+model Game {
+  id              String   @id @default(uuid())
+  GameName        String   @unique
+  GameDescription String
+  GameImage       String
+  GameLink        String
+  Matches         Match[]
+  GameType        GameType
+}
+
+enum GameType {
+  SP
+  MP
+}
+
+enum Status {
+  Completed
+  Scheduled
+  Pending
+}
