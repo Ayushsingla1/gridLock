@@ -1,7 +1,10 @@
+"use client"
 
 
 const Home = () => {
   return <div className="bg-black w-screen h-screen flex justify-center items-center text-white">
-    hi there 
+    hi there
   </div>
 }
+
+export default Home;
