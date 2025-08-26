@@ -1,6 +1,6 @@
 import axios from "axios";
 import { raw, Request, Response } from "express";
-import { apiKey } from "../../config";
+import { apifyKey } from "../../config";
 import { screenNameZod } from "../../zodTypes";
 
 export const getFollowers = async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const getFollowers = async (req: Request, res: Response) => {
             cursor: '-1',
             screenName: screenName
         }
-        const data = await axios.post(`https://api.apify.com/v2/acts/xbLZMZWSJDAzYUrmI/runs?token=${apiKey}&waitForFinish=1`, input);
+        const data = await axios.post(`https://api.apify.com/v2/acts/xbLZMZWSJDAzYUrmI/runs?token=${apifyKey}&waitForFinish=1`, input);
 
         // should add some checks eg: if a wrong screen name is given
         console.log(data.data.data);
