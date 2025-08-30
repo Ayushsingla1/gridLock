@@ -1,5 +1,4 @@
 "use client"
-
 import { motion } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,6 +20,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 import { useState } from "react"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export default function HomePage() {
   const [hoveredGame, setHoveredGame] = useState<number | null>(null)
@@ -130,10 +130,7 @@ export default function HomePage() {
               <Button variant="ghost" className="text-foreground hover:text-primary">
                 Leaderboard
               </Button>
-              <Button className="glow-hover bg-primary text-primary-foreground">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Connect X Account
-              </Button>
+              <ConnectButton/>
             </div>
           </div>
         </div>
@@ -452,3 +449,5 @@ export default function HomePage() {
     </div>
   )
 }
+
+
