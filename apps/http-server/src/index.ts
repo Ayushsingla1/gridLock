@@ -1,6 +1,6 @@
 import express from "express";
 import { configDotenv } from "dotenv";
-import axios from "axios";
+
 import XRouter from './controllers/twitterRouters' 
 configDotenv();
 
@@ -10,7 +10,7 @@ app.use('/api/v1', XRouter);
 
 // env
 
-const PORT = 3000;
+const PORT = 3001;
 
 app.listen(PORT,() => {
     console.log("hi there");
