@@ -21,7 +21,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                     user2_socket : wss
                 }) 
             }
-            else wss.close(403, "not a player");
+            else wss.close();
         }
         else if(info.role === role.Spectator){
             if(info.userId === roomInfo.user1 || info.userId === roomInfo.user2){
@@ -81,7 +81,8 @@ export const room_join = async(info : message,wss : WebSocket) => {
             }
         }
         else{
-            wss.close(403,"No such room exists");    
+            console.log('closed');
+            wss.close(1002, "No such room exists")
         }
     }
 }

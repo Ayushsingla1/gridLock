@@ -20,7 +20,7 @@ export default function RenderParagrah({
                 }
                 return <span 
                     id={`${index == currentWord ? `word-active` : `word-${index}`}`}
-                    className={`m-[7.2px] font-mono text-lg ${makeGreen ? "text-green-400" : "text-white"}`}
+                    className={`m-[7.2px] font-mono text-lg word-${index} ${makeGreen ? "text-green-400" : "text-white"}`}
                 >
                     <Word wordIdx={index} prevLetters={prevLetters} currentWord={currentWord} word={word} pointerPos={pointerPos}/>
                 </span>

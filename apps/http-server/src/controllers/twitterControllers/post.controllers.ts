@@ -1,30 +1,38 @@
 // import { TwitterApi } from 'twitter-api-v2';
 import { accessSecret, accessToken } from '../../config';
-import { Request, Response } from 'express';
-import { XUserName } from '../../zodTypes';
+import { XUserName, GameZod } from '../../zodTypes';
 import axios from 'axios';
-import { makeOuthReqData, oauth } from './twtterOAuthConfig';
+import { oauth } from './twtterOAuthConfig';
 
+interface postTweetProps {
+  challenger: string,
+  challenged: string,
+  game: string
+}
 
-export async function postTweet(req: Request, res: Response) {
-  const {challenger, challenged} = req.body;
-  console.log(challenged, challenger);
+export async function postTweet({challenger, challenged, game} : postTweetProps) {
+  console.log(challenged, challenger, game);
   const parsedData1 = XUserName.safeParse(challenger);
   const parsedData2 = XUserName.safeParse(challenged);
+  const parsedData3 = GameZod.safeParse(game);
 
   if(!parsedData1.success || !parsedData2.success){
-    console.log(parsedData1.data, " ", parsedData2.data);
-    res.status(403).json({
+    return {
+      status: 403,
       success: false,
       message: `invalid usernames`
-    })
-    return;
+    }
   }
-  //challenger
-  const user1 = parsedData1.data;
-  //challenged
-  // const user2 = parsedData2.data;
-  const user2  = "Ayushsingla32";
+  if(!parsedData3.success){
+    return {
+      status: 403,
+      success: false,
+      message: `invalid Game`
+    }
+  }
+  const challengerUser = parsedData1.data;
+  const challengedUser = parsedData2.data;
+  const parsedGame = parsedData3.data;
 
   try {
     // const response = await client.v2.tweet("Hello world! This is a tweet from my app 🚀");
@@ -34,7 +42,7 @@ export async function postTweet(req: Request, res: Response) {
       method: 'POST',
     };
     const payload = {
-      text: `test message for tagging @${user2}`
+      text: `challenger @${challengedUser} has challenged @${challengerUser} at ${parsedGame}!!`
     }
     
     const authHeader = oauth.toHeader(
@@ -53,17 +61,19 @@ export async function postTweet(req: Request, res: Response) {
     });
 
     console.log(response);
-    res.status(200).json({
+    return {
+      status: 200,
       success: true,
       message: "post done!",
       data: response.data
-    })
+    }
     
   } catch (error) {
     console.error("Error posting tweet:", error);
-    res.status(500).json({
+    return {
+      status: 500,
       success: false,
       error: error
-    })
+    }
   }
 }
