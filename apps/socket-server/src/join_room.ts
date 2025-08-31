@@ -3,7 +3,6 @@ import { message, role, Rooms } from "./index";
 import WebSocket from "ws";
 
 export const room_join = async(info : message,wss : WebSocket) => {
-
     if(Rooms.has(info.challengeId)){
         const roomInfo = Rooms.get(info.challengeId)!;
         if(info.role === role.Player){

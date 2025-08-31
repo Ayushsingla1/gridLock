@@ -1,6 +1,6 @@
 import { WebSocket, WebSocketServer } from "ws";
-import prisma from "@repo/db/dbClient";
 import { room_join } from "./join_room";
+import { distributionHandler } from "./playTyping";
 
 const server = new WebSocketServer({port : 8080});
 
@@ -37,9 +37,10 @@ server.on("connection",(wss) => {
         const info : message = JSON.parse(data.toString());
         console.log(info)
         if(info.msg === "Join Room"){
-            room_join(info,wss);
-        }else{
-            console.log(info)
+            await room_join(info,wss);
+        }
+        else{
+            await distributionHandler(info,wss);
         }
     })
 })
