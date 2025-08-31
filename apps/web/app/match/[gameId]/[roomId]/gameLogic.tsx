@@ -1,7 +1,7 @@
 'use client'
 import RenderParagrah from "@/components/game/typing/RenderPragraph"
 import { useEffect, useRef, useState } from 'react'
-import useSocket from "../../../src/hooks/socket";
+import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
@@ -16,12 +16,16 @@ export type message = {
     password? : string
 }
 
-export default function typing() {
-    const challengeId = '1'; // for now hardcoded, get this from params ig
-    const gameId = '1'; //get from params
+interface gameLogicProps {
+    roomId: string,
+    gameId: string
+}
+
+export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const [pointerPos, setPointerPos] = useState<number>(0);
     const [currentWord, setCurrentWord] = useState<number>(0);
     const [prevLetters, setPrevLetter] = useState<number>(0);
+    const [username, setUsername] = useState<string>("");
     const pointerRef = useRef(0); 
     const wordRef = useRef(0);
     const prevLettersRef = useRef(0);
@@ -37,7 +41,10 @@ export default function typing() {
         if(isLoaded){
             if(!isSignedIn){
                 console.log('not Signed In')
-                router.push('/');
+                router.push('/auth');
+            }else{
+                console.log(user.username);
+                setUsername(user.username!);
             }
         }
     }, [isLoaded])
@@ -46,7 +53,7 @@ export default function typing() {
         if(!loading && socket && user && user?.username){
             const socketMsg: message = {
                 role: "Player",
-                challengeId: challengeId, 
+                challengeId: roomId, 
                 gameId: gameId,
                 msg: "Join Room",
                 userId: user.username,
@@ -59,6 +66,7 @@ export default function typing() {
     useEffect(() => {
         canvasRef.current = document.createElement("canvas");
     }, []);
+
 
     useEffect(() => {
         const activeWordElement = document.getElementById("word-active");
@@ -99,21 +107,45 @@ export default function typing() {
     }, [prevLetters])
 
     const keyPressHandeler = (e: KeyboardEvent) => {
+        e.preventDefault();
+        console.log(isSignedIn, isLoaded);
+        console.log(user?.username)
+        console.log(username);
+        if (!username) return;
+        console.log("hi there");
         const activeWordElement = document.getElementById('word-active');
         console.log(activeWordElement);
         console.log(activeWordElement?.textContent.length);
         console.log(activeWordElement?.getBoundingClientRect());
         console.log(e.key);
         if(e.key == paragraph[pointerRef.current]){
+            const pointerData = {
+                pointerPos: pointerPos,
+                prevLetters: prevLetters,
+                currentWord: currentWord
+            }
             if(e.key == ' '){
                 console.log(activeWordElement?.textContent);
                 const wordLen = activeWordElement?.textContent.length;
                 console.log(wordLen);
                 setCurrentWord(prev => prev + 1);
                 setPrevLetter(prev => prev + (wordLen ?? 0));
+                pointerData.currentWord += 1;
+                pointerData.prevLetters += (wordLen ?? 0);
             }
             console.log(e.key)
             setPointerPos(p => p += 1);
+            pointerData.pointerPos += 1;
+
+            const socketMsg = {
+                role: "Player",
+                gameId,
+                challengeId: roomId,
+                msg: JSON.stringify(pointerData),
+                userId: username
+            }
+            console.log(socketMsg);
+            socket?.send(JSON.stringify(JSON.stringify(socketMsg)));
         }
     }
 
@@ -125,7 +157,7 @@ export default function typing() {
         } 
     }, [])
 
-    return <div className="text-2xl flex justify-center items-center h-screen w-screen">
+    return <div className="text-2xl mt-[100px] flex justify-self-center justify-center items-center w-full h-full">
         <div className="text-2xl w-8/12 h-6/12 relative rounded-lg p-4">
             <div
             id="caret"

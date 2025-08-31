@@ -53,6 +53,7 @@ export const createRoom = async ({gameId, userId_1, userId_2, startTime} : creat
 }
 
 export const fetchUser = async (user1: string, user2: string) => {
+    console.log("user1: ", user1, " user2: ", user2)
     try {
         const challengerId = await prisma.user.findFirst({
             where: {
@@ -63,9 +64,11 @@ export const fetchUser = async (user1: string, user2: string) => {
             }
         })
 
+        console.log("challnger: ", challengerId)
+
         if(challengerId == null){
             return {
-                status: 400,
+                status: 403,
                 success: false,
                 message: 'Challenger not found!'
             }
@@ -80,9 +83,11 @@ export const fetchUser = async (user1: string, user2: string) => {
             }
         })
 
+        console.log("challenged: ", challengedId)
+
         if(challengedId == null){
             return {
-                status: 400,
+                status: 403,
                 success: false,
                 message: 'Challenged user not found!'
             }
@@ -99,6 +104,7 @@ export const fetchUser = async (user1: string, user2: string) => {
         }
         
     } catch (error) {
+        console.log('server in fetch user error!')
         return {
             status: 500,
             success: false,
@@ -112,26 +118,27 @@ export const createMatch = async (req: Request, res: Response) => {
     const { challenger, challenged, game, gameId, startTime } = req.body;
     try {
 
-        // post created
-        const postResponse = await postTweet({challenger, challenged, game});
-        if(postResponse.status == 403){
-            res.status(postResponse.status).json(postResponse)
-            return;
-        }else if(postResponse.status == 500){
-            res.status(postResponse.status).json(postResponse)
-            return;
-        }
+        // post created (commented for now but working fine)
+        // const postResponse = await postTweet({challenger, challenged, game});
+        // if(postResponse.status == 403){
+        //     res.status(postResponse.status).json(postResponse)
+        //     return;
+        // }else if(postResponse.status == 500){
+        //     res.status(postResponse.status).json(postResponse)
+        //     return;
+        // }
 
         //fetch users
         const usersResponse = await fetchUser(challenger, challenged); 
-        if(usersResponse.status == 400){
-            res.status(400).json(usersResponse)
+        if(usersResponse.status == 403){
+            res.status(403).json(usersResponse)
         }else if(usersResponse.status == 500){
             res.status(500).json(usersResponse);
         }
 
         const userId_1 = usersResponse.data?.challengerId!;
         const userId_2 = usersResponse.data?.challengedId!;
+        console.log(userId_1, userId_2);
 
         //room creation
         const roomResponse = await createRoom({gameId, startTime, userId_1, userId_2});

@@ -3,6 +3,8 @@ import { configDotenv } from "dotenv";
 
 import cors from 'cors'
 import XRouter from './controllers/twitterRouters' 
+import roomsRouter from "./controllers/roomRouters";
+import userRouter from "./controllers/userRouters";
 configDotenv();
 
 const app = express();
@@ -11,6 +13,8 @@ app.use(cors({
     origin: "http://localhost:3000"
 }))
 app.use('/api/v1', XRouter);
+app.use('/api/v1', roomsRouter);
+app.use('/api/v1', userRouter);
 
 // env
 

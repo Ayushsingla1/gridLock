@@ -35,8 +35,11 @@ const PASSWORD = "HALLA@MADRID";
 server.on("connection",(wss) => {
     wss.on("message",async(data) => {
         const info : message = JSON.parse(data.toString());
+        console.log(info)
         if(info.msg === "Join Room"){
             room_join(info,wss);
+        }else{
+            console.log(info)
         }
     })
 })

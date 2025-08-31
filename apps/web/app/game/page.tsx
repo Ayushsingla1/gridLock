@@ -13,7 +13,7 @@ export type GameName = "Typing" | "Chess" | "Pictionary";
 
 // Define the structure for each game object
 interface Game {
-  index: number;
+  id: string;
   name: GameName;
   description: string;
   isAvailable: boolean;
@@ -21,29 +21,34 @@ interface Game {
 
 const games: Game[] = [
   {
-    index: 0,
+    id: "1",
     name: "Typing",
     description: "Participate in a fast-paced typing competition to see who comes out on top!",
     isAvailable: true,
   },
   {
-    index: 1,
+    id: "2",
     name: "Chess",
     description: "Coming soon...",
     isAvailable: false,
   },
   {
-    index: 2,
+    id: "3",
     name: "Pictionary",
     description: "Coming soon...",
     isAvailable: false,
   },
 ];
 
+interface gameSelectedProps {
+  id: string,
+  name: string
+}
+
 export default function GamePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [twitterUsername, setTwitterUsername] = useState("");
-  const [selectedGame, setSelectedGame] = useState<GameName | null>(null);
+  const [selectedGame, setSelectedGame] = useState<gameSelectedProps | null>(null);
 
   const router = useRouter();
   const {user, isLoaded} = useUser();
@@ -52,13 +57,17 @@ export default function GamePage() {
     if(isLoaded){
       if(!user){
         router.push('/');
+      }else{
+        console.log(user?.username);
       }
-      console.log(user?.username);
     }
   }, [isLoaded])
 
-  const handleChallengeClick = (gameName: GameName) => {
-    setSelectedGame(gameName);
+  const handleChallengeClick = (gameId: string, gameName: string) => {
+    setSelectedGame({
+      id: gameId,
+      name: gameName
+    });
     setIsModalOpen(true);
   };
   
@@ -66,7 +75,7 @@ export default function GamePage() {
     setIsModalOpen(false);
     setTwitterUsername("");
   }
-  const postEndPoint = "/api/v1/tweet"
+  const postEndPoint = "/api/v1/createMatch"
 
   const handleSendChallenge = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,9 +86,11 @@ export default function GamePage() {
       method: 'POST',
       url: `http://localhost:3001${postEndPoint}`,
       data: {
-        challenger: "Dev_Aggarwal03",
-        challenged: twitterUsername,
-        game: selectedGame
+        challenger: "dev_aggarwal03",
+        challenged: twitterUsername.toLowerCase(),
+        gameId: selectedGame?.id,
+        game: selectedGame?.name,
+        startTime: new Date(Date.now() + 5*60*1000) // 5min after current hardcoded for now
       }
     })
     console.log(response.data);
@@ -152,7 +163,7 @@ export default function GamePage() {
               >
                 {games.map((game) => (
                   <motion.div
-                    key={game.index}
+                    key={game.id}
                     variants={itemVariants}
                     whileHover={{ scale: 1.05, y: -5 }}
                     className="bg-card/50 flex flex-col justify-between backdrop-blur-sm border border-border/50 rounded-xl p-6 text-center glow-hover-card"
@@ -163,7 +174,7 @@ export default function GamePage() {
                     </div>
                     <Button
                       id={game.name}
-                      onClick={() => handleChallengeClick(game.name)}
+                      onClick={() => handleChallengeClick(game.id, game.name)}
                       size='default'
                       className="mt-4 w-full"
                       disabled={!game.isAvailable}
@@ -201,7 +212,7 @@ export default function GamePage() {
               </button>
 
               <h2 className="text-2xl font-bold text-center mb-2">Challenge a Player</h2>
-              <p className="text-muted-foreground text-center mb-6">Enter your friend's Twitter username to send a challenge for <span className="font-semibold text-primary">{selectedGame}</span>.</p>
+              <p className="text-muted-foreground text-center mb-6">Enter your friend's Twitter username to send a challenge for <span className="font-semibold text-primary">{selectedGame?.name}</span>.</p>
 
               <form onSubmit={handleSendChallenge}>
                 <div className="relative mb-4">
