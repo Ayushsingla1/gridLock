@@ -25,7 +25,8 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const [pointerPos, setPointerPos] = useState<number>(0);
     const [currentWord, setCurrentWord] = useState<number>(0);
     const [prevLetters, setPrevLetter] = useState<number>(0);
-    const [username, setUsername] = useState<string>("");
+    // const [username, setUsername] = useState<string | null>(null);
+    const userRef = useRef<string>(null);
     const pointerRef = useRef(0); 
     const wordRef = useRef(0);
     const prevLettersRef = useRef(0);
@@ -58,7 +59,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                 router.push('/auth');
             }else{
                 console.log(user.username);
-                setUsername(user.username!);
+                userRef.current = user.username;
                 if(!loading && socket && user && user?.username){
                     const socketMsg: message = {
                         role: "Player",
@@ -119,9 +120,9 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
 
     const keyPressHandeler = (e: KeyboardEvent) => {
         e.preventDefault();
-        if (!socketRef.current && !(username != "" || user?.username)) return;
-        console.log(username);
-        console.log(user?.username);
+        if (!socketRef.current && !userRef.current) return;
+        console.log(userRef.current);
+        // console.log(user?.username);
         const activeWordElement = document.getElementById('word-active');
         console.log(activeWordElement);
         console.log(activeWordElement?.textContent.length);
@@ -151,7 +152,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                 gameId,
                 challengeId: roomId,
                 msg: JSON.stringify(pointerData),
-                userId: username
+                userId: userRef.current 
             }
             console.log(socketMsg);
             socketRef.current?.send(JSON.stringify(JSON.stringify(socketMsg)));
