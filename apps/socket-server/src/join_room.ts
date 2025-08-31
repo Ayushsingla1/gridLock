@@ -24,10 +24,16 @@ export const room_join = async(info : message,wss : WebSocket) => {
         }
         else if(info.role === role.Spectator){
             if(info.userId === roomInfo.user1 || info.userId === roomInfo.user2){
+                console.log('closed');
                 wss.close();
             }
             else if(roomInfo?.spectators.has(info.userId)){
-                wss.close();
+                Rooms.set(info.challengeId, {
+                    ...roomInfo,
+                    spectators: roomInfo.spectators.set(info.userId, wss)
+                })
+                console.log('already in the room');
+                // wss.close();
             }
             else{
                 Rooms.set(info.challengeId,{
@@ -54,7 +60,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                 user1_socket : null,
                 user2_socket : null
             })
-    
+            
             if(info.role === role.Player && info.userId === challenge.user1_Id){
                 Rooms.set(info.challengeId,{
                     ...Rooms.get(info.challengeId)!,

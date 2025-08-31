@@ -6,6 +6,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     const { gameId, challengeId, msg, userId } = info;
 
     if(info.role != role.Player || !Rooms.has(challengeId)) {
+        console.log("closed in dist");
         wss.close();
         return;
     }
@@ -15,7 +16,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     if(userId === room.user1){
         const msgToUser = {
             ...JSON.parse(msg),
-            user : "user1",
+            user : userId,
             gameId,
             challengeId
         }
@@ -25,7 +26,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     else if(userId === room.user2){
         const msgToUser = {
             ...JSON.parse(msg),
-            user : "user2",
+            user : userId,
             gameId,
             challengeId
         }
