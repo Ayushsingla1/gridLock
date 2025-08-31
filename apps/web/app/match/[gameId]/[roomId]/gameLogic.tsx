@@ -30,12 +30,26 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const wordRef = useRef(0);
     const prevLettersRef = useRef(0);
     const {user, isLoaded, isSignedIn} = useUser();
+    const socketRef = useRef<WebSocket>(null);
+
     // put this in env
     const url = `ws://localhost:8080`
+    const {socket, loading} = useSocket(url, socketRef);
 
     const router = useRouter();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const {socket, loading} = useSocket(url);
+
+    // useEffect(() => {
+    //     if(isLoaded){
+    //         if(!isSignedIn){
+    //             console.log('not Signed In')
+    //             router.push('/auth');
+    //         }else{
+    //             console.log(user.username);
+    //             setUsername(user.username!);
+    //         }
+    //     }
+    // }, [isLoaded])
 
     useEffect(() => {
         if(isLoaded){
@@ -45,23 +59,20 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             }else{
                 console.log(user.username);
                 setUsername(user.username!);
+                if(!loading && socket && user && user?.username){
+                    const socketMsg: message = {
+                        role: "Player",
+                        challengeId: roomId, 
+                        gameId: gameId,
+                        msg: "Join Room",
+                        userId: user.username,
+                    }
+                    socket.send(JSON.stringify(socketMsg));
+                }
             }
         }
-    }, [isLoaded])
 
-    useEffect(() => {
-        if(!loading && socket && user && user?.username){
-            const socketMsg: message = {
-                role: "Player",
-                challengeId: roomId, 
-                gameId: gameId,
-                msg: "Join Room",
-                userId: user.username,
-            }
-            socket.send(JSON.stringify(socketMsg));
-        }
-
-    }, [loading, user, socket])
+    }, [loading, user, socket, isLoaded])
 
     useEffect(() => {
         canvasRef.current = document.createElement("canvas");
@@ -108,11 +119,9 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
 
     const keyPressHandeler = (e: KeyboardEvent) => {
         e.preventDefault();
-        console.log(isSignedIn, isLoaded);
-        console.log(user?.username)
+        if (!socketRef.current && !(username != "" || user?.username)) return;
         console.log(username);
-        if (!username) return;
-        console.log("hi there");
+        console.log(user?.username);
         const activeWordElement = document.getElementById('word-active');
         console.log(activeWordElement);
         console.log(activeWordElement?.textContent.length);
@@ -145,7 +154,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                 userId: username
             }
             console.log(socketMsg);
-            socket?.send(JSON.stringify(JSON.stringify(socketMsg)));
+            socketRef.current?.send(JSON.stringify(JSON.stringify(socketMsg)));
         }
     }
 
