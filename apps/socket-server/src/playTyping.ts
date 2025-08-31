@@ -15,7 +15,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     if(userId === room.user1){
         const msgToUser = {
             ...JSON.parse(msg),
-            user : "user1",
+            user : userId,
             gameId,
             challengeId
         }
@@ -25,7 +25,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     else if(userId === room.user2){
         const msgToUser = {
             ...JSON.parse(msg),
-            user : "user2",
+            user : userId,
             gameId,
             challengeId
         }
