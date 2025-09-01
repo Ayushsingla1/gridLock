@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import Link from "next/link"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export default function Nav() {
   const router = useRouter() 
@@ -30,8 +31,8 @@ export default function Nav() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-chart-2 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-2 hover:cursor-pointer" onClick={() => router.push('/')}>
+              <div className="w-8 h-8 bg-gradient-to-br from-primary to-chart-2 rounded-lg flex items-center justify-center" >
                 <Gamepad2 className="w-5 h-5 text-primary-foreground" />
               </div>
               <span className="text-2xl font-bold text-glow">GridLock</span>
@@ -51,10 +52,7 @@ export default function Nav() {
               <Button variant="ghost" className="text-foreground hover:text-black">
                 Leaderboard
               </Button>
-              <Button className="glow-hover bg-primary text-primary-foreground">
-                <Sparkles className="w-4 h-4 mr-2" />
-                Connect X Account
-              </Button>
+              <ConnectButton/>     
             </div>
           </div>
         </div>

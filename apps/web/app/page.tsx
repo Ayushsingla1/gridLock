@@ -144,11 +144,7 @@ export default function HomePage() {
                 this exists — until now.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <Button size="lg" className="glow-hover bg-primary text-primary-foreground text-lg px-8 py-6 group">
-                  <Users className="w-5 h-5 mr-2" />
-                  Connect & Challenge
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <ConnectButton/>
                 <Button
                   size="lg"
                   variant="outline"

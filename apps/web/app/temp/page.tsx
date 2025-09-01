@@ -7,7 +7,6 @@ import { contractABI, contractAddress, usdContractAddress } from "../../utils/co
 import { useState } from "react"
 
 const App = () => {
-
     const [data,setData] = useState({
         stakeAmount : 0,
         betYes : 2
@@ -24,7 +23,6 @@ const App = () => {
         })
 
         if(finalize.status === "success"){
-            // now execute stake thing;
             const stakeAmountHash = await writeContract(config,{
                 abi : contractABI,
                 address : contractAddress,
@@ -70,6 +68,7 @@ const App = () => {
         <input name="betYes" type="number" value={data.betYes} onChange={changeHandler} className="bg-white text-red-400"></input>
         <button onClick={() => getPrice("first_game")}>getPrice</button>
     </div>
+
 }
 
 export default App;
