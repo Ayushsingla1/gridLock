@@ -22,7 +22,7 @@ export default function RenderMatch({
 }){
     console.log(process.env.NEXT_ENCRYPTION_SECRET);
     const secretKey = process.env.NEXT_ENCRYPTION_SECRET || "SECRET";
-    const url = "ws://localhost:8080"
+    const url = process.env.NEXT_PUBLIC_WSS_SERVER!
     const socketRef = useRef<WebSocket>(null)
     const userRef = useRef<string>(null);
     const {socket,loading} = useSocket(url, socketRef)
@@ -41,9 +41,10 @@ export default function RenderMatch({
         prevLetters: 0
     });
     const ep = '/api/v1/getMatchInfo'
+    const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
     
     useEffect(() => {
-        axios.get(`http://localhost:3001${ep}`, {
+        axios.get(`${HTTP_URL}${ep}`, {
             params: {
                 roomId
             }

@@ -76,6 +76,7 @@ export default function GamePage() {
     setTwitterUsername("");
   }
   const postEndPoint = "/api/v1/createMatch"
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
 
   const handleSendChallenge = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +85,7 @@ export default function GamePage() {
     // twitter post
     const response = await axios({
       method: 'POST',
-      url: `http://localhost:3001${postEndPoint}`,
+      url: `${HTTP_URL}${postEndPoint}`,
       data: {
         challenger: "dev_aggarwal03",
         challenged: twitterUsername.toLowerCase(),

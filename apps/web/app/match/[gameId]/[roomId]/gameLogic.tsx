@@ -36,7 +36,8 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const {user, isLoaded, isSignedIn} = useUser();
     const socketRef = useRef<WebSocket>(null);
 
-    const url = `ws://localhost:8080`
+    const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER
+    const url = `${WSS_URL}`
     const {socket, loading} = useSocket(url, socketRef);
 
     const router = useRouter();
