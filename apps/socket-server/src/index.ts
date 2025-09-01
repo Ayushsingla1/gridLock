@@ -1,8 +1,12 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { room_join } from "./join_room";
 import { distributionHandler } from "./playTyping";
+import 'dotenv/config'
+import CryptoJS from "crypto-js";
+import { AES } from "crypto-js";
 
 const server = new WebSocketServer({port : 8080});
+export const secretKey = process.env.ECRYPTION_SECRET || "SECRET";
 
 export type roomInfo = {
     user1 : string,
@@ -34,14 +38,14 @@ const PASSWORD = "HALLA@MADRID";
 
 server.on("connection",(wss) => {
     wss.on("message",async(data) => {
-        const info : message = JSON.parse(data.toString());
-        console.log(info)
+        const decrtyptedMsgBytes = AES.decrypt(data.toString(), secretKey);
+        const decrtyptedMsg = decrtyptedMsgBytes.toString(CryptoJS.enc.Utf8);
+        const info : message = JSON.parse(decrtyptedMsg as string);
         if(info.msg === "Join Room"){
             await room_join(info,wss);
         }
         else{
-            const parsedInfo = JSON.parse(info.toString())
-            await distributionHandler(parsedInfo,wss);
+            await distributionHandler(info,wss);
         }
     })
 })

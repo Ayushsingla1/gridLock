@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react"
 import { cursorPositions, Match, role, typingRecMsg } from "@/types/gameTypes"
 import axios from "axios"
 import ShowTyping from "./showTyping"
+import {AES} from 'crypto-js'
+import CryptoJS from "crypto-js"
 
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
@@ -18,6 +20,8 @@ export default function RenderMatch({
     roomId: string,
     gameId: string
 }){
+    console.log(process.env.NEXT_ENCRYPTION_SECRET);
+    const secretKey = process.env.NEXT_ENCRYPTION_SECRET || "SECRET";
     const url = "ws://localhost:8080"
     const socketRef = useRef<WebSocket>(null)
     const userRef = useRef<string>(null);
@@ -60,16 +64,17 @@ export default function RenderMatch({
                 console.log('not Signed In');
                 router.push('/auth');
             }else{
-                console.log(user.username);
                 userRef.current = user.username;
                 if(socketRef.current){
-                    socketRef.current.send(JSON.stringify({
+                    const socketMsg = {
                         role: role.Spectator,
                         gameId,
                         challengeId: roomId,
                         msg: "Join Room",
                         userId: userRef.current
-                    }))            
+                    }
+                    const encryptedMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
+                    socketRef.current.send(encryptedMsg)            
                 }
             }
         }
@@ -77,8 +82,9 @@ export default function RenderMatch({
 
     if(socketRef.current){
         socketRef.current.onmessage = (ev: MessageEvent) => {
-            const recMsg = JSON.parse(ev.data) as typingRecMsg;
-            console.log(recMsg);
+            const decryptedMsgBytes = AES.decrypt(ev.data, secretKey)
+            const decryptedMsg = decryptedMsgBytes.toString(CryptoJS.enc.Utf8);
+            const recMsg = JSON.parse(decryptedMsg as string) as typingRecMsg;
             if(recMsg.user == matchDetails?.user1_Id){
                 setUser1Position({
                     pointerPos: recMsg.pointerPos,
@@ -86,7 +92,6 @@ export default function RenderMatch({
                     prevLetters: recMsg.prevLetters
                 })
             }else if(recMsg.user == matchDetails?.user2_Id){
-                console.log('recieved')
                 setUser2Position({
                     pointerPos: recMsg.pointerPos,
                     currentWord: recMsg.currentWord,
@@ -103,12 +108,12 @@ export default function RenderMatch({
     return <div className="w-full h-full flex flex-col gap-y-5 p-3">
         <div className="flex flex-col w-full items-center justify-center gap-y-2">
             <div className="text-3xl font-bold font-mono">{matchDetails?.user1_Id}</div>
-            <ShowTyping userIdx={0} username={matchDetails?.user1_Id!} position={user1Positions} paragraph={paragraph}/>
+            <ShowTyping userIdx={0}  position={user1Positions} paragraph={paragraph}/>
         </div>
 
         <div className="flex w-full flex-col justify-center items-center">
             <div className="text-3xl font-bold font-mono">{matchDetails?.user2_Id}</div>
-            <ShowTyping userIdx={1} username={matchDetails?.user2_Id!} position={user2Positions} paragraph={paragraph}/>
+            <ShowTyping userIdx={1}  position={user2Positions} paragraph={paragraph}/>
         </div>
     </div>
 }

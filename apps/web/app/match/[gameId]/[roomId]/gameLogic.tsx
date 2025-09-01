@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import {AES} from 'crypto-js'
 import { role } from "@/types/gameTypes";
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
@@ -23,10 +24,11 @@ interface gameLogicProps {
 }
 
 export default function GameLogic({roomId, gameId}: gameLogicProps) {
+    console.log(process.env.NEXT_ENCRYPTION_SECRET)
+    const secretKey = process.env.ENCRYPTION_SECRET || "SECRET";
     const [pointerPos, setPointerPos] = useState<number>(0);
     const [currentWord, setCurrentWord] = useState<number>(0);
     const [prevLetters, setPrevLetter] = useState<number>(0);
-    // const [username, setUsername] = useState<string | null>(null);
     const userRef = useRef<string>(null);
     const pointerRef = useRef(0); 
     const wordRef = useRef(0);
@@ -34,24 +36,11 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const {user, isLoaded, isSignedIn} = useUser();
     const socketRef = useRef<WebSocket>(null);
 
-    // put this in env
     const url = `ws://localhost:8080`
     const {socket, loading} = useSocket(url, socketRef);
 
     const router = useRouter();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-    // useEffect(() => {
-    //     if(isLoaded){
-    //         if(!isSignedIn){
-    //             console.log('not Signed In')
-    //             router.push('/auth');
-    //         }else{
-    //             console.log(user.username);
-    //             setUsername(user.username!);
-    //         }
-    //     }
-    // }, [isLoaded])
 
     useEffect(() => {
         if(isLoaded){
@@ -69,7 +58,8 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                         msg: "Join Room",
                         userId: user.username,
                     }
-                    socket.send(JSON.stringify(socketMsg));
+                    const encryptedJoinMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
+                    socket.send(encryptedJoinMsg);
                 }
             }
         }
@@ -123,45 +113,34 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
         e.preventDefault();
         if (!socketRef.current && !userRef.current) return;
         console.log(userRef.current);
-        // console.log(user?.username);
         const activeWordElement = document.getElementById('word-active');
-        console.log(activeWordElement);
-        console.log(activeWordElement?.textContent.length);
-        console.log(activeWordElement?.getBoundingClientRect());
-        console.log(e.key);
+        let tempPointerPos = pointerRef.current;
+        let tempPrevLetters = prevLettersRef.current;
+        let tempCurrentWord = wordRef.current;
         if(e.key == paragraph[pointerRef.current]){
-            // const pointerData = {
-            //     pointerPos: pointerPos,
-            //     prevLetters: prevLetters,
-            //     currentWord: currentWord
-            // }
             if(e.key == ' '){
-                console.log(activeWordElement?.textContent);
                 const wordLen = activeWordElement?.textContent.length;
-                console.log(wordLen);
                 setCurrentWord(prev => prev + 1);
                 setPrevLetter(prev => prev + (wordLen ?? 0));
-                // pointerData.currentWord += 1;
-                // pointerData.prevLetters += (wordLen ?? 0);
+                tempCurrentWord += 1;
+                tempPrevLetters += wordLen ?? 0;
             }
-            console.log(e.key)
             setPointerPos(p => p += 1);
-            // pointerData.pointerPos += 1;
+            tempPointerPos += 1;
 
             const socketMsg = {
                 role: role.Player,
                 gameId,
                 challengeId: roomId,
                 msg: JSON.stringify({
-                    pointerPos: pointerRef.current,
-                    prevLetters: prevLettersRef.current,
-                    currentWord: wordRef.current, 
+                    pointerPos: tempPointerPos,
+                    prevLetters: tempPrevLetters,
+                    currentWord: tempCurrentWord, 
                 }),
                 userId: userRef.current 
             }
-            // console.log(socketMsg);
-            console.log(socketRef.current)
-            socketRef.current?.send(JSON.stringify(JSON.stringify(socketMsg)));
+            const encryptedMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
+            socketRef.current?.send(encryptedMsg);
         }
     }
 
