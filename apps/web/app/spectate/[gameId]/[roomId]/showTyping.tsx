@@ -3,32 +3,23 @@ import RenderParagrahSpec from "@/components/game/typing/spectators/RenderPragra
 import { useEffect, useRef, useState } from "react";
 
 export default function ShowTyping ({
-    username,
     userIdx,
     position,
     paragraph
 }: {
-    username: string,
     userIdx: 0 | 1,
     position: cursorPositions, 
     paragraph: string
 }) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    //  const pointerRef = useRef(0); 
-    // const wordRef = useRef(0);
-    // const prevLettersRef = useRef(0);
-
     useEffect(() => {
         canvasRef.current = document.createElement("canvas");
     }, []);
 
     useEffect(() => {
-        console.log('hoi');
         const activeWordElement = document.getElementById(`word-${position.currentWord}-${userIdx}`);
-        console.log(username, " ", activeWordElement);
         if (!activeWordElement || !canvasRef.current) return;
-        console.log(username, " ", canvasRef.current)
 
         const ctx = canvasRef.current.getContext("2d");
         if (!ctx) return;

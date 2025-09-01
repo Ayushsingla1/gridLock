@@ -1,5 +1,7 @@
 import { WebSocket } from "ws";
 import { message, role, Rooms } from "./index";
+import { secretKey } from "./index";
+import { AES } from "crypto-js";
 
 export const distributionHandler = async(info : message, wss : WebSocket) => {
 
@@ -20,7 +22,9 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
             gameId,
             challengeId
         }
-        room.spectators.forEach((ws) => ws.send(JSON.stringify(msgToUser)));
+        const sendMsg = JSON.stringify(msgToUser);
+        const encryptedMsg = AES.encrypt(sendMsg, secretKey).toString();
+        room.spectators.forEach((ws) => ws.send(encryptedMsg));
         console.log("sent possibly");
     }
     else if(userId === room.user2){
@@ -30,7 +34,9 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
             gameId,
             challengeId
         }
-        room.spectators.forEach((ws) => ws.send(JSON.stringify(msgToUser)));
+        const sendMsg = JSON.stringify(msgToUser);
+        const encryptedMsg = AES.encrypt(sendMsg, secretKey).toString();
+        room.spectators.forEach((ws) => ws.send(encryptedMsg));
         console.log("sent possibly");
     }
     else{
