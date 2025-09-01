@@ -1,14 +1,15 @@
 'use client'
-import RenderParagrah from "@/components/game/typing/RenderPragraph"
+import RenderParagrah from "@/components/game/typing/player/RenderPragraph"
 import { useEffect, useRef, useState } from 'react'
 import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import { role } from "@/types/gameTypes";
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
 
 export type message = {
-    role : "Player" | "Spectator",
+    role : role,
     gameId : string,
     challengeId : string,
     msg : string,
@@ -62,7 +63,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                 userRef.current = user.username;
                 if(!loading && socket && user && user?.username){
                     const socketMsg: message = {
-                        role: "Player",
+                        role: role.Player,
                         challengeId: roomId, 
                         gameId: gameId,
                         msg: "Join Room",
@@ -129,32 +130,37 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
         console.log(activeWordElement?.getBoundingClientRect());
         console.log(e.key);
         if(e.key == paragraph[pointerRef.current]){
-            const pointerData = {
-                pointerPos: pointerPos,
-                prevLetters: prevLetters,
-                currentWord: currentWord
-            }
+            // const pointerData = {
+            //     pointerPos: pointerPos,
+            //     prevLetters: prevLetters,
+            //     currentWord: currentWord
+            // }
             if(e.key == ' '){
                 console.log(activeWordElement?.textContent);
                 const wordLen = activeWordElement?.textContent.length;
                 console.log(wordLen);
                 setCurrentWord(prev => prev + 1);
                 setPrevLetter(prev => prev + (wordLen ?? 0));
-                pointerData.currentWord += 1;
-                pointerData.prevLetters += (wordLen ?? 0);
+                // pointerData.currentWord += 1;
+                // pointerData.prevLetters += (wordLen ?? 0);
             }
             console.log(e.key)
             setPointerPos(p => p += 1);
-            pointerData.pointerPos += 1;
+            // pointerData.pointerPos += 1;
 
             const socketMsg = {
-                role: "Player",
+                role: role.Player,
                 gameId,
                 challengeId: roomId,
-                msg: JSON.stringify(pointerData),
+                msg: JSON.stringify({
+                    pointerPos: pointerRef.current,
+                    prevLetters: prevLettersRef.current,
+                    currentWord: wordRef.current, 
+                }),
                 userId: userRef.current 
             }
-            console.log(socketMsg);
+            // console.log(socketMsg);
+            console.log(socketRef.current)
             socketRef.current?.send(JSON.stringify(JSON.stringify(socketMsg)));
         }
     }

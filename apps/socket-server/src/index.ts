@@ -40,7 +40,8 @@ server.on("connection",(wss) => {
             await room_join(info,wss);
         }
         else{
-            await distributionHandler(info,wss);
+            const parsedInfo = JSON.parse(info.toString())
+            await distributionHandler(parsedInfo,wss);
         }
     })
 })

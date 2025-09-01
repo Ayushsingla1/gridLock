@@ -6,6 +6,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     const { gameId, challengeId, msg, userId } = info;
 
     if(info.role != role.Player || !Rooms.has(challengeId)) {
+        console.log("closed in dist");
         wss.close();
         return;
     }

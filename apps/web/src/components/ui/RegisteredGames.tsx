@@ -3,17 +3,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox } from "lucide-react";
+import { Match } from "@/types/gameTypes";
 
 // Define a type for a single match for better type safety
 // Based on the data structure from your screenshot
-type Match = {
-  gameId: string;
-  user1_Id: string;
-  user2_Id: string;
-  status: 'Pending' | 'Scheduled' | 'Completed';
-  createdAt: Date;
-  ExpiresAt: Date;
-};
 
 // Define the props for our component
 interface RegisteredGamesProps {
