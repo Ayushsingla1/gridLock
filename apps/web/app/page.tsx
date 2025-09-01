@@ -104,6 +104,7 @@ export default function HomePage() {
     },
   ]
 
+  console.log(process.env.NEXT_PUBLIC_ENCRYPTION_SECRET);
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}

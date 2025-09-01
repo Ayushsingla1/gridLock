@@ -27,7 +27,8 @@ export default function typing() {
     const prevLettersRef = useRef(0);
     const {user, isLoaded, isSignedIn} = useUser();
     // put this in env
-    const url = `ws://localhost:8080`
+    const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER
+    const url = `${WSS_URL}`
 
     const router = useRouter();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);

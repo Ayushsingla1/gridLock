@@ -10,10 +10,10 @@ configDotenv();
 const app = express();
 app.use(express.json())
 app.use(cors({
-    origin: "http://localhost:3000"
+    origin: process.env.FRONT_END 
 }))
 
-app.use(middleware);
+// app.use(middleware);
 
 app.use('/api/v1',XRouter);
 app.use('/api/v1',roomsRouter);

@@ -11,10 +11,10 @@ export default function MyGames() {
     const {user} = useUser();
     const [challengesSent, setChallengesSent] = useState<any>();
     const [challengesRec, setChallengesRec] = useState<any>();
-
+    const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
     useEffect(() => {
         if(user){
-            axios.get(`http://localhost:3001${ep}`, {
+            axios.get(`${HTTP_URL}${ep}`, {
                 params: {
                     username: user?.username    
                 }
