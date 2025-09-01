@@ -5,24 +5,41 @@ import { config } from "../../utils/wagmiProvider"
 import { erc20Abi } from "viem"
 import { contractABI, contractAddress, usdContractAddress } from "../../utils/contractInfo"
 import { useState } from "react"
+import { useAddress } from "wagmi";
 
 const App = () => {
     const [data,setData] = useState({
         stakeAmount : 0,
         betYes : 2
     })
-    const submitHandler = async() => {
+
+    const userAddress = useAddress();
+    
+    const submitHandler = async(amount : string) => {
+        const amountApproved = await readContract(config,{
+            abi : erc20Abi,
+            address : usdContractAddress,
+            functionName : "allowance",
+            args : [userAddress,usdContractAddress]
+        }
+        let finalize = false;
+        if(amountApproved >= amount){
+            finalize = true;
+        }
+        else {                     
         const res = await writeContract(config,{
             abi : erc20Abi,
             address : usdContractAddress,
             functionName : "approve",
             args : [contractAddress,10000000000000000000n]
         })
-        const finalize = await waitForTransactionReceipt(config,{
+        finalize = await waitForTransactionReceipt(config,{
             hash : res
         })
-
-        if(finalize.status === "success"){
+        if(finalize.status === "success") finalize = true;
+        }
+        
+        if(finalize){
             const stakeAmountHash = await writeContract(config,{
                 abi : contractABI,
                 address : contractAddress,
