@@ -12,7 +12,7 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
     }
 
     const room = Rooms.get(challengeId)!;
-
+    
     if(userId === room.user1){
         const msgToUser = {
             ...JSON.parse(msg),
