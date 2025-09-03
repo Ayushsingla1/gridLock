@@ -18,6 +18,7 @@ model User {
   username       String  @unique
   matchesAsUser1 Match[] @relation("challenger")
   matchesAsUser2 Match[] @relation("challenged")
+  winner Match[] @relation("winner")
 }
 
 model Match {
@@ -26,6 +27,8 @@ model Match {
   user1_Id  String
   user2     User     @relation("challenged", fields: [user2_Id], references: [username])
   user2_Id  String
+  winner    User?     @relation("winner", fields: [winnerId], references: [username]) 
+  winnerId  String?  
   createdAt DateTime @default(now())
   status    Status   @default(Pending)
   ExpiresAt DateTime
@@ -52,4 +55,5 @@ enum Status {
   Completed
   Scheduled
   Pending
+  rejected
 }

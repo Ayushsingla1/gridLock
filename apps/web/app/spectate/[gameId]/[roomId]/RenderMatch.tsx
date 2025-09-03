@@ -10,7 +10,8 @@ import {AES} from 'crypto-js'
 import CryptoJS from "crypto-js"
 
 
-const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
+const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
+// const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
 
 
 export default function RenderMatch({
@@ -44,19 +45,21 @@ export default function RenderMatch({
     const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
     
     useEffect(() => {
-        axios.get(`${HTTP_URL}${ep}`, {
-            params: {
-                roomId
-            }
-        }).then(res => {
-            console.log(res.data);
-            if(res.data.success){
-                setMatchDetails(res.data.roomDetails);
-            }
-        }).finally(() => {
-            setLoadingDetails(false)
-        })
-    }, [])
+        if(isSignedIn){
+            axios.get(`${HTTP_URL}${ep}`, {
+                params: {
+                    roomId
+                }
+            }).then(res => {
+                console.log(res.data);
+                if(res.data.success){
+                    setMatchDetails(res.data.roomDetails);
+                }
+            }).finally(() => {
+                setLoadingDetails(false)
+            })
+        }
+    }, [isSignedIn])
 
 
     useEffect(() => {
@@ -99,11 +102,30 @@ export default function RenderMatch({
                     prevLetters: recMsg.prevLetters
                 })
             }
+            if(recMsg.isComplete){
+                setLoadingDetails(true);
+                axios.get(`${HTTP_URL}${ep}`, {
+                    params: {
+                        roomId
+                    }
+                }).then(res => {
+                    console.log(res.data);
+                    if(res.data.success){
+                        setMatchDetails(res.data.roomDetails);
+                    }
+                }).finally(() => {
+                    setLoadingDetails(false)
+                })
+            }
         }
     }
 
     if(loadingDetails){
         return <div className="text-3xl font-bold font-mono text-center">loading...</div>
+    }
+
+    if(matchDetails?.winnerId != null){
+        return <div className="text-3xl font-bold font-mono text-center">Match Winner: {matchDetails.winnerId}</div>
     }
 
     return <div className="w-full h-full flex flex-col gap-y-5 p-3">

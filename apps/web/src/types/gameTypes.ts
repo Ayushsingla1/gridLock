@@ -4,6 +4,7 @@ export enum role {
 }
 
 export interface typingRecMsg {
+    isComplete?: boolean,
     pointerPos: number,
     prevLetters: number,
     currentWord: number,
@@ -16,12 +17,14 @@ export type Match = {
   gameId: string;
   user1_Id: string;
   user2_Id: string;
-  status: 'Pending' | 'Scheduled' | 'Completed';
+  winnerId: string
+  status: 'Pending' | 'Scheduled' | 'Completed' | 'rejected';
   createdAt: Date;
   ExpiresAt: Date;
 };
 
 export interface cursorPositions{
+    isComplete?: boolean,
     pointerPos: number,
     prevLetters: number,
     currentWord: number, 

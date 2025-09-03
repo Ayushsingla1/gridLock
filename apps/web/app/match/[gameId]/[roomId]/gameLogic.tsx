@@ -5,9 +5,12 @@ import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import {AES} from 'crypto-js'
-import { role } from "@/types/gameTypes";
+import { cursorPositions, Match, role } from "@/types/gameTypes";
+import CryptoJS from 'crypto-js'
+import axios from "axios";
 
-const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
+// const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
+const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
 
 export type message = {
     role : role,
@@ -35,6 +38,12 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const prevLettersRef = useRef(0);
     const {user, isLoaded, isSignedIn} = useUser();
     const socketRef = useRef<WebSocket>(null);
+
+
+    const [matchDetails, setMatchDetails] = useState<Match | null>(null);
+    const [loadingDetails, setLoadingDetails] = useState<boolean>(true);
+    const ep = '/api/v1/getMatchInfo'
+    const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
 
     const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER
     const url = `${WSS_URL}`
@@ -67,36 +76,78 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
 
     }, [loading, user, socket, isLoaded])
 
-    useEffect(() => {
-        canvasRef.current = document.createElement("canvas");
-    }, []);
-
 
     useEffect(() => {
-        const activeWordElement = document.getElementById("word-active");
-        if (!activeWordElement || !canvasRef.current) return;
-
-        const ctx = canvasRef.current.getContext("2d");
-        if (!ctx) return;
-
-        ctx.font = "18px monospace"; 
-
-        const wordText = activeWordElement.textContent ?? "";
-        const typedSoFar = pointerPos - prevLetters - currentWord; 
-        const substring = wordText.slice(0, typedSoFar);
-        const offsetX = ctx.measureText(substring).width;
-        const rect = activeWordElement.getBoundingClientRect();
-        const containerRect = activeWordElement.offsetParent?.getBoundingClientRect();
-        const left = rect.left - (containerRect?.left ?? 0) + offsetX;
-        const top = rect.top - (containerRect?.top ?? 0);
-
-        const cursor = document.getElementById("caret");
-
-        if (cursor) {
-            cursor.style.left = `${left - 2}px`;
-            cursor.style.top = `${top}px`;
+        if(isSignedIn){
+            axios.get(`${HTTP_URL}${ep}`, {
+                params: {
+                    roomId
+                }
+            }).then(res => {
+                console.log(res.data);
+                if(res.data.success){
+                    setMatchDetails(res.data.roomDetails);
+                }
+            }).finally(() => {
+                setLoadingDetails(false)
+            })
         }
-    }, [pointerPos, currentWord, prevLetters]);
+        canvasRef.current = document.createElement("canvas");
+    }, [isSignedIn]);
+
+    if(socketRef.current){
+        socketRef.current.onmessage = async(ev: MessageEvent) => {
+            const decryptedMsgBytes = AES.decrypt(ev.data, secretKey);
+            const decryptedMsg = decryptedMsgBytes.toString(CryptoJS.enc.Utf8); 
+            console.log(decryptedMsg);
+            if(JSON.parse(decryptedMsg).isComplete){
+                router.push(`/match/${gameId}/${roomId}`);
+                // alert("Opponent wins!");
+                setLoadingDetails(true);
+                axios.get(`${HTTP_URL}${ep}`, {
+                    params: {
+                        roomId
+                    }
+                }).then(res => {
+                    console.log(res.data);
+                    if(res.data.success){
+                        setMatchDetails(res.data.roomDetails);
+                    }
+                }).finally(() => {
+                    setLoadingDetails(false)
+                })
+            }
+        }
+    }
+
+
+    useEffect(() => {
+        if(!loadingDetails){
+            const activeWordElement = document.getElementById("word-active");
+            if (!activeWordElement || !canvasRef.current) return;
+    
+            const ctx = canvasRef.current.getContext("2d");
+            if (!ctx) return;
+    
+            ctx.font = "18px monospace"; 
+    
+            const wordText = activeWordElement.textContent ?? "";
+            const typedSoFar = pointerPos - prevLetters - currentWord; 
+            const substring = wordText.slice(0, typedSoFar);
+            const offsetX = ctx.measureText(substring).width;
+            const rect = activeWordElement.getBoundingClientRect();
+            const containerRect = activeWordElement.offsetParent?.getBoundingClientRect();
+            const left = rect.left - (containerRect?.left ?? 0) + offsetX;
+            const top = rect.top - (containerRect?.top ?? 0);
+    
+            const cursor = document.getElementById("caret");
+    
+            if (cursor) {
+                cursor.style.left = `${left - 2}px`;
+                cursor.style.top = `${top}px`;
+            }
+        }
+    }, [pointerPos, currentWord, prevLetters, loadingDetails]);
 
     useEffect(() => {
         pointerRef.current = pointerPos;
@@ -110,7 +161,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
         prevLettersRef.current = prevLetters;
     }, [prevLetters])
 
-    const keyPressHandeler = (e: KeyboardEvent) => {
+    const keyPressHandeler = async (e: KeyboardEvent) => {
         e.preventDefault();
         if (!socketRef.current && !userRef.current) return;
         console.log(userRef.current);
@@ -128,16 +179,20 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             }
             setPointerPos(p => p += 1);
             tempPointerPos += 1;
+            const cursorJsonMsg: cursorPositions = {
+                    pointerPos: tempPointerPos,
+                    prevLetters: tempPrevLetters,
+                    currentWord: tempCurrentWord, 
+                }
+            if(tempPointerPos == paragraph.length){
+                cursorJsonMsg.isComplete = true;
+            }
 
             const socketMsg = {
                 role: role.Player,
                 gameId,
                 challengeId: roomId,
-                msg: JSON.stringify({
-                    pointerPos: tempPointerPos,
-                    prevLetters: tempPrevLetters,
-                    currentWord: tempCurrentWord, 
-                }),
+                msg: JSON.stringify(cursorJsonMsg),
                 userId: userRef.current 
             }
             const encryptedMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
@@ -152,6 +207,16 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             document.removeEventListener('keypress', keyPressHandeler);
         } 
     }, [])
+
+
+    if(loadingDetails){
+        return <div className="text-3xl font-bold font-mono text-center">loading...</div>
+    }
+
+
+    if(matchDetails?.status == 'Completed'){
+        return <div className="text-3xl font-bold font-mono text-center">Match Winner: {matchDetails.winnerId}</div>
+    }
 
     return <div className="text-2xl mt-[100px] flex justify-self-center justify-center items-center w-full h-full">
         <div className="text-2xl w-8/12 h-6/12 relative rounded-lg p-4">

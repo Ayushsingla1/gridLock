@@ -50,6 +50,10 @@ export const room_join = async(info : message,wss : WebSocket) => {
                 id : info.challengeId,
             }
         })
+        if(challenge?.status == "Completed"){
+            console.log('Game\'s conclusion already reached');
+            wss.close();
+        }
         if(challenge){
             Rooms.set(info.challengeId, {
                 user1 : challenge.user1_Id,
