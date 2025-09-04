@@ -6,7 +6,6 @@ const privateKey = process.env.PRIVATE_KEY!;
 const provider = new ethers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc")
 const wallet = new ethers.Wallet(privateKey,provider);
 const contract = new ethers.Contract(contractAddress,abi,wallet);
-wallet.connect(provider);
 
 export const announceResult = async(gameId : string, winner : number) => {
     try {
