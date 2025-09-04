@@ -1,13 +1,16 @@
 import { useState } from "react";
 import Letter from "./LetterSpec"
+import LetterSpec from "./LetterSpec";
 
 export default function WordSpec({ 
     word, 
     wordIdx,
     currentWord,
     pointerPos,
-    prevLetters
+    prevLetters,
+    userIdx
 }: { 
+    userIdx: 0 | 1,
     word: string, 
     wordIdx: number,
     currentWord: number, 
@@ -22,8 +25,10 @@ export default function WordSpec({
                     makeGreen = true;
                 }
 
-                return <Letter 
+                return <LetterSpec 
+                    key={index}
                     letter={letter} 
+                    userIdx={userIdx}
                     makeGreen={makeGreen}
                 />
             })

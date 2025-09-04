@@ -1,20 +1,17 @@
 'use client'
-
-import { useEffect, useState } from "react"
-
 export default function LetterSpec({
     letter,
-    makeGreen
+    makeGreen,
+    userIdx
 }: {
     letter: string,
-    makeGreen: boolean
+    makeGreen: boolean,
+    userIdx: 0 | 1 
 }) {
+    const cursorColor = userIdx === 0 ? 'text-cyan-400' : 'text-pink-400';
     return <div 
-     className={`${makeGreen ? "text-green-400" : "text-inherit"} inline font-mono`}
+     className={`${makeGreen ? `${cursorColor}` : "text-inherit"} inline font-mono`}
     >
         {letter}
     </div>
 }
-
-
-// hi this is dev aggarwal

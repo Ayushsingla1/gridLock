@@ -15,6 +15,3 @@ export default function Letter({
         {letter}
     </div>
 }
-
-
-// hi this is dev aggarwal

@@ -1,5 +1,5 @@
 import Nav from "@/components/ui/nav";
-import RenderMatch from "./RenderMatch";
+import SpectateMatch from "./spectateMatch";
 
 
 export default async function Spectate({
@@ -13,9 +13,8 @@ export default async function Spectate({
     const roomId = (await params).roomId;
     const gameId = (await params).gameId;
     console.log(roomId, " ", gameId);
-    return <div>
+    return <div className="w-screen flex flex-col gap-y-10 h-screen">
         <Nav/>
-        Spectating...
-        <RenderMatch roomId={roomId} gameId={gameId}/>
+        <SpectateMatch roomId={roomId} gameId={gameId}/>
     </div>
 }

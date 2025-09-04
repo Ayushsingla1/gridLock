@@ -1,3 +1,4 @@
+import WordSpec from "./WordSpec";
 import Word from "./WordSpec"
 
 export default function RenderParagrahSpec({
@@ -13,6 +14,7 @@ export default function RenderParagrahSpec({
     currentWord: number
     pointerPos: number
 }) {
+    const cursorColor = userIdx === 0 ? 'text-cyan-400' : 'text-pink-400';
     return <div className="flex flex-wrap">
         {
             paragraph.split(" ").map((word,index) => {
@@ -21,10 +23,11 @@ export default function RenderParagrahSpec({
                     makeGreen = true;
                 }
                 return <span 
+                    key={index}
                     id={`${`word-${index}-${userIdx}`}`}
-                    className={`m-[7.2px] font-mono text-lg word-${index} ${makeGreen ? "text-green-400" : "text-white"}`}
+                    className={`m-[7.2px] font-mono text-lg word-${index} ${makeGreen ? `${cursorColor}` : "text-gray-500"}`}
                 >
-                    <Word wordIdx={index} prevLetters={prevLetters} currentWord={currentWord} word={word} pointerPos={pointerPos}/>
+                    <WordSpec userIdx={userIdx} wordIdx={index} prevLetters={prevLetters} currentWord={currentWord} word={word} pointerPos={pointerPos}/>
                 </span>
             }) 
         }
