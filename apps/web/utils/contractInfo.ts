@@ -275,7 +275,23 @@ export const contractABI = [
 			}
 		],
 		"name": "stakeAmount",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -426,6 +442,11 @@ export const contractABI = [
 				"internalType": "uint256",
 				"name": "stakerCount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalPool",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -458,5 +479,5 @@ export const contractABI = [
 		"type": "function"
 	}
 ]
-export const contractAddress = "0x394A449206bceA896Af65ee8065D79A36a59CC0b";
-export const usdContractAddress = "0x3173B60B29B43A9163e938Bbf5C8A28523686E8B";
+export const contractAddress = "0xcb4068EB5Dad5A7869772Db33E19D209646484f0";
+export const usdContractAddress = "0xCaF4c2c7D95ceE7E141389cAd8f07c0b92349aac";
