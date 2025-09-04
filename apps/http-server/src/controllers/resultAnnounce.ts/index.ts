@@ -18,21 +18,16 @@ export const announceResult = async(gameId : string, winner : number) => {
     }
 }
 
-export const createGame = async(gameId : string, ExpiresAt : Date, user1_id : string, user2_id : string) => {
+export const createGame = async(gameId : string) => {
     try{
-        const result = await prisma.match.create({data: {
-            gameId : gameId,
-            ExpiresAt : ExpiresAt.toISOString(),
-            user1_Id : user1_id,
-            user2_Id : user2_id
-        }})
-    
-        if(!result) return {success : false, msg : "Error while creating game in Db"};
-    
+        const result = await prisma.match.findFirst({
+            where : {
+                id : gameId
+            }
+        })
+        if(!result || !(result.status == "Scheduled")) return {success : false, msg : "maths not found or not scheduled"};
         const result2 = await contract.createGame!(result.id);
-        console.log(result2);
         const confirmation = await result2.waitForTransactionReceipt();
-        console.log(confirmation);
         if(confirmation) {return {success : true, msg : "Game created Successfully", id : result.id}};
 
     }catch(e){
