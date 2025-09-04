@@ -1,11 +1,10 @@
 "use client"
 import '@rainbow-me/rainbowkit/styles.css';
 import {
-  getDefaultConfig,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { createConfig, http, WagmiProvider } from 'wagmi';
-import {flowTestnet} from 'wagmi/chains';
+import {arbitrumSepolia} from 'wagmi/chains';
 import {
   QueryClientProvider,
   QueryClient,
@@ -13,9 +12,9 @@ import {
 import React from 'react';
 
 export const config = createConfig({
-    chains: [flowTestnet],
+    chains: [arbitrumSepolia],
     transports : {
-        [flowTestnet.id] : http()
+        [arbitrumSepolia.id] : http()
     }
 });
 
