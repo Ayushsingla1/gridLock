@@ -5,6 +5,7 @@ import WebSocket from "ws";
 export const room_join = async(info : message,wss : WebSocket) => {
     if(Rooms.has(info.challengeId)){
         const roomInfo = Rooms.get(info.challengeId)!;
+        console.log("start: ", roomInfo)
         if(info.role === role.Player){
             if(info.userId === roomInfo.user1){
                 Rooms.set(info.challengeId,{
@@ -12,6 +13,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                     user1_joined : true,
                     user1_socket : wss
                 })
+                console.log('user 1 joined: ', Rooms.get(info.challengeId))
             }
             else if(info.userId === roomInfo.user2){
                 Rooms.set(info.challengeId,{
@@ -19,6 +21,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                     user2_joined : true,
                     user2_socket : wss
                 }) 
+                console.log('user 2 joined: ', Rooms.get(info.challengeId))
             }
             else wss.close();
         }
@@ -43,6 +46,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                 )
             }
         }
+        console.log("inside room_join: ", roomInfo)
     }
     else{
         const challenge = await prisma.match.findFirst({
@@ -72,6 +76,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                     user1_joined : true,
                     user1_socket : wss
                 })
+                console.log("user 1 joined: ", Rooms.get(info.challengeId))
             }
             else if(info.role === role.Player && info.userId === challenge.user2_Id){
                 Rooms.set(info.challengeId,{
@@ -80,6 +85,7 @@ export const room_join = async(info : message,wss : WebSocket) => {
                     user2_joined : true,
                     user2_socket : wss
                 }) 
+                console.log("user 2 joined: ", Rooms.get(info.challengeId));
             }
             else if(info.role === role.Spectator && (info.userId !== challenge.user1_Id || info.userId !== challenge.user2_Id)){
                 const roomInfo = Rooms.get(info.challengeId);
@@ -93,5 +99,6 @@ export const room_join = async(info : message,wss : WebSocket) => {
             console.log('closed');
             wss.close(1002, "No such room exists")
         }
+        console.log("inside room_join for the first time: ", Rooms.get(info.challengeId))
     }
 }

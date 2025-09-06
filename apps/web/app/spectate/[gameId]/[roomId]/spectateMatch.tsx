@@ -7,12 +7,12 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import useSocket from "@/hooks/socket";
 import { AES } from "crypto-js";
-import { Loader, Trophy } from "lucide-react";
-import {motion} from 'motion/react'
 import BettingPanel from "@/components/game/Betting/BettingPanel";
 import Timer from "@/components/ui/Timer";
 import NoMatchFound from "@/components/ui/noMatchFound";
 import MatchOngoingStatus from "@/components/ui/noWinner";
+import LoadingDetails from "@/components/ui/LoadingDetails";
+import MatchWinnerDec from "@/components/ui/matchWinnerDec";
 
 export default function SpectateMatch({
     roomId,
@@ -78,17 +78,7 @@ export default function SpectateMatch({
 
      if (loadingDetails) {
         return (
-            <div className="bg-black text-slate-200 min-h-screen flex flex-col justify-center items-center gap-4">
-                <Loader className="h-12 w-12 animate-spin text-indigo-400" />
-                <motion.div
-                    className="text-2xl font-semibold font-mono tracking-widest"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                >
-                    Loading Match...
-                </motion.div>
-            </div>
+           <LoadingDetails/> 
         )
     }
 
@@ -108,23 +98,7 @@ export default function SpectateMatch({
     }
 
     if (matchDetails?.winnerId != null) {
-        return (
-            <div className="bg-black-900 text-slate-200 h-full mt-12 flex justify-center items-center">
-                <motion.div
-                    className="flex flex-col items-center gap-6 p-10 bg-slate-800/50 rounded-2xl shadow-2xl"
-                    initial={{ y: -50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 100 }}
-                >
-                    <Trophy className="h-24 w-24 text-yellow-400" />
-                    <h1 className="text-xl font-mono text-slate-400">Match Over!</h1>
-                    <div className="text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500">
-                        {matchDetails.winnerId}
-                    </div>
-                    <p className="text-2xl font-semibold">is the winner!</p>
-                </motion.div>
-            </div>
-        )
+        return <MatchWinnerDec matchDetails={matchDetails}/>
     }
 
 

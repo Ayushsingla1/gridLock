@@ -68,6 +68,8 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
             console.log('isCompleted: ', userId);
             room.user2_socket?.send(encryptedMsg);
             room.user1_socket?.send(encryptedMsg);
+            console.log("u1: ",room.user1_socket);
+            console.log("u2: ", room.user2_socket);
         }
 
         
@@ -93,6 +95,8 @@ export const distributionHandler = async(info : message, wss : WebSocket) => {
             console.log('isCompleted: ', userId);
             room.user1_socket?.send(encryptedMsg);
             room.user2_socket?.send(encryptedMsg);
+            console.log("u1: ",room.user1_socket);
+            console.log("u2: ", room.user2_socket);
         }
 
 

@@ -1,17 +1,22 @@
 'use client'
-import RenderParagrah from '@/components/game/typing/Player/RenderPragraph';
+import RenderParagrah from '@/components/game/typing/player/RenderPragraph';
 import { useEffect, useRef, useState } from 'react'
 import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import {AES} from 'crypto-js'
-import { cursorPositions, Match, role } from "@/types/gameTypes";
+import { cursorPositions, Match, role, typingRecMsg } from "@/types/gameTypes";
 import CryptoJS from 'crypto-js'
 import axios from "axios";
 import {motion} from 'motion/react'
+import LoadingDetails from '@/components/ui/LoadingDetails';
+import NoMatchFound from '@/components/ui/noMatchFound';
+import MatchWinnerDec from '@/components/ui/matchWinnerDec';
+import MatchOngoingStatus from '@/components/ui/noWinner';
+import Timer from "@/components/ui/Timer";
 
-const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
-// const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
+// const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
+const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
 
 export type message = {
     role : role,
@@ -58,6 +63,8 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             if(!isSignedIn){
                 console.log('not Signed In')
                 router.push('/auth');
+            }else if(!gameId || !roomId){
+                return;
             }else{
                 console.log(user.username);
                 userRef.current = user.username;
@@ -70,12 +77,18 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                         userId: user.username,
                     }
                     const encryptedJoinMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
-                    socket.send(encryptedJoinMsg);
+                    console.log("connecting: ", socket.CLOSING);
+                    // if(socket.readyState == socket.CLOSING){
+                    //     return;
+                    // }
+                    if(socket.readyState == socket.OPEN){
+                        socket.send(encryptedJoinMsg);
+                    }
                 }
             }
         }
 
-    }, [loading, user, socket, isLoaded])
+    }, [loading, gameId, socket?.readyState, roomId, user, socket, isLoaded])
 
 
     useEffect(() => {
@@ -101,9 +114,10 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             const decryptedMsgBytes = AES.decrypt(ev.data, secretKey);
             const decryptedMsg = decryptedMsgBytes.toString(CryptoJS.enc.Utf8); 
             console.log(decryptedMsg);
-            if(JSON.parse(decryptedMsg).isComplete){
-                router.push(`/match/${gameId}/${roomId}`);
-                // alert("Opponent wins!");
+            const recMsg = JSON.parse(decryptedMsg as string) as typingRecMsg
+            if(recMsg.isComplete){
+                console.log("HI inside isComplete");
+                // router.push(`/match/${gameId}/${roomId}`);
                 setLoadingDetails(true);
                 axios.get(`${HTTP_URL}${ep}`, {
                     params: {
@@ -210,13 +224,28 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     }, [])
 
 
+    
     if(loadingDetails){
-        return <div className="text-3xl font-bold font-mono text-center">loading...</div>
+        return <LoadingDetails/>
+    }
+    
+    if(!matchDetails){
+        return <NoMatchFound/>
+    }
+
+    let timeRem = Math.floor(new Date(matchDetails?.ExpiresAt).getTime() / 1000);
+
+    if(timeRem + 3600 < Math.floor(new Date(Date.now()).getTime() / 1000) && matchDetails.winnerId == null){
+        return <MatchOngoingStatus/> 
+    }
+
+    if(matchDetails && new Date(matchDetails?.ExpiresAt).getTime() > new Date(Date.now()).getTime()){
+        return <Timer time={timeRem}/>
     }
 
 
     if(matchDetails?.status == 'Completed'){
-        return <div className="text-3xl font-bold font-mono text-center">Match Winner: {matchDetails.winnerId}</div>
+        return <MatchWinnerDec matchDetails={matchDetails}/>
     }
 
     return <div className="text-2xl mt-[100px] flex justify-self-center justify-center items-center w-full h-full">

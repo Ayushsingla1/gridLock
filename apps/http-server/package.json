@@ -13,7 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "@repo/db": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "@repo/types": "workspace:*"
   },
   "dependencies": {
     "@clerk/backend": "^2.10.1",

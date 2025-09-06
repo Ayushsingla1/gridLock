@@ -14,13 +14,14 @@ export interface typingRecMsg {
 }
 
 export type Match = {
-  gameId: string;
-  user1_Id: string;
-  user2_Id: string;
-  winnerId: string
-  status: 'Pending' | 'Scheduled' | 'Completed' | 'rejected';
-  createdAt: Date;
-  ExpiresAt: Date;
+    id: string,
+    gameId: string;
+    user1_Id: string;
+    user2_Id: string;
+    winnerId: string
+    status: 'Pending' | 'Scheduled' | 'Completed' | 'rejected';
+    createdAt: Date;
+    ExpiresAt: Date;
 };
 
 export interface cursorPositions{

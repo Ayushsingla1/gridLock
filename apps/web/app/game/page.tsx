@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Nav from "@/components/ui/nav";
-import { ArrowRight, Eye, Send, Wallet, X, AtSign } from "lucide-react";
+import { ArrowRight, Eye, Send, Wallet, X, AtSign, Calendar } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
@@ -48,6 +48,7 @@ interface gameSelectedProps {
 export default function GamePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [twitterUsername, setTwitterUsername] = useState("");
+  const [scheduledDate, setScheduledDate] = useState<string>("");
   const [selectedGame, setSelectedGame] = useState<gameSelectedProps | null>(null);
 
   const router = useRouter();
@@ -82,7 +83,6 @@ export default function GamePage() {
     e.preventDefault();
     console.log(`Challenge sent to ${twitterUsername} for the game: ${selectedGame}`);
 
-    // twitter post
     const response = await axios({
       method: 'POST',
       url: `${HTTP_URL}${postEndPoint}`,
@@ -91,10 +91,11 @@ export default function GamePage() {
         challenged: twitterUsername.toLowerCase(),
         gameId: selectedGame?.id,
         game: selectedGame?.name,
-        startTime: new Date(Date.now() + 5*60*1000) // 5min after current hardcoded for now
+        startTime: new Date(scheduledDate) 
       }
     })
     console.log(response.data);
+    // console.log(twitterUsername, " ", new Date(scheduledDate));
 
     closeModal();
   };
@@ -223,6 +224,17 @@ export default function GamePage() {
                     value={twitterUsername}
                     onChange={(e) => setTwitterUsername(e.target.value)}
                     placeholder="twitter_username"
+                    className="w-full bg-input border border-border/50 rounded-md py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
+                    required
+                  />
+                </div>
+                <div className='relative mb-4'>
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                  <input
+                    type='datetime-local'
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    placeholder="scheduledDate"
                     className="w-full bg-input border border-border/50 rounded-md py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:outline-none transition-shadow"
                     required
                   />

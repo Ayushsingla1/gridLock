@@ -47,11 +47,63 @@ export const getChallengedMatches = async (req: Request, res: Response) => {
 }
 
 
-// export const acceptChallenge = async (req: Request, res: Response) => {
-//     const {username, matchId, isAccepted}
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// }
+export const acceptChallenge = async (req: Request, res: Response) => {
+    const {matchId, isAccepted, userId} = req.body
+    try {
+        const match = await prisma.match.findFirst({
+            where: {
+                id: matchId
+            }
+        }) 
+
+        if(match == null){
+            res.status(404).json({
+                success: false,
+                message: "no match found!"
+            })
+        }
+
+        if(match?.user2_Id != userId){
+            res.status(401).json({
+                success: false,
+                message: "not the correct user!"
+            })
+        }
+
+        if(match?.status != "Pending"){
+            res.status(401).json({
+                success: false,
+                message: "status not pending"
+            })
+        }
+
+        const updateMatch = await prisma.match.update({
+            data: {
+                status: isAccepted ? "Scheduled" : "rejected"
+            },
+            where: {
+                id: matchId
+            }
+        }) 
+
+        if(updateMatch == null){
+            res.status(400).json({
+                success: false,
+                message: "Something went wrong!"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Match updated",
+            details: updateMatch
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error',
+            error: error
+        })
+    }
+}

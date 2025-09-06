@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
-import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox } from "lucide-react";
+import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox, SendIcon } from "lucide-react";
 import { Match } from "@/types/gameTypes";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 // Define a type for a single match for better type safety
 // Based on the data structure from your screenshot
@@ -12,6 +14,7 @@ import { Match } from "@/types/gameTypes";
 interface RegisteredGamesProps {
   sentMatches: Match[];
   recMatches: Match[];
+  username: string | null | undefined;
 }
 
 // Helper function to get the game name from its ID
@@ -62,10 +65,12 @@ const itemVariants: Variants = {
   },
 };
 
-export default function RegisteredGames({ sentMatches, recMatches }: RegisteredGamesProps) {
+export default function RegisteredGames({ sentMatches, recMatches, username }: RegisteredGamesProps) {
   const [activeView, setActiveView] = useState<'sent' | 'received'>('sent');
 
   const matchesToShow = activeView === 'sent' ? sentMatches : recMatches;
+
+  
 
   return (
     <section className="bg-gray-950 text-gray-200">
@@ -124,7 +129,7 @@ export default function RegisteredGames({ sentMatches, recMatches }: RegisteredG
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
                 {matchesToShow.map((match, index) => (
-                  <MatchCard key={index} match={match} type={activeView} />
+                  <MatchCard username={username} key={index} match={match} type={activeView} />
                 ))}
               </motion.div>
             ) : (
@@ -147,13 +152,41 @@ export default function RegisteredGames({ sentMatches, recMatches }: RegisteredG
 }
 
 // A separate component for rendering a single match card
-function MatchCard({ match, type }: { match: Match, type: 'sent' | 'received' }) {
-    console.log(match);
+function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 'received', username: string | null | undefined }) {
   const opponent = (type === 'sent') ? match.user2_Id : match.user1_Id;
   const gameName = getGameName(match.gameId);
   const formattedDate = new Date(match.createdAt).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric'
   });
+
+  const formattedMatchDate = new Date(match.ExpiresAt).toLocaleString('en-US', {
+    // year: 'numeric', month: 'short', day: 'numeric', timeStyle: 'medium'
+    timeZone: "IST"
+  })
+
+  const router = useRouter();
+  const ep = `/api/v1/acceptChallenge`
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
+
+
+  if(username == undefined || username == null){
+    router.push('/auth')
+  }
+
+  const acceptHandeler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const {name} = e.currentTarget
+    const body = {
+      matchId: match.id,
+      isAccepted: name == "accept" ? true : false,
+      userId: username  
+    }
+    try {
+      const response = await axios.post(`${HTTP_URL}${ep}`, body)
+      console.log(response);
+    } catch (error) {
+      console.log(error);  
+    }
+  }
 
   return (
     <motion.div
@@ -173,8 +206,12 @@ function MatchCard({ match, type }: { match: Match, type: 'sent' | 'received' })
             <span>vs. <span className="font-medium text-gray-200">{opponent}</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock size={14} className="text-primary" />
+            <SendIcon size={14} className="text-primary" />
             <span>Sent on: {formattedDate}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock size={14} className="text-primary" />
+            <span>Match Date: {formattedMatchDate}</span>
           </div>
         </div>
       </div>
@@ -183,10 +220,18 @@ function MatchCard({ match, type }: { match: Match, type: 'sent' | 'received' })
       <div className="flex gap-2 mt-2">
         {type === 'received' && match.status === 'Pending' && (
           <>
-            <button className="flex-1 bg-green-500/80 hover:bg-green-500 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
+            <button
+             name="accept"
+             onClick={acceptHandeler}
+             className="flex-1 bg-green-500/80 hover:bg-green-500 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors"
+            >
               <Check size={16} /> Accept
             </button>
-            <button className="flex-1 bg-red-500/80 hover:bg-red-500 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
+            <button
+             name="decline"
+             onClick={acceptHandeler}
+             className="flex-1 bg-red-500/80 hover:bg-red-500 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors"
+            >
               <X size={16} /> Decline
             </button>
           </>
@@ -197,7 +242,7 @@ function MatchCard({ match, type }: { match: Match, type: 'sent' | 'received' })
           </button>
         )}
         {(match.status === 'Scheduled' || match.status === 'Completed') && (
-            <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
+            <button onClick={() => router.push(`/match/${match.gameId}/${match.id}`)} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
               <Swords size={16} /> {match.status === 'Completed' ? 'View Result' : 'Play Match'}
             </button>
         )}

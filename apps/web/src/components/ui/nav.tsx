@@ -11,7 +11,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 export default function Nav() {
   const router = useRouter() 
-  const {user, isLoaded} = useUser()
+  const {user, isLoaded, isSignedIn} = useUser()
   useEffect(() => {
     if(isLoaded){
       if(!user){
@@ -43,15 +43,16 @@ export default function Nav() {
                 My Games  
               </Button></Link>
               }
-              <Button variant="ghost" className="text-foreground hover:text-black">
-                About
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-black">
+              <Link href={'/game'}><Button variant="ghost" className="text-foreground hover:text-black">
                 Games
-              </Button>
-              <Button variant="ghost" className="text-foreground hover:text-black">
-                Leaderboard
-              </Button>
+              </Button></Link>
+              {
+                isSignedIn ?  <Link href={'/profile'}><Button variant="ghost" className="text-foreground hover:text-black">
+                  Profile 
+                </Button></Link> : <Link href={'/auth'}><Button variant="ghost" className="text-foreground hover:text-black">
+                  SignUp 
+                </Button></Link>
+              }
               <ConnectButton/>     
             </div>
           </div>

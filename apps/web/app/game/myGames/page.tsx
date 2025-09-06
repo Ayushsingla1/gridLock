@@ -4,13 +4,14 @@ import axios from "axios";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import RegisteredGames from "@/components/ui/RegisteredGames";
+import { Match } from "@/types/gameTypes";
 
 
 export default function MyGames() {
     const ep = '/api/v1/getMatches'
     const {user} = useUser();
-    const [challengesSent, setChallengesSent] = useState<any>();
-    const [challengesRec, setChallengesRec] = useState<any>();
+    const [challengesSent, setChallengesSent] = useState<Match[] | []>([]);
+    const [challengesRec, setChallengesRec] = useState<Match[] | []>([]);
     const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
     useEffect(() => {
         if(user){
@@ -32,6 +33,6 @@ export default function MyGames() {
     return <div className="min-h-screen">
         <Nav/>
 
-        <RegisteredGames sentMatches={challengesSent} recMatches={challengesRec}/>
+        <RegisteredGames username={user?.username} sentMatches={challengesSent} recMatches={challengesRec}/>
     </div>
 }
