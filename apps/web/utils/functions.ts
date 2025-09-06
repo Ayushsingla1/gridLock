@@ -3,6 +3,7 @@ import { contractABI, contractAddress } from "./contractInfo"
 import { config } from "./wagmiProvider"
 import { Address } from "viem"
 
+
 export const createGame = async(gameId : string) => {
 
     const result = await writeContract(config,{
