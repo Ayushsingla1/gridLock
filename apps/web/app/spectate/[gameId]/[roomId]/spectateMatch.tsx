@@ -111,6 +111,7 @@ export default function SpectateMatch({
                 <BettingPanel
                     player1={matchDetails?.user1_Id || 'Player 1'}
                     player2={matchDetails?.user2_Id || 'Player 2'}
+                    gameId={gameId}
                 />
             </div>
         </main>
