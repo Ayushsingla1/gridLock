@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { abi, contractAddress } from "./info";
-import prisma from "@repo/db/dbClient";
+// import prisma from "@repo/db/dbClient";
+import { MatchSchema } from "@repo/types";
 
 const privateKey = process.env.PRIVATE_KEY!;
 const provider = new ethers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc")
@@ -18,21 +19,14 @@ export const announceResult = async(gameId : string, winner : number) => {
     }
 }
 
-export const createGame = async(gameId : string) => {
+export const createGame = async(gameId : string, updatedMatch: MatchSchema) => {
     try{
-        console.log("gameId: ", gameId);
-        const result = await prisma.match.findFirst({
-            where : {
-                id : gameId
-            }
-        })
-        
-        console.log("result: ", result);
+        console.log("result: ", updatedMatch);
 
-        if(!result || !(result.status == "Scheduled")) return {status: 404, success : false, msg : "match not found or not scheduled"};
-        const result2 = await contract.createGame!(result.id);
+        if(!updatedMatch || !(updatedMatch.status == "Scheduled")) return {status: 404, success : false, msg : "match not found or not scheduled"};
+        const result2 = await contract.createGame!(updatedMatch.id);
         const confirmation = await result2.waitForTransactionReceipt();
-        if(confirmation) {return {status: 200, success : true, msg : "Game created Successfully", id : result.id}};
+        if(confirmation) {return {status: 200, success : true, msg : "Game created Successfully", id : updatedMatch.id}};
 
     }catch(e){
         return {status:500, success : false, msg : "error while writing to blockchain", error : e};

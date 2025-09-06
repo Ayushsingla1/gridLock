@@ -22,7 +22,7 @@ const BettingPanel = ({ player1, player2, gameId }: { player1: string, player2: 
     useEffect(() => {
         // getPrice(gameId, betShares, betYes);
         console.log(betYes);
-        getPrice("first", betShares, betYes);
+        getPrice(gameId, betShares, betYes);
     }, [betYes])
 
     const getPrice = async(gameId : string, amount : number, betYes: boolean) => {
@@ -44,7 +44,7 @@ const BettingPanel = ({ player1, player2, gameId }: { player1: string, player2: 
     const getEstAmt = async (e: React.ChangeEvent<HTMLInputElement>) => {
         // getPrice(gameId, betShares, betYes)
         setBetShares(parseInt(e.target.value))
-        getPrice("first", parseInt(e.target.value), betYes)
+        getPrice(gameId, parseInt(e.target.value), betYes)
     }
 
 
@@ -53,7 +53,7 @@ const BettingPanel = ({ player1, player2, gameId }: { player1: string, player2: 
         const res = await readContract(config, {
             abi: contractABI,
             functionName: "getGame",
-            args: ["first"],
+            args: [gameId],
             address: contractAddress
         })
         console.log(res);

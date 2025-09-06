@@ -107,6 +107,16 @@ export const cancleReq = async (req: Request, res: Response) => {
     }
 }
 
+// export interface MatchSchema {
+//     status: "Pending" | "Completed" | "Scheduled" | "rejected";
+//     id: string;
+//     createdAt: Date;
+//     ExpiresAt: Date;
+//     user1_Id: string;
+//     user2_Id: string;
+//     gameId: string;
+// }
+
 export const acceptChallenge = async (req: Request, res: Response) => {
     const {matchId, isAccepted, userId} = req.body
     try {
@@ -154,7 +164,8 @@ export const acceptChallenge = async (req: Request, res: Response) => {
 
             let contractResponse: any = {};
             if(isAccepted){
-                contractResponse = await createGame(updateMatch.id)
+                console.log(updateMatch.id);
+                contractResponse = await createGame(updateMatch.id, updateMatch)
                 console.log("contract Res: ", contractResponse);
             }
 
