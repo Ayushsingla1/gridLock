@@ -158,19 +158,33 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
   const formattedDate = new Date(match.createdAt).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric'
   });
-
   const formattedMatchDate = new Date(match.ExpiresAt).toLocaleString('en-US', {
     // year: 'numeric', month: 'short', day: 'numeric', timeStyle: 'medium'
     timeZone: "IST"
   })
-
+  
+  const cancelEp = "/api/v1/cancelReq"
   const router = useRouter();
   const ep = `/api/v1/acceptChallenge`
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
-
-
+  
+  
   if(username == undefined || username == null){
     router.push('/auth')
+  }
+  
+  const handleCancel = async (e: any) => {
+    const {name} = e.currentTarget
+    const body = {
+      matchId: match.id,
+      user: username  
+    }
+    try {
+      const response = await axios.post(`${HTTP_URL}${cancelEp}`, body)
+      console.log(response);
+    } catch (error) {
+      console.log(error);  
+    }
   }
 
   const acceptHandeler = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -237,7 +251,7 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
           </>
         )}
         {type === 'sent' && match.status === 'Pending' && (
-          <button className="w-full bg-zinc-600/80 hover:bg-zinc-600 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
+          <button onClick={handleCancel} className="w-full bg-zinc-600/80 hover:bg-zinc-600 text-white px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors">
             <X size={16} /> Cancel
           </button>
         )}
