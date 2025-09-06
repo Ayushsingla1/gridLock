@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@repo/db": "workspace:*",
+    "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@types/ws": "^8.18.1",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.2.1",
+    "ethers": "^6.15.0",
     "ws": "^8.18.3"
   }
 }
