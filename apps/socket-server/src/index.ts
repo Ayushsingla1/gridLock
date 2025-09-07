@@ -4,9 +4,15 @@ import { distributionHandler } from "./playTyping";
 import 'dotenv/config'
 import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
+import { configDotenv } from "dotenv";
 
+configDotenv();
+
+const privateKey = process.env.PRIVATE_KEY!;
 const server = new WebSocketServer({port : 8080});
-export const secretKey = process.env.ECRYPTION_SECRET || "SECRET";
+// export const secretKey = process.env.ECRYPTION_SECRET || "SECRET";
+export const secretKey = "SECRET";
+console.log(privateKey);
 
 export type roomInfo = {
     user1 : string,

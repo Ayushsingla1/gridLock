@@ -213,7 +213,7 @@ const BettingPanel = ({ player1, player2, gameId }: { player1: string, player2: 
                     <span className="font-medium">Total Pot</span>
                 </div>
                 <span className="text-xl font-bold text-amber-400 font-mono">
-                    {gameContractDetails ? `$${(parseInt(gameContractDetails[6]) / 10**12)}` : "$31,000"}
+                    {gameContractDetails ? `$${(parseInt(gameContractDetails[6]) / 10**6)}` : "$31,000"}
                 </span>
             </div>
         </motion.div>

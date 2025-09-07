@@ -8,9 +8,11 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import Link from "next/link"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { useAccount } from "wagmi"
 
 export default function Nav() {
   const router = useRouter() 
+  const {address} = useAccount();
   const {user, isLoaded, isSignedIn} = useUser()
   useEffect(() => {
     if(isLoaded){
@@ -21,6 +23,8 @@ export default function Nav() {
       }
     }
   }, [isLoaded])
+
+
   return (
     <div>
         <motion.nav
@@ -51,6 +55,11 @@ export default function Nav() {
                   Profile 
                 </Button></Link> : <Link href={'/auth'}><Button variant="ghost" className="text-foreground hover:text-black">
                   SignUp 
+                </Button></Link>
+              }
+              {
+                address && <Link href={'/redeem'}><Button variant="ghost" className="text-foreground hover:text-black">
+                  Redeem 
                 </Button></Link>
               }
               <ConnectButton/>     

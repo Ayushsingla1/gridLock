@@ -8,6 +8,9 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Gamepad2, Trophy, Target, Zap, Crown, Clock, TrendingUp, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useUser } from "@clerk/nextjs"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function ProfilePage() {
   const stats = [
@@ -61,6 +64,20 @@ export default function ProfilePage() {
     },
   ]
 
+  const {user, isSignedIn, isLoaded} = useUser();
+  const [username, setUsername] = useState<string>("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if(isLoaded){
+      if(!isSignedIn){
+        router.push('/');
+      }else{
+        setUsername(user.username!);
+      }
+    }
+  }, [isLoaded]) 
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -111,8 +128,8 @@ export default function ProfilePage() {
                   <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">JD</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-3xl font-bold mb-2 text-glow">John Doe</h1>
-                  <p className="text-xl text-primary mb-4">@johndoe_dev</p>
+                  <h1 className="text-3xl font-bold mb-2 text-glow">{user ? user.fullName : "XXXXX"}</h1>
+                  <p className="text-xl text-primary mb-4">{username}</p>
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                     <Badge className="bg-primary/10 text-primary border-primary/20">
                       <Crown className="w-3 h-3 mr-1" />

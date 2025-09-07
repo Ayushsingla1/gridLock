@@ -120,14 +120,14 @@ export const createMatch = async (req: Request, res: Response) => {
     try {
 
         // post created (commented for now but working fine)
-        // const postResponse = await postTweet({challenger, challenged, game});
-        // if(postResponse.status == 403){
-        //     res.status(postResponse.status).json(postResponse)
-        //     return;
-        // }else if(postResponse.status == 500){
-        //     res.status(postResponse.status).json(postResponse)
-        //     return;
-        // }
+        const postResponse = await postTweet({challenger, challenged, game});
+        if(postResponse.status == 403){
+            res.status(postResponse.status).json(postResponse)
+            return;
+        }else if(postResponse.status == 500){
+            res.status(postResponse.status).json(postResponse)
+            return;
+        }
 
         //fetch users
         const usersResponse = await fetchUser(challenger, challenged); 
