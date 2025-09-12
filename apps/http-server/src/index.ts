@@ -4,7 +4,7 @@ import cors from 'cors'
 import XRouter from './controllers/twitterRouters' 
 import roomsRouter from "./controllers/roomRouters";
 import userRouter from "./controllers/userRouters";
-import { middleware } from "./middleware";
+// import { middleware } from "./middleware";
 import { clerkHandler } from "./controllers/clerkHandler";
 
 configDotenv();
@@ -19,7 +19,7 @@ app.use(cors({
 app.use('/api/v1',XRouter);
 app.use('/api/v1',roomsRouter);
 app.use('/api/v1', userRouter);
-app.use('api/v1',clerkHandler);
+app.use('/api/v1',clerkHandler);
 
 const PORT = 3001;
 
