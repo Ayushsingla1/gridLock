@@ -5,15 +5,21 @@ import { Gamepad2, Sparkles } from "lucide-react"
 import { motion } from "motion/react"
 import { useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useAccount } from "wagmi"
 
 export default function Nav() {
   const router = useRouter() 
+  const [walletAddress, setWalletAddress] = useState<`0x${string}` | undefined>(undefined);
   const {address} = useAccount();
   const {user, isLoaded, isSignedIn} = useUser()
+
+  useEffect(() => {
+    setWalletAddress(address)
+  }, [address])
+ 
   useEffect(() => {
     if(isLoaded){
       if(!user){
@@ -58,7 +64,7 @@ export default function Nav() {
                 </Button></Link>
               }
               {
-                address && <Link href={'/redeem'}><Button variant="ghost" className="text-foreground hover:text-black">
+                walletAddress && <Link href={'/redeem'}><Button variant="ghost" className="text-foreground hover:text-black">
                   Redeem 
                 </Button></Link>
               }

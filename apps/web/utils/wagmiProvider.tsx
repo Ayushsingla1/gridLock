@@ -10,6 +10,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import React from 'react';
+import { ClerkProvider } from '@clerk/nextjs';
 
 export const config = createConfig({
     chains: [arbitrumSepolia],
@@ -25,7 +26,9 @@ const App = ({children} : {children : React.ReactNode}) => {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          {children}
+          <ClerkProvider>
+            {children}
+          </ClerkProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

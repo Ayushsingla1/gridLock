@@ -1,7 +1,7 @@
 import { cursorPositions } from "@/types/gameTypes";
 import { useEffect, useRef} from "react";
 import {motion} from 'motion/react'
-import RenderParagrahSpectator from "../spectators/RenderPragraphSpec";
+import RenderParagrahSpectator from "../Spectators/RenderPragraphSpec";
 
 export default function ShowTyping({
     userIdx,
