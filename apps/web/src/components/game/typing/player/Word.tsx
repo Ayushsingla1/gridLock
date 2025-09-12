@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Letter from "./Letter"
 
 export default function Word({ 
@@ -22,7 +21,8 @@ export default function Word({
                     makeGreen = true;
                 }
 
-                return <Letter 
+                return <Letter
+                    key={index} 
                     letter={letter} 
                     makeGreen={makeGreen}
                 />

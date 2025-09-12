@@ -1,5 +1,3 @@
-import { useState } from "react";
-import Letter from "./LetterSpec"
 import LetterSpec from "./LetterSpec";
 
 export default function WordSpec({ 

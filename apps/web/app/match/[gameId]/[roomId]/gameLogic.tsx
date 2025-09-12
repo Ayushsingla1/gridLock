@@ -33,7 +33,6 @@ interface gameLogicProps {
 }
 
 export default function GameLogic({roomId, gameId}: gameLogicProps) {
-    console.log(process.env.NEXT_ENCRYPTION_SECRET)
     const secretKey = process.env.ENCRYPTION_SECRET || "SECRET";
     const [pointerPos, setPointerPos] = useState<number>(0);
     const [currentWord, setCurrentWord] = useState<number>(0);
@@ -44,7 +43,6 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
     const prevLettersRef = useRef(0);
     const {user, isLoaded, isSignedIn} = useUser();
     const socketRef = useRef<WebSocket>(null);
-
 
     const [matchDetails, setMatchDetails] = useState<Match | null>(null);
     const [loadingDetails, setLoadingDetails] = useState<boolean>(true);
@@ -186,7 +184,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
         let tempCurrentWord = wordRef.current;
         if(e.key == paragraph[pointerRef.current]){
             if(e.key == ' '){
-                const wordLen = activeWordElement?.textContent.length;
+                const wordLen = activeWordElement?.textContent!.length;
                 setCurrentWord(prev => prev + 1);
                 setPrevLetter(prev => prev + (wordLen ?? 0));
                 tempCurrentWord += 1;

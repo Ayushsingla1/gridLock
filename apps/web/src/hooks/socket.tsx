@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Ref, RefObject } from "react";
+import { useState, useEffect, RefObject } from "react";
 
 export default function useSocket (url: string, socketRef: RefObject<WebSocket | null>) {
     const [socket, setSocket] = useState<WebSocket | null>(null)

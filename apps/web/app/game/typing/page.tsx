@@ -103,13 +103,13 @@ export default function typing() {
     const keyPressHandeler = (e: KeyboardEvent) => {
         const activeWordElement = document.getElementById('word-active');
         console.log(activeWordElement);
-        console.log(activeWordElement?.textContent.length);
+        console.log(activeWordElement?.textContent!.length);
         console.log(activeWordElement?.getBoundingClientRect());
         console.log(e.key);
         if(e.key == paragraph[pointerRef.current]){
             if(e.key == ' '){
                 console.log(activeWordElement?.textContent);
-                const wordLen = activeWordElement?.textContent.length;
+                const wordLen = activeWordElement?.textContent!.length;
                 console.log(wordLen);
                 setCurrentWord(prev => prev + 1);
                 setPrevLetter(prev => prev + (wordLen ?? 0));

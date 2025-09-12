@@ -2,6 +2,7 @@ import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/c
 import { contractABI, contractAddress } from "./contractInfo"
 import { config } from "./wagmiProvider"
 import { Address } from "viem"
+import { privateKeyToAccount } from "viem/accounts"
 
 
 export const createGame = async(gameId : string) => {
@@ -76,3 +77,9 @@ export const redeemAmount = async(gameId : string) => {
     return {success : false};
 }
 
+export const ecryptAdmin = async(message : string) : Promise<Address>=> {
+    const privateKey : Address = process.env.NEXT_PUBLIC_PRIVATE_KEY! as Address;
+    const account = privateKeyToAccount(privateKey);
+    const hash = await account.signMessage({message : message});
+    return hash;
+}

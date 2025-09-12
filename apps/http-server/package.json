@@ -13,8 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "@repo/db": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@repo/types": "workspace:*"
+    "@repo/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
     "@clerk/backend": "^2.10.1",
@@ -29,6 +29,7 @@
     "ethers": "^6.15.0",
     "express": "^5.1.0",
     "oauth-1.0a": "^2.2.6",
+    "svix": "^1.76.1",
     "twitter-api-v2": "^1.25.0",
     "twitter-v2": "^1.1.0",
     "zod": "^4.1.1"

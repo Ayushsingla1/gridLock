@@ -32,3 +32,12 @@ export const createGame = async(gameId : string, updatedMatch: MatchSchema) => {
         return {status:500, success : false, msg : "error while writing to blockchain", error : e};
     }
 }
+
+
+export const decryptMsg = (hash : string, message : string) : boolean => {
+    const publicKey = wallet.address;
+    const result = ethers.verifyMessage(hash,message);
+    if(result === publicKey) return true;
+    return false;
+}
+

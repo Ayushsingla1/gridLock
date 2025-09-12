@@ -154,6 +154,7 @@ export const acceptChallenge = async (req: Request, res: Response) => {
 
             const updateMatch = await tx.match.update({
                 data: {
+                    //@ts-ignore
                     status: isAccepted ? "Scheduled" : "rejected"
                 },
                 where: {

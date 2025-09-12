@@ -32,7 +32,6 @@ export default function MyGames() {
 
     return <div className="min-h-screen">
         <Nav/>
-
         <RegisteredGames username={user?.username} sentMatches={challengesSent} recMatches={challengesRec}/>
     </div>
 }

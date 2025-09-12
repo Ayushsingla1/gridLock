@@ -1,6 +1,6 @@
 'use client'
 import axios from 'axios'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Nav from "@/components/ui/nav";
 import { ArrowRight, Eye, Send, Wallet, X, AtSign, Calendar } from "lucide-react";
@@ -87,7 +87,7 @@ export default function GamePage() {
       method: 'POST',
       url: `${HTTP_URL}${postEndPoint}`,
       data: {
-        challenger: "dev_aggarwal03",
+        challenger: user?.username?.toLowerCase(),
         challenged: twitterUsername.toLowerCase(),
         gameId: selectedGame?.id,
         game: selectedGame?.name,
@@ -95,7 +95,6 @@ export default function GamePage() {
       }
     })
     console.log(response.data);
-    // console.log(twitterUsername, " ", new Date(scheduledDate));
 
     closeModal();
   };
@@ -207,14 +206,14 @@ export default function GamePage() {
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="bg-card border border-border/50 rounded-xl shadow-2xl p-6 w-full max-w-md relative"
-              onClick={(e: any) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             >
               <button onClick={closeModal} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
                 <X size={20}/>
               </button>
 
               <h2 className="text-2xl font-bold text-center mb-2">Challenge a Player</h2>
-              <p className="text-muted-foreground text-center mb-6">Enter your friend's Twitter username to send a challenge for <span className="font-semibold text-primary">{selectedGame?.name}</span>.</p>
+              <p className="text-muted-foreground text-center mb-6">Enter your friend&apos s Twitter username to send a challenge for <span className="font-semibold text-primary">{selectedGame?.name}</span>.</p>
 
               <form onSubmit={handleSendChallenge}>
                 <div className="relative mb-4">

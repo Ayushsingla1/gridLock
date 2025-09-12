@@ -1,7 +1,6 @@
 import WordSpec from "./WordSpec";
-import Word from "./WordSpec"
 
-export default function RenderParagrahSpec({
+const RenderParagrahSpectator = ({
     userIdx,
     paragraph,
     prevLetters, 
@@ -13,7 +12,7 @@ export default function RenderParagrahSpec({
     prevLetters: number, 
     currentWord: number
     pointerPos: number
-}) {
+}) => {
     const cursorColor = userIdx === 0 ? 'text-cyan-400' : 'text-pink-400';
     return <div className="flex flex-wrap">
         {
@@ -33,3 +32,5 @@ export default function RenderParagrahSpec({
         }
     </div>
 }
+
+export default RenderParagrahSpectator;

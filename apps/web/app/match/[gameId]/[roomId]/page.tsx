@@ -8,8 +8,6 @@ interface paramsProps {
     }
 }
 
-
-
 export default async function TypingPage({
     params
 }: paramsProps) {
@@ -22,4 +20,4 @@ export default async function TypingPage({
             <GameLogic gameId={gameId} roomId={roomId}/>
         </div>
     )
-} 
+}

@@ -1,7 +1,7 @@
 import { cursorPositions } from "@/types/gameTypes";
-import RenderParagrahSpec from "./RenderPragraphSpec";
 import { useEffect, useRef} from "react";
 import {motion} from 'motion/react'
+import RenderParagrahSpectator from "../spectators/RenderPragraphSpec";
 
 export default function ShowTyping({
     userIdx,
@@ -38,7 +38,7 @@ export default function ShowTyping({
             cursor.style.left = `${left - 2}px`;
             cursor.style.top = `${top}px`;
         }
-    }, [position])
+    }, [position,userIdx])
 
     const cursorColor = userIdx === 0 ? 'bg-cyan-400' : 'bg-pink-400';
 
@@ -53,7 +53,7 @@ export default function ShowTyping({
                 transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
             />
             <div className="leading-relaxed tracking-wider">
-                <RenderParagrahSpec
+                <RenderParagrahSpectator
                     userIdx={userIdx}
                     paragraph={paragraph}
                     prevLetters={position.prevLetters}
