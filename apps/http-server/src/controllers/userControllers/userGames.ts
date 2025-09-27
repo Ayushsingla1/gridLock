@@ -259,3 +259,53 @@ export const acceptChallenge = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const getAllScheduledMatches = async (req: Request, res: Response) => {
+    try {
+        const result = await prisma.match.findMany({
+            where: {
+                status: 'Scheduled'
+            },
+            include: {
+                user1: {
+                    select: {
+                        username: true,
+                        name: true
+                    }
+                },
+                user2: {
+                    select: {
+                        username: true,
+                        name: true
+                    }
+                },
+                game: {
+                    select: {
+                        GameName: true,
+                        GameType: true,
+                        GameDescription: true,
+                    }
+                },
+            }
+        })
+
+        if(result == null){
+            console.log("empty matches table");
+            return res.status(200).json({
+                success: true,
+                message: "no entries in the table"
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            result
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "something went wrong"
+        }) 
+    }
+}

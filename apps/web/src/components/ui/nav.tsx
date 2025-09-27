@@ -15,19 +15,22 @@ export default function Nav() {
   const [walletAddress, setWalletAddress] = useState<`0x${string}` | undefined>(undefined);
   const {address} = useAccount();
   const {user, isLoaded, isSignedIn} = useUser()
+  const username = process.env.NEXT_PUBLIC_USERNAME 
 
   useEffect(() => {
     setWalletAddress(address)
   }, [address])
  
   useEffect(() => {
-    if(isLoaded){
-      if(!user){
-        router.push('/');
-      }else{
-        console.log(user?.username);
-      }
-    }
+    // if(isLoaded){
+    //   if(!user){
+    //     router.push('/');
+    //   }else{
+    //     console.log(user?.username);
+    //   }
+    // }
+      console.log(username);
+    
   }, [isLoaded])
 
 
@@ -49,15 +52,28 @@ export default function Nav() {
             </div>
             <div className="flex items-center space-x-4">
               {
-              user && <Link href={'/game/myGames'}><Button variant="ghost" className="text-foreground hover:text-black">
-                My Games  
-              </Button></Link>
+                username && <Link href={'/scheduledMatches'}>
+                  <Button
+                  value="ghost"
+                  className="text-foreground bg-black hover:text-black">
+                    Live Matches  
+                  </Button>
+                </Link>
+              }
+              {
+              username && <Link href={'/game/myGames'}>
+                <Button 
+                variant="ghost" 
+                className="text-foreground hover:text-black">
+                  My Games  
+                </Button>
+              </Link>
               }
               <Link href={'/game'}><Button variant="ghost" className="text-foreground hover:text-black">
                 Games
               </Button></Link>
               {
-                isSignedIn ?  <Link href={'/profile'}><Button variant="ghost" className="text-foreground hover:text-black">
+                username ?  <Link href={'/profile'}><Button variant="ghost" className="text-foreground hover:text-black">
                   Profile 
                 </Button></Link> : <Link href={'/auth'}><Button variant="ghost" className="text-foreground hover:text-black">
                   SignUp 
@@ -76,3 +92,5 @@ export default function Nav() {
     </div>
   )
 }
+
+// line 8 and 63 are wrong change username to user

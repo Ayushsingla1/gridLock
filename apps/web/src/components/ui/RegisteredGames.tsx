@@ -1,11 +1,12 @@
 'use client'
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox, SendIcon } from "lucide-react";
 import { Match } from "@/types/gameTypes";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 // Define a type for a single match for better type safety
 // Based on the data structure from your screenshot
@@ -162,6 +163,7 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
     // year: 'numeric', month: 'short', day: 'numeric', timeStyle: 'medium'
     timeZone: "IST"
   })
+  const {getToken, userId} = useAuth();
   
   const cancelEp = "/api/v1/cancelReq"
   const router = useRouter();
@@ -175,12 +177,22 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
   
   const handleCancel = async (e: any) => {
     const {name} = e.currentTarget
-    const body = {
+    const body: {
+      userId : string | null | undefined,
+      matchId: string,
+      user: string | null | undefined
+    } = {
+      userId: userId,
       matchId: match.id,
       user: username  
     }
     try {
-      const response = await axios.post(`${HTTP_URL}${cancelEp}`, body)
+      const token = await getToken();
+      const response = await axios.post(`${HTTP_URL}${cancelEp}`, body, {
+        headers:  {
+          Authorization: `Bearer ${token}`
+        }
+      })
       console.log(response);
     } catch (error) {
       console.log(error);  
@@ -195,7 +207,12 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
       userId: username  
     }
     try {
-      const response = await axios.post(`${HTTP_URL}${ep}`, body)
+      const token = await getToken();
+      const response = await axios.post(`${HTTP_URL}${ep}`, body, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
       console.log(response);
     } catch (error) {
       console.log(error);  

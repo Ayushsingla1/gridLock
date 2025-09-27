@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Nav from "@/components/ui/nav";
 import { ArrowRight, Eye, Send, Wallet, X, AtSign, Calendar } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "motion/react";
-import { useUser } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 // Define the type for game names for better type safety
@@ -50,14 +50,16 @@ export default function GamePage() {
   const [twitterUsername, setTwitterUsername] = useState("");
   const [scheduledDate, setScheduledDate] = useState<string>("");
   const [selectedGame, setSelectedGame] = useState<gameSelectedProps | null>(null);
-
+  const {getToken, userId} = useAuth();
   const router = useRouter();
   const {user, isLoaded} = useUser();
+  const username = process.env.NEXT_PUBLIC_USERNAME
 
   useEffect(() => {
     if(isLoaded){
       if(!user){
-        router.push('/');
+        // router.push('/');
+        console.log(username)
       }else{
         console.log(user?.username);
       }
@@ -83,10 +85,15 @@ export default function GamePage() {
     e.preventDefault();
     console.log(`Challenge sent to ${twitterUsername} for the game: ${selectedGame}`);
 
+    const token = await getToken();
     const response = await axios({
       method: 'POST',
       url: `${HTTP_URL}${postEndPoint}`,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       data: {
+        userId: userId,
         challenger: user?.username?.toLowerCase(),
         challenged: twitterUsername.toLowerCase(),
         gameId: selectedGame?.id,
