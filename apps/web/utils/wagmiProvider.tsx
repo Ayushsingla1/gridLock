@@ -1,10 +1,10 @@
 "use client"
 import '@rainbow-me/rainbowkit/styles.css';
 import {
+  Chain,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { createConfig, http, WagmiProvider } from 'wagmi';
-import {arbitrumSepolia} from 'wagmi/chains';
 import {
   QueryClientProvider,
   QueryClient,
@@ -12,26 +12,40 @@ import {
 import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 
+const U2U = {
+  id: 2484,
+  name: 'U2U',
+  iconBackground: '#fff',
+  nativeCurrency: { name: 'Unicorn Ultra Nebulas Testnet', symbol: 'U2U', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://rpc-nebulas-testnet.uniultra.xyz'] },
+  },
+  blockExplorers: {
+    default: { name: 'u2uScan', url: 'https://testnet.u2uscan.xyz' },
+  }
+} as const satisfies Chain;
+
+
 export const config = createConfig({
-    chains: [arbitrumSepolia],
-    transports : {
-        [arbitrumSepolia.id] : http()
-    }
+  chains: [U2U],
+  transports: {
+    [U2U.id]: http()
+  }
 });
 
 const queryClient = new QueryClient();
 
-const App = ({children} : {children : React.ReactNode}) => {
+const App = ({ children }: { children: React.ReactNode }) => {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <ClerkProvider>
+    <ClerkProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
             {children}
-          </ClerkProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </ClerkProvider>
   );
 };
 

@@ -6,6 +6,7 @@ import roomsRouter from "./controllers/roomRouters";
 import userRouter from "./controllers/userRouters";
 // import { middleware } from "./middleware";
 import { clerkHandler } from "./controllers/clerkHandler";
+import { createGame } from "./controllers/resultAnnounce";
 
 configDotenv();
 const app = express();

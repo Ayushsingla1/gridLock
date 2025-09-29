@@ -4,7 +4,7 @@ import { abi, contractAddress } from "./info";
 import { MatchSchema } from "@repo/types";
 
 const privateKey = process.env.PRIVATE_KEY!;
-const provider = new ethers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc")
+const provider = new ethers.JsonRpcProvider("https:rpc-nebulas-testnet.uniultra.xyz/")
 const wallet = new ethers.Wallet(privateKey,provider);
 const contract = new ethers.Contract(contractAddress,abi,wallet);
 
@@ -21,11 +21,9 @@ export const announceResult = async(gameId : string, winner : number) => {
 
 export const createGame = async(gameId : string, updatedMatch: MatchSchema) => {
     try{
-        console.log("result: ", updatedMatch);
-
         if(!updatedMatch || !(updatedMatch.status == "Scheduled")) return {status: 404, success : false, msg : "match not found or not scheduled"};
         const result2 = await contract.createGame!(updatedMatch.id);
-        const confirmation = await result2.waitForTransactionReceipt();
+        const confirmation = await result2.wait();
         if(confirmation) {return {status: 200, success : true, msg : "Game created Successfully", id : updatedMatch.id}};
 
     }catch(e){
