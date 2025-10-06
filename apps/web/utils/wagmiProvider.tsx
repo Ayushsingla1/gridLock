@@ -13,7 +13,7 @@ import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 
 const U2U = {
-  id: 2484,
+  id: 39,
   name: 'U2U',
   iconBackground: '#fff',
   nativeCurrency: { name: 'U2U Solaris Mainnet', symbol: 'U2U', decimals: 18 },

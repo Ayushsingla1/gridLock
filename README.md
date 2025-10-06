@@ -1,135 +1,184 @@
-# Turborepo starter
+# GridLock — Challenge Your X Followers on U2U Solaris
 
-This Turborepo starter is maintained by the Turborepo core team.
+ <!-- IMAGE: Hero / Banner -->
+ <!-- Add a catchy product image or GIF showcasing a challenge flow -->
 
-## Using this example
+ GridLock is a social wagering platform where creators challenge their X (Twitter) followers, and the community stakes on outcomes. It’s powered by smart contracts on the U2U Solaris mainnet and built as a modern Turborepo monorepo.
 
-Run the following command:
+ - **Challenge your followers** with custom prompts and deadlines.
+ - **Stake on outcomes** and let the market decide confidence.
+ - **Trustless settlement** via on-chain contracts on U2U Solaris.
 
-```sh
-npx create-turbo@latest
+ > Note: This repository contains multiple apps (web, socket-server, http-server) and shared packages (prisma, ui, types, etc.).
+
+ ---
+
+ ## Table of Contents
+ - **[Overview](#overview)**
+ - **[Features](#features)**
+ - **[How It Works](#how-it-works)**
+ - **[Architecture](#architecture)**
+ - **[Monorepo Structure](#monorepo-structure)**
+ - **[Tech Stack](#tech-stack)**
+ - **[Prerequisites](#prerequisites)**
+ - **[Setup](#setup)**
+ - **[Development](#development)**
+ - **[Build](#build)**
+ - **[Database & Migrations](#database--migrations)**
+ - **[Contracts & Network](#contracts--network)**
+
+ ## Overview
+ GridLock lets creators spin up on-chain challenges that their X followers can participate in. Others can stake on whether a creator will complete the challenge. Results are announced and settled trustlessly.
+
+ <!-- IMAGE: Overview Diagram -->
+ <!-- Add a high-level overview image illustrating creator -> challenge -> staking -> result flow -->
+
+ ## Features
+ - **Creator challenges** with on-chain lifecycle.
+ - **Community staking** on outcomes with clear odds and payouts.
+ - **Real-time updates** via sockets for challenge status and staking activity.
+ - **U2U Solaris mainnet** for low-cost, fast settlement.
+ - **Modular monorepo** with shared packages and consistent tooling.
+
+ ## How It Works
+ 1. **Create Challenge:** A creator defines the challenge, stake window, and resolution criteria (usually an on-chain or admin result announcement).
+ 2. **Share on X:** The challenge page provides a shareable link or prefilled post to drive participation.
+ 3. **Stake:** Followers and community members stake on the Yes/No (or multi-outcome) result.
+ 4. **Resolve & Settle:** Once the result is announced, the smart contract settles, distributing rewards to winning stakers.
+
+ ## Architecture
+ Monorepo with three primary apps and shared packages.
+
+ <!-- IMAGE: Architecture Diagram -->
+ <!-- Add a diagram showing web (Next.js) ⇄ socket-server ⇄ http-server ⇄ DB ⇄ U2U chain -->
+
+ ## Monorepo Structure
+ - `apps/web`: Next.js frontend, wallet/wagmi setup, contract interactions.
+ - `apps/socket-server`: Realtime updates (e.g., Socket.IO) for challenge events and staking activity.
+ - `apps/http-server`: HTTP/REST APIs (e.g., Express) for business logic and off-chain orchestration.
+ - `packages/prisma`: Prisma schema, migrations, and DB client.
+ - `packages/ui`: Shared UI components.
+ - `packages/types`: Shared TypeScript types.
+ - `packages/eslint-config`, `packages/typescript-config`: Shared tooling.
+
+ ## Tech Stack
+ - **Framework:** Next.js, Node.js, TypeScript
+ - **Monorepo:** Turborepo, pnpm
+ - **Realtime:** Socket server (e.g., Socket.IO)
+ - **DB:** Prisma ORM (+ your SQL database)
+ - **Web3:** wagmi/viem (client), custom contracts on U2U Solaris
+ - **Tooling:** ESLint, Prettier, TypeScript configs
+
+ ## Prerequisites
+ - **Node.js >= 18**
+ - **pnpm** (repo uses `pnpm-workspace.yaml`)
+ - Access to a **U2U Solaris mainnet RPC URL**
+ - A SQL database connection string for Prisma (e.g., PostgreSQL)
+
+ ## Setup
+ 1. Install dependencies:
+    ```bash
+    pnpm install
+    ```
+ 2. Create environment files per app.
+
+ ### apps/web `.env`
+ ```bash
+ # Public web config
+ NEXT_PUBLIC_CHAIN_ID= # e.g., U2U Solaris chain ID
+ NEXT_PUBLIC_RPC_URL=  # e.g., https://rpc.solaris.u2u.xyz (example; replace with the actual)
+ NEXT_PUBLIC_CONTRACT_ADDRESS= # Deployed challenge/staking contract
+ NEXT_PUBLIC_EXPLORER_URL=     # U2U explorer base URL
+
+ # Optional X (Twitter) integration
+ NEXT_PUBLIC_X_SHARE_URL=https://twitter.com/intent/tweet
+ ```
+
+relevant web helpers:
+ - `apps/web/utils/wagmiProvider.tsx`
+ - `apps/web/utils/contractInfo.ts`
+
+### apps/socket-server `.env`
+ ```bash
+ # Server config
+ PORT=4001
+
+ # Chain
+ RPC_URL=
+CHAIN_ID=
+CONTRACT_ADDRESS=
+
+ # If signing or posting txs server-side
+ PRIVATE_KEY= # NEVER commit this
+ ```
+
+relevant server files:
+ - `apps/socket-server/src/index.ts`
+ - `apps/socket-server/src/contractFn.ts`
+ - `apps/socket-server/src/utils/contractInfo.ts`
+
+### apps/http-server `.env`
+ ```bash
+ PORT=4000
+ DATABASE_URL= # Prisma connection string
+
+ # Chain (if needed)
+ RPC_URL=
+CHAIN_ID=
+CONTRACT_ADDRESS=
 ```
 
-## What's inside?
+relevant controllers:
+ - `apps/http-server/src/controllers/resultAnnounce/info.ts`
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+### packages/prisma `.env`
+ ```bash
+ DATABASE_URL=
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+ ## Development
+ - **Dev all apps:**
+   ```bash
+   pnpm dev
+   ```
+ - **Dev a specific app:**
+   ```bash
+   pnpm -F web dev
+   pnpm -F socket-server dev
+   pnpm -F http-server dev
+   ```
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+ ## Build
+ - **Build everything:**
+   ```bash
+   pnpm build
+   ```
+ - **Build a specific app:**
+   ```bash
+   pnpm -F web build
+   pnpm -F socket-server build
+   pnpm -F http-server build
+   ```
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+ ## Database & Migrations
+ - Prisma lives in `packages/prisma`.
+ - Typical flow:
+   ```bash
+   # Edit schema.prisma then
+   pnpm -F prisma db push      # or: pnpm -F prisma prisma migrate dev
+   pnpm -F prisma generate
+   ```
 
-### Develop
+Ensure `DATABASE_URL` is set in the appropriate `.env`.
 
-To develop all apps and packages, run the following command:
+ ## Contracts & Network
+ - Chain: **U2U Solaris mainnet**.
+ - Configure addresses in:
+   - `apps/web/utils/contractInfo.ts`
+   - `apps/socket-server/src/utils/contractInfo.ts`
+ - Provide the correct:
+   - `CHAIN_ID`
+   - `RPC_URL`
+   - `CONTRACT_ADDRESS`
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+ > Tip: Add links to the contract on the U2U explorer and keep ABIs synced across apps.
