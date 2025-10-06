@@ -16,12 +16,12 @@ const U2U = {
   id: 2484,
   name: 'U2U',
   iconBackground: '#fff',
-  nativeCurrency: { name: 'Unicorn Ultra Nebulas Testnet', symbol: 'U2U', decimals: 18 },
+  nativeCurrency: { name: 'U2U Solaris Mainnet', symbol: 'U2U', decimals: 18 },
   rpcUrls: {
-    default: { http: ['https://rpc-nebulas-testnet.uniultra.xyz'] },
+    default: { http: ['https://rpc-mainnet.u2u.xyz'] },
   },
   blockExplorers: {
-    default: { name: 'u2uScan', url: 'https://testnet.u2uscan.xyz' },
+    default: { name: 'u2uScan', url: 'https://u2uscan.xyz' },
   }
 } as const satisfies Chain;
 

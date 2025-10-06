@@ -1,7 +1,6 @@
 import prisma from '@repo/db/dbClient'
 import { Request, Response } from 'express'
 import { postTweet } from '../twitterControllers/post.controllers'
-import { success } from 'zod'
 
 interface createRoomProps {
     gameId: string,
