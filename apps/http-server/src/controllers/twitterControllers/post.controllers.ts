@@ -42,7 +42,7 @@ export async function postTweet({challenger, challenged, game} : postTweetProps)
       method: 'POST',
     };
     const payload = {
-      text: `challenger @${challengedUser} has challenged @${challengerUser} at ${parsedGame}!!`
+      text: `challenger @${challengerUser} has challenged @${challengedUser} at ${parsedGame}!!`
     }
     
     const authHeader = oauth.toHeader(

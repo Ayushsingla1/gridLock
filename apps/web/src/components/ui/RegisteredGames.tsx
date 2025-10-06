@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox, SendIcon } from "lucide-react";
 import { Match } from "@/types/gameTypes";
@@ -164,6 +164,15 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
     timeZone: "IST"
   })
   const {getToken, userId} = useAuth();
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if(new Date(match.ExpiresAt).getSeconds < new Date(Date.now()).getSeconds){
+  //       await axios.post('')
+  //     }
+  //   }, 5000)
+
+  // }, [])
   
   const cancelEp = "/api/v1/cancelReq"
   const router = useRouter();
@@ -214,6 +223,11 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
         }
       })
       console.log(response);
+      if(response.data.success){
+        alert('match accepted!');
+      }else{
+        alert('something went wrong')
+      }
     } catch (error) {
       console.log(error);  
     }

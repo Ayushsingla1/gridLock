@@ -10,10 +10,10 @@ const App = () => {
    const router = useRouter();
 
    useEffect(() => {
-      if(isLoaded && isSignedIn){
+      if(isSignedIn){
          return router.push('/');
       }
-   }, [])
+   }, [isLoaded])
 
    if(!isLoaded) {
       return <div>loading...</div>

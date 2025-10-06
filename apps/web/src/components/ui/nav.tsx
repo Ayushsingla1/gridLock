@@ -22,15 +22,13 @@ export default function Nav() {
   }, [address])
  
   useEffect(() => {
-    // if(isLoaded){
-    //   if(!user){
-    //     router.push('/');
-    //   }else{
-    //     console.log(user?.username);
-    //   }
-    // }
-      console.log(username);
-    
+    if(isSignedIn){
+      if(!user){
+        router.push('/');
+      }else{
+        console.log(user?.username);
+      }
+    }
   }, [isLoaded])
 
 
@@ -61,19 +59,19 @@ export default function Nav() {
                 </Link>
               }
               {
-              username && <Link href={'/game/myGames'}>
-                <Button 
-                variant="ghost" 
-                className="text-foreground hover:text-black">
-                  My Games  
-                </Button>
-              </Link>
-              }
-              <Link href={'/game'}><Button variant="ghost" className="text-foreground hover:text-black">
-                Games
-              </Button></Link>
+                user && <Link href={'/game/myGames'}>
+                  <Button 
+                  variant="ghost" 
+                  className="text-foreground hover:text-black">
+                    My Games  
+                  </Button>
+                </Link>
+                }
+                <Link href={'/game'}><Button variant="ghost" className="text-foreground hover:text-black">
+                  Games
+                </Button></Link>
               {
-                username ?  <Link href={'/profile'}><Button variant="ghost" className="text-foreground hover:text-black">
+                user ?  <Link href={'/profile'}><Button variant="ghost" className="text-foreground hover:text-black">
                   Profile 
                 </Button></Link> : <Link href={'/auth'}><Button variant="ghost" className="text-foreground hover:text-black">
                   SignUp 

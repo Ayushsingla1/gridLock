@@ -58,8 +58,8 @@ export default function GamePage() {
   useEffect(() => {
     if(isLoaded){
       if(!user){
-        // router.push('/');
-        console.log(username)
+        router.push('/');
+        // console.log(username)
       }else{
         console.log(user?.username);
       }
@@ -102,6 +102,11 @@ export default function GamePage() {
       }
     })
     console.log(response.data);
+    if(response.data.success){
+      alert('challenge sent!');
+    }else{
+      alert('err occoured')
+    }
 
     closeModal();
   };

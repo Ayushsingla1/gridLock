@@ -183,12 +183,14 @@ export const acceptChallenge = async (req: Request, res: Response) => {
             }
 
             return {
+                status: 200,
                 updateMatch,
                 contractMatchId: contractResponse.id
             };
-        })
+        }, {maxWait: 8000, timeout: 8000})
 
         if(result.status != 200){
+            console.log(result);
             res.status(parseInt(result.status) | 401).json({
                 ...result
             })

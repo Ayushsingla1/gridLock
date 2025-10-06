@@ -18,8 +18,8 @@ export default function MyGames() {
         if(user){
             axios.get(`${HTTP_URL}${ep}`, {
                 params: {
-                    // username: user?.username    
-                    username: username
+                    username: user?.username    
+                    // username: username
                 }
             }).then((res) => {
                 setChallengesSent(res.data.data.challengesSent)
