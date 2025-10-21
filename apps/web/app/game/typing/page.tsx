@@ -1,5 +1,5 @@
 'use client'
-import RenderParagrah from "@/components/game/typing/Player/RenderPragraph"
+import RenderParagrah from "../../../src/components/game/typing/Player/RenderPragraph"
 import { useEffect, useRef, useState } from 'react'
 import useSocket from "../../../src/hooks/socket";
 import { useUser } from "@clerk/nextjs";

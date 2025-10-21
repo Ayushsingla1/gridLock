@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from "react"
-import RenderMatch from "@/components/game/typing/Spectators/RenderMatch"
+// import RenderMatch from "@/components/game/typing/Spectators/RenderMatch"
+import RenderMatch from "../../../../src/components/game/typing/Spectators/RenderMatch"
 import { Match, role } from "@/types/gameTypes";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
