@@ -7,11 +7,22 @@ import { oauth } from './twtterOAuthConfig';
 interface postTweetProps {
   challenger: string,
   challenged: string,
-  game: string
+  game: string,
+  matchId: string | undefined,
+  gameId: string | undefined
 }
 
-export async function postTweet({challenger, challenged, game} : postTweetProps) {
-  console.log(challenged, challenger, game);
+export async function postTweet({challenger, challenged, game, gameId, matchId} : postTweetProps) {
+  console.log(challenged, challenger, game, gameId, matchId);
+
+  if(matchId == undefined || gameId == undefined) {
+    return {
+      status: 404,
+      succes: false,
+      message: `matchId undefined`
+    }
+  }
+
   const parsedData1 = XUserName.safeParse(challenger);
   const parsedData2 = XUserName.safeParse(challenged);
   const parsedData3 = GameZod.safeParse(game);
@@ -41,10 +52,10 @@ export async function postTweet({challenger, challenged, game} : postTweetProps)
       url: 'https://api.x.com/2/tweets',
       method: 'POST',
     };
+    const frontEnd = process.env.FRONT_END
     const payload = {
-      text: `challenger @${challengerUser} has challenged @${challengedUser} at ${parsedGame}!!`
+      text: `challenger @${challengerUser} has challenged @${challengedUser} at ${parsedGame}, View The match here : ${frontEnd}/spectate/${gameId}/${matchId} !!`
     }
-    
     const authHeader = oauth.toHeader(
       oauth.authorize(requestForSignature, { key: accessToken!, secret: accessSecret! })
     );

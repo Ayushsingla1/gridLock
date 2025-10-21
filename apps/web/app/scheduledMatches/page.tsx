@@ -190,7 +190,7 @@ function LiveMatchCard({ match }: { match: any }) {
       {/* Action Button */}
       <div className="flex gap-2 mt-2">
         <button 
-            onClick={() => router.push(`/match/${match.gameId}/${match.id}`)} 
+            onClick={() => router.push(`/spectate/${match.gameId}/${match.id}`)} 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors"
         >
             <Gamepad2 size={16} /> Spectate Match

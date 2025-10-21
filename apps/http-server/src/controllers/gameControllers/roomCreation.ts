@@ -118,16 +118,6 @@ export const createMatch = async (req: Request, res: Response) => {
     const { challenger, challenged, game, gameId, startTime } = req.body;
     try {
 
-        // post created (commented for now but working fine)
-        const postResponse = await postTweet({challenger, challenged, game});
-        if(postResponse.status == 403){
-            res.status(postResponse.status).json(postResponse)
-            return;
-        }else if(postResponse.status == 500){
-            res.status(postResponse.status).json(postResponse)
-            return;
-        }
-
         //fetch users
         const usersResponse = await fetchUser(challenger, challenged); 
         if(usersResponse.status == 403){
@@ -135,18 +125,30 @@ export const createMatch = async (req: Request, res: Response) => {
         }else if(usersResponse.status == 500){
             res.status(500).json(usersResponse);
         }
-
+        
         const userId_1 = usersResponse.data?.challengerId!;
         const userId_2 = usersResponse.data?.challengedId!;
         console.log(userId_1, userId_2);
-
+        
         //room creation
         const roomResponse = await createRoom({gameId, startTime, userId_1, userId_2});
-
+        
         if(roomResponse.status == 400){
             res.status(400).json(roomResponse);
         }else if(roomResponse.status == 500) {
             res.status(500).json(roomResponse);
+        }
+
+        const matchId = roomResponse.data?.matchId;
+        // post created (commented for now but working fine)
+        const postResponse = await postTweet({challenger, challenged, game, gameId, matchId});
+
+        if(postResponse.status == 403){
+            res.status(postResponse.status).json(postResponse)
+            return;
+        }else if(postResponse.status == 500){
+            res.status(postResponse.status).json(postResponse)
+            return;
         }
         
         res.status(200).json(roomResponse);

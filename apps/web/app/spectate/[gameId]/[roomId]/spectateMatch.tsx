@@ -32,6 +32,7 @@ export default function SpectateMatch({
     const url = process.env.NEXT_PUBLIC_WSS_SERVER!
     const socketRef = useRef<WebSocket>(null)
     const {socket,loading} = useSocket(url, socketRef)
+    const [connected, setConnected] = useState<boolean>(false);
     
     useEffect(() => {
         if(isSignedIn){
@@ -58,7 +59,8 @@ export default function SpectateMatch({
             if(!isSignedIn){
                 console.log('not Signed In');
                 router.push('/auth');
-            }else{
+            }else if(socketRef.current?.readyState == socketRef.current?.OPEN && !connected){
+                setConnected(true);
                 userRef.current = user.username;
                 if(socketRef.current){
                     const socketMsg = {
@@ -69,11 +71,12 @@ export default function SpectateMatch({
                         userId: userRef.current
                     }
                     const encryptedMsg = AES.encrypt(JSON.stringify(socketMsg), secretKey).toString();
+                    console.log(socketRef.current.readyState, " ", socketRef.current.CONNECTING);
                     socketRef.current.send(encryptedMsg)            
                 }
             }
         }
-    }, [socketRef, isLoaded, loading, socket])
+    }, [socketRef, isLoaded, loading, socket, socketRef.current?.readyState])
 
 
      if (loadingDetails) {

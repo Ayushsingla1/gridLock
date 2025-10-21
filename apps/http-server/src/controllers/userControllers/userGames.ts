@@ -202,57 +202,7 @@ export const acceptChallenge = async (req: Request, res: Response) => {
             details: result
         })
 
-        // const match = await prisma.match.findFirst({
-        //     where: {
-        //         id: matchId
-        //     }
-        // }) 
-
-        // if(match == null){
-        //     res.status(404).json({
-        //         success: false,
-        //         message: "no match found!"
-        //     })
-        // }
-
-        // if(match?.user2_Id != userId){
-        //     res.status(401).json({
-        //         success: false,
-        //         message: "not the correct user!"
-        //     })
-        // }
-
-        // if(match?.status != "Pending"){
-        //     res.status(401).json({
-        //         success: false,
-        //         message: "status not pending"
-        //     })
-        // }
-
-        // const updateMatch = await prisma.match.update({
-        //     data: {
-        //         status: isAccepted ? "Scheduled" : "rejected"
-        //     },
-        //     where: {
-        //         id: matchId
-        //     }
-        // }) 
-
-        // let contractResponse: any = {};
-        // if(isAccepted){
-        //     contractResponse = await createGame(updateMatch.id)
-        // }
-        // if(!contractResponse.success){
-
-        // }
-
-        // if(updateMatch == null){
-        //     res.status(400).json({
-        //         success: false,
-        //         message: "Something went wrong!"
-        //     })
-        // }
-} catch (error) {
+       } catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
