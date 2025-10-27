@@ -4,7 +4,7 @@ import { abi, contractAddress } from "./info";
 import { MatchSchema } from "@repo/types";
 
 const privateKey = process.env.PRIVATE_KEY!;
-const provider = new ethers.JsonRpcProvider("https://rpc-mainnet.u2u.xyz")
+const provider = new ethers.JsonRpcProvider("https://testnet.evm.nodes.onflow.org")
 const wallet = new ethers.Wallet(privateKey,provider);
 const contract = new ethers.Contract(contractAddress,abi,wallet);
 
@@ -25,12 +25,10 @@ export const createGame = async(gameId : string, updatedMatch: MatchSchema) => {
         const result2 = await contract.createGame!(updatedMatch.id);
         const confirmation = await result2.wait();
         if(confirmation) {return {status: 200, success : true, msg : "Game created Successfully", id : updatedMatch.id}};
-
     }catch(e){
         return {status:500, success : false, msg : "error while writing to blockchain", error : e};
     }
 }
-
 
 export const decryptMsg = (hash : string, message : string) : boolean => {
     const publicKey = wallet.address;
