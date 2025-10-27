@@ -479,5 +479,10 @@ export const contractABI = [
 		"type": "function"
 	}
 ]
-export const contractAddress = "0xb75751B725A9663420962f10042f77D6abF5f56c";
-export const usdContractAddress = "0x67588a34FAfae09E9b683b76dB1FB97d9238B63a";
+export const flowContractAddress = "0xf83c0dcD20901C53Dc171C95604d086dB5af21a0";
+export const flowUsdContractAddress = "0x26CaCB7e02AB1112067f0Dc28F8eBFd5Cad00405";
+export const contractAddress = flowContractAddress
+export const usdContractAddress = flowUsdContractAddress
+
+export const u2u_mainnet_contract = "0xb75751B725A9663420962f10042f77D6abF5f56c";
+export const u2u_mainnet_usd = "0x67588a34FAfae09E9b683b76dB1FB97d9238B63a"

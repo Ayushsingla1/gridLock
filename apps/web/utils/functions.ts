@@ -4,7 +4,6 @@ import { config } from "./wagmiProvider"
 import { Address } from "viem"
 import { privateKeyToAccount } from "viem/accounts"
 
-
 export const createGame = async(gameId : string) => {
 
     const result = await writeContract(config,{

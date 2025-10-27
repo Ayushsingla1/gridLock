@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-query";
 import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
+import { flowTestnet } from 'viem/chains';
 
 const U2U = {
   id: 39,
@@ -27,9 +28,10 @@ const U2U = {
 
 
 export const config = createConfig({
-  chains: [U2U],
+  chains: [flowTestnet],
   transports: {
-    [U2U.id]: http()
+    // [U2U.id]: http(),
+    [flowTestnet.id] : http()
   }
 });
 
