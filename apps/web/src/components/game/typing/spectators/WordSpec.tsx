@@ -1,4 +1,4 @@
-import LetterSpec from "./LetterSpec";
+import LetterSpec from "./letterSpec";
 
 export default function WordSpec({ 
     word, 

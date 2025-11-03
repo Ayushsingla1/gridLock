@@ -1,6 +1,6 @@
 'use client'
 // import RenderParagrah from '@/components/game/typing/Player/RenderPragraph';
-import RenderParagrah from '../../../../src/components/game/typing/Player/RenderPragraph';
+import RenderParagrah from '../../../../src/components/game/typing/player/renderParagraph';
 import { useEffect, useRef, useState } from 'react'
 import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
@@ -10,11 +10,11 @@ import { cursorPositions, Match, role, typingRecMsg } from "@/types/gameTypes";
 import CryptoJS from 'crypto-js'
 import axios from "axios";
 import {motion} from 'motion/react'
-import LoadingDetails from '@/components/ui/LoadingDetails';
+import LoadingDetails from '@/components/ui/loadingDetails';
 import NoMatchFound from '@/components/ui/noMatchFound';
 import MatchWinnerDec from '@/components/ui/matchWinnerDec';
 import MatchOngoingStatus from '@/components/ui/noWinner';
-import Timer from "@/components/ui/Timer";
+import Timer from "@/components/ui/timer";
 
 // const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."

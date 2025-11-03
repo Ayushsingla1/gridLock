@@ -1,7 +1,7 @@
 import { Dispatch, RefObject, SetStateAction, useState } from "react"
 import { cursorPositions, Match} from "@/types/gameTypes"
-import ShowTyping from "../Spectators/showTyping"
-import { listenTypingSocket } from "../Spectators/utils/socketFn"
+import ShowTyping from "./showTyping"
+import { listenTypingSocket } from "./utils/socketFn"
 import { User } from "lucide-react"
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."

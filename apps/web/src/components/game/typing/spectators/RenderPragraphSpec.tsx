@@ -1,4 +1,4 @@
-import WordSpec from "../Spectators/WordSpec";
+import WordSpec from "./wordSpec";
 
 const RenderParagrahSpectator = ({
     userIdx,

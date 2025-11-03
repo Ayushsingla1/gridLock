@@ -1,18 +1,18 @@
 'use client'
 import { useEffect, useRef, useState } from "react"
 // import RenderMatch from "@/components/game/typing/Spectators/RenderMatch"
-import RenderMatch from "../../../../src/components/game/typing/Spectators/RenderMatch"
+import RenderMatch from "@/components/game/typing/spectators/renderMatch";
 import { Match, role } from "@/types/gameTypes";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import useSocket from "@/hooks/socket";
 import { AES } from "crypto-js";
-import BettingPanel from "@/components/game/Betting/BettingPanel";
-import Timer from "@/components/ui/Timer";
+import BettingPanel from "@/components/game/betting/bettingPanel";
+import Timer from "@/components/ui/timer";
 import NoMatchFound from "@/components/ui/noMatchFound";
 import MatchOngoingStatus from "@/components/ui/noWinner";
-import LoadingDetails from "@/components/ui/LoadingDetails";
+import LoadingDetails from "@/components/ui/loadingDetails";
 import MatchWinnerDec from "@/components/ui/matchWinnerDec";
 
 export default function SpectateMatch({
