@@ -11,6 +11,7 @@ export const getUserProfile = async(req : Request, res : Response) => {
             msg : "Username not found"
         })
     }
+    
     const result = await prisma.user.findFirst({
         where : {
             username : username as string

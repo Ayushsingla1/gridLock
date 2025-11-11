@@ -11,38 +11,59 @@ import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import axios from "axios"
 
 export default function ProfilePage() {
 
-  const userData = useState<any>();
+  const [userData,setUserData] = useState({
+    success : true,
+    matchPlayed : 0,
+    matchWon : 0,
+    matchLost : 0,
+    winPercentage : 0
+  });
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
 
+  const {user, isSignedIn, isLoaded} = useUser();
+  const [username, setUsername] = useState<string>("");
+  const router = useRouter();
 
   useEffect(() => {
-    
-  })
+    const getUserProfile = async() => {
+      if(!user?.username) return;
+      const result = await axios.get(`${HTTP_URL}/api/v1/userProfile`, {
+        params : {
+          username : user?.username
+        }
+      })
+      console.log(result);
+      setUserData(result.data);
+    }
+    getUserProfile();
+  },[user,isLoaded])
 
   const stats = [
     {
       title: "Games Played",
-      value: "127",
+      value: userData.matchPlayed,
       icon: <Gamepad2 className="w-6 h-6" />,
       color: "from-primary/20 to-primary/5",
     },
     {
       title: "Games Won",
-      value: "89",
+      value: userData.matchWon,
       icon: <Trophy className="w-6 h-6" />,
       color: "from-chart-2/20 to-chart-2/5",
     },
     {
       title: "Games Lost",
-      value: "38",
+      value: userData.matchLost,
       icon: <Target className="w-6 h-6" />,
       color: "from-chart-3/20 to-chart-3/5",
     },
     {
       title: "Win Rate",
-      value: "70%",
+      value: `${userData.winPercentage}%`,
       icon: <TrendingUp className="w-6 h-6" />,
       color: "from-chart-4/20 to-chart-4/5",
     },
@@ -72,10 +93,6 @@ export default function ProfilePage() {
     },
   ]
 
-  const {user, isSignedIn, isLoaded} = useUser();
-  const [username, setUsername] = useState<string>("");
-  const router = useRouter();
-
   useEffect(() => {
     if(isLoaded){
       if(!isSignedIn){
@@ -84,7 +101,7 @@ export default function ProfilePage() {
         setUsername(user.username!);
       }
     }
-  }, [isLoaded]) 
+  }, [isLoaded])
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +150,7 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                 <Avatar className="w-24 h-24 border-2 border-primary glow">
                   <AvatarImage src="/gamer-profile.png" />
-                  <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">JD</AvatarFallback>
+                  <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">{user?.username![0]?.toUpperCase() || 'G'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-center md:text-left">
                   <h1 className="text-3xl font-bold mb-2 text-glow">{user ? user.fullName : "XXXXX"}</h1>
