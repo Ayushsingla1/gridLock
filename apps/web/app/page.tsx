@@ -17,15 +17,16 @@ import {
   Shield,
   Sparkles,
   Play,
-  ArrowRight,
 } from "lucide-react"
 import { useState } from "react"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Nav from "@/components/ui/nav"
+import { useRouter } from "next/navigation"
 
 export default function HomePage() {
   const [hoveredGame, setHoveredGame] = useState<number | null>(null)
   const [activeFeature, setActiveFeature] = useState(0)
+  const router = useRouter();
 
   const gameCards = [
     {
@@ -88,19 +89,16 @@ export default function HomePage() {
 
   const testimonials = [
     {
-      name: "@techinfluencer",
+      name: "@ayushsingla32",
       text: "GridLock turned my boring Tuesday into an epic gaming session with my followers. This is the future!",
-      followers: "45K followers",
     },
     {
-      name: "@gamingqueen",
+      name: "@Dev_Aggarwal03",
       text: "Finally, a way to actually compete with my audience instead of just talking to them. Game changer!",
-      followers: "128K followers",
     },
     {
       name: "@startupfounder",
       text: "My team uses GridLock for team building. Nothing beats beating your CEO in Speed Typing 😂",
-      followers: "23K followers",
     },
   ]
 
@@ -150,6 +148,7 @@ export default function HomePage() {
                   size="lg"
                   variant="outline"
                   className="border-primary/50 text-primary hover:bg-primary/10 text-lg px-8 py-6 bg-transparent"
+                  onClick={() => router.push('/scheduledMatches')}
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   Watch Live Games
@@ -339,9 +338,6 @@ export default function HomePage() {
                     <p className="text-muted-foreground mb-4 italic">"{testimonial.text}"</p>
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-primary">{testimonial.name}</span>
-                      <Badge variant="outline" className="text-xs">
-                        {testimonial.followers}
-                      </Badge>
                     </div>
                   </CardContent>
                 </Card>

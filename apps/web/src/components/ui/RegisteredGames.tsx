@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
-import { ArrowRightLeft, Check, Swords, User, Clock, X, Send, Inbox, SendIcon } from "lucide-react";
+import { ArrowRightLeft, Check, Swords, Clock, X, Send, Inbox, SendIcon } from "lucide-react";
 import { Match } from "@/types/gameTypes";
 import axios from "axios";
 import { useRouter } from "next/navigation";

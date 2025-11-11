@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import useSocket from "@/hooks/socket";
 import { AES } from "crypto-js";
-import BettingPanel from "@/components/game/betting/bettingPanel";
+import BettingPanel from "@/components/game/Betting/bettingPanel";
 import Timer from "@/components/ui/timer";
 import NoMatchFound from "@/components/ui/noMatchFound";
 import MatchOngoingStatus from "@/components/ui/noWinner";

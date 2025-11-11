@@ -9,10 +9,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Gamepad2, Trophy, Target, Zap, Crown, Clock, TrendingUp, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 export default function ProfilePage() {
+
+  const userData = useState<any>();
+
+
+  useEffect(() => {
+    
+  })
+
   const stats = [
     {
       title: "Games Played",

@@ -7,6 +7,7 @@ import { ArrowRight, Eye, Send, Wallet, X, AtSign, Calendar } from "lucide-react
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // Define the type for game names for better type safety
 export type GameName = "Typing" | "Chess" | "Pictionary";
@@ -152,16 +153,13 @@ export default function GamePage() {
                 </span>
               </h1>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <Button size="lg" className="glow-hover bg-primary text-primary-foreground text-lg px-8 py-6 group">
-                  <Wallet className="w-5 h-5 mr-2" />
-                  Connect Wallet
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 items-center">
+                <ConnectButton showBalance/>
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-primary/50 text-primary hover:bg-primary/10 text-lg px-8 py-6 bg-transparent"
+                  onClick={() => router.push('/scheduledMatches')}
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   Watch Live Games
