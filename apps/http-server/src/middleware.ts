@@ -6,10 +6,7 @@ export const middleware = async(req : Request, res : Response, next : NextFuncti
     try{
 
         console.log(req.headers["authorization"]);
-        console.log("thi ththnjdk"); 
         const result = await clerkClient.verifyToken(req.headers["authorization"]?.replace("Bearer ","")!,{});
-        console.log("hi there");
-        console.log(result);
         if(result.sub === req.body.userId){
             next();
         }else{
@@ -20,7 +17,7 @@ export const middleware = async(req : Request, res : Response, next : NextFuncti
     }catch(e) {
         return res.status(401).json({
             msg : "unauthorized",
-            error : e
+            error : "User not Authorized"
         })
     }
 };

@@ -29,7 +29,6 @@ export const fetchMatchInfo = async (req:Request, res:Response) => {
         res.status(500).json({
             success: false,
             message: "internal server error",
-            error
         })    
     }
 }

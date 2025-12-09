@@ -42,12 +42,12 @@ export const createRoom = async ({gameId, userId_1, userId_2, startTime} : creat
             }
         }
     } catch (error) {
+        console.log(error)
         return {
             status: 500,
             success: false,
-            error: error,
             message: "server error"
-        }       
+        }
     }
      
 }
@@ -104,11 +104,10 @@ export const fetchUser = async (user1: string, user2: string) => {
         }
         
     } catch (error) {
-        console.log('server in fetch user error!')
+        console.log(error)
         return {
             status: 500,
             success: false,
-            error: error,
             message: "server error"
         } 
     }

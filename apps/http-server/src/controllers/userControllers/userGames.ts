@@ -42,7 +42,6 @@ export const getChallengedMatches = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: "internal server error",
-            error
         })
     }
 }
@@ -102,7 +101,6 @@ export const cancleReq = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: 'Server Error',
-            error: error
         })        
     }
 }
@@ -207,7 +205,6 @@ export const acceptChallenge = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: 'Server Error',
-            error: error
         })
     }
 }
@@ -255,6 +252,7 @@ export const getAllScheduledMatches = async (req: Request, res: Response) => {
         })
         
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             message: "something went wrong"

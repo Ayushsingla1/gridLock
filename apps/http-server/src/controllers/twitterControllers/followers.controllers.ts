@@ -50,7 +50,6 @@ export const getFollowers = async (req: Request, res: Response) => {
             users: users 
         })
     } catch (error) {
-        console.log(error);
-        
+        console.log(error); 
     }
 }
