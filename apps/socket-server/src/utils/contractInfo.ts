@@ -32,6 +32,6 @@ export const abi = [
 	}
 ]
 
-export const flowContractAddress = "0xf83c0dcD20901C53Dc171C95604d086dB5af21a0";
-export const contractAddress = flowContractAddress;
+export const mantleContractAddress = "0x0E9EBb442DB3309d3e8d991C21a5371997d76DDf";
+export const contractAddress = mantleContractAddress;
 export const u2u_mainnet_contractAddress = "0xb75751B725A9663420962f10042f77D6abF5f56c";

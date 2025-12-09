@@ -4,7 +4,7 @@ import { abi, contractAddress } from "./info";
 import { MatchSchema } from "@repo/types";
 
 const privateKey = process.env.PRIVATE_KEY!;
-const provider = new ethers.JsonRpcProvider("https://testnet.evm.nodes.onflow.org")
+const provider = new ethers.JsonRpcProvider("https://rpc.sepolia.mantle.xyz")
 const wallet = new ethers.Wallet(privateKey,provider);
 const contract = new ethers.Contract(contractAddress,abi,wallet);
 
