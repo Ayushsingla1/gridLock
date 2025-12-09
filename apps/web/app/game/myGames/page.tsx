@@ -8,7 +8,7 @@ import { Match } from "@/types/gameTypes";
 
 
 export default function MyGames() {
-    const ep = '/api/v1/getMatches'
+    const ep = '/api/v1/user/getMatches'
     const {user} = useUser();
     const username = process.env.NEXT_PUBLIC_USERNAME
     const [challengesSent, setChallengesSent] = useState<Match[] | []>([]);

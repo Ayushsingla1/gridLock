@@ -47,7 +47,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
 
     const [matchDetails, setMatchDetails] = useState<Match | null>(null);
     const [loadingDetails, setLoadingDetails] = useState<boolean>(true);
-    const ep = '/api/v1/getMatchInfo'
+    const ep = '/api/v1/room/getMatchInfo'
     const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
 
     const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER

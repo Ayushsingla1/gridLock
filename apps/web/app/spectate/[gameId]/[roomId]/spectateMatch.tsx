@@ -27,7 +27,7 @@ export default function SpectateMatch({
     const userRef = useRef<string>(null);
     const {user, isLoaded, isSignedIn} = useUser();
     const router = useRouter();
-    const ep = '/api/v1/getMatchInfo'
+    const ep = '/api/v1/room/getMatchInfo'
     const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
     const secretKey = process.env.NEXT_ENCRYPTION_SECRET || "SECRET";
     const url = process.env.NEXT_PUBLIC_WSS_SERVER!

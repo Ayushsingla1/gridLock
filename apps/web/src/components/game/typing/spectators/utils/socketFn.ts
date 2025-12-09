@@ -4,7 +4,7 @@ import { AES } from "crypto-js";
 import CryptoJS from "crypto-js";
 import { Dispatch, SetStateAction } from "react";
 
-const ep = '/api/v1/getMatchInfo'
+const ep = '/api/v1/room/getMatchInfo'
 const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
 const secretKey = process.env.NEXT_ENCRYPTION_SECRET || "SECRET";
 
