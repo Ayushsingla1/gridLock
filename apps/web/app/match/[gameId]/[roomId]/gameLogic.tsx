@@ -17,7 +17,7 @@ import MatchOngoingStatus from '@/components/ui/noWinner';
 import Timer from "@/components/ui/timer";
 
 // const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
-const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
+let paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
 
 export type message = {
     role : role,
@@ -99,6 +99,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             }).then(res => {
                 console.log(res.data);
                 if(res.data.success){
+                    paragraph = res.data.roomDetails.gameText;
                     setMatchDetails(res.data.roomDetails);
                 }
             }).finally(() => {
@@ -116,7 +117,6 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
             const recMsg = JSON.parse(decryptedMsg as string) as typingRecMsg
             if(recMsg.isComplete){
                 console.log("HI inside isComplete");
-                // router.push(`/match/${gameId}/${roomId}`);
                 setLoadingDetails(true);
                 axios.get(`${HTTP_URL}${ep}`, {
                     params: {
@@ -125,6 +125,7 @@ export default function GameLogic({roomId, gameId}: gameLogicProps) {
                 }).then(res => {
                     console.log(res.data);
                     if(res.data.success){
+                        paragraph = res.data.roomDetails.gameText;
                         setMatchDetails(res.data.roomDetails);
                     }
                 }).finally(() => {

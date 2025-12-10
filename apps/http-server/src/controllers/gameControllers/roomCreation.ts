@@ -1,6 +1,7 @@
 import prisma from '@repo/db/dbClient'
 import { Request, Response } from 'express'
 import { postTweet } from '../twitterControllers/post.controllers'
+import words from "../../../typingData.json"
 
 interface createRoomProps {
     gameId: string,
@@ -12,14 +13,42 @@ interface createRoomProps {
 export const createRoom = async ({gameId, userId_1, userId_2, startTime} : createRoomProps) => {
 
     try {
-        const createdMatch = await prisma.match.create({
+        const createdMatch = await prisma.$transaction(async(tx) => {
+           
+            const createdMatch = await prisma.match.create({
             data: {
                 gameId,
                 user1_Id: userId_1,
                 user2_Id: userId_2,
-                ExpiresAt: startTime
-            } 
-        })   
+                ExpiresAt: startTime,
+                }
+            })
+
+            if(!createdMatch){
+                return createdMatch
+            }
+
+            let text = "";
+
+            for(let i = 0; i < 100; i++){
+                let ind = Math.floor(Math.random() * words.length);
+                text += words[ind];
+                if(i != 99) text += " ";
+            }
+
+            const result = await prisma.game.update({
+                where : {
+                    id : createdMatch.gameId
+                },
+                data : {
+                    GameText : text
+                }
+            })
+
+            if(!result) return null;
+
+            return createdMatch;
+    })
 
         if(createdMatch == null){
             return {

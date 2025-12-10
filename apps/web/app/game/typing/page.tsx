@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import useSocket from "../../../src/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
 
@@ -26,9 +27,12 @@ export default function typing() {
     const wordRef = useRef(0);
     const prevLettersRef = useRef(0);
     const {user, isLoaded, isSignedIn} = useUser();
+    const [para, setPara] = useState<string>(paragraph);
     // put this in env
-    const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER
-    const url = `${WSS_URL}`
+    const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER;
+    const url = `${WSS_URL}`;
+
+    const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
 
     const router = useRouter();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -57,6 +61,17 @@ export default function typing() {
         }
 
     }, [loading, user, socket])
+
+    // useEffect(() => {
+    //     if(gameId) {
+    //         axios.get(`${HTTP_URL}/room/getMatchInfo`).then(result => {
+    //             if(result.data.success){
+    //                 console.log(result);
+    //                 setPara(result.data.roomDetails.gameText);
+    //             }
+    //         })
+    //     }
+    // },[gameId])
 
     useEffect(() => {
         canvasRef.current = document.createElement("canvas");

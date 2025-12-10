@@ -5,7 +5,6 @@ import { listenTypingSocket } from "./utils/socketFn"
 import { User } from "lucide-react"
 
 const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit."
-// const paragraph = "Lorem ips dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos."
 
 export default function RenderMatch({
     roomId,
@@ -43,7 +42,7 @@ export default function RenderMatch({
                     <User className="h-7 w-7 text-cyan-400" />
                     <div className="text-2xl font-semibold text-slate-200 tracking-wide">{matchDetails?.user1_Id}</div>
                 </div>
-                <ShowTyping userIdx={0} position={user1Positions} paragraph={paragraph} />
+                <ShowTyping userIdx={0} position={user1Positions} paragraph={matchDetails?.gameText || paragraph} />
             </div>
 
             {/* Player 2 Area */}
@@ -52,7 +51,7 @@ export default function RenderMatch({
                     <User className="h-7 w-7 text-pink-400" />
                     <div className="text-2xl font-semibold text-slate-200 tracking-wide">{matchDetails?.user2_Id}</div>
                 </div>
-                <ShowTyping userIdx={1} position={user2Positions} paragraph={paragraph} />
+                <ShowTyping userIdx={1} position={user2Positions} paragraph={matchDetails?.gameText || paragraph} />
             </div>
         </div>
 }
