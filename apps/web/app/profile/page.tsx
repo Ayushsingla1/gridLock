@@ -31,7 +31,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const getUserProfile = async() => {
       if(!user?.username) return;
-      const result = await axios.get(`${HTTP_URL}/api/v1/userProfile`, {
+      const result = await axios.get(`${HTTP_URL}/api/v1/user/userProfile`, {
         params : {
           username : user?.username
         }

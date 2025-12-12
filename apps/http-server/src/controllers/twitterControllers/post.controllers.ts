@@ -84,7 +84,6 @@ export async function postTweet({challenger, challenged, game, gameId, matchId} 
     return {
       status: 500,
       success: false,
-      error: error
     }
   }
 }

@@ -22,6 +22,7 @@ export type Match = {
     status: 'Pending' | 'Scheduled' | 'Completed' | 'rejected';
     createdAt: Date;
     ExpiresAt: Date;
+    gameText? : string;
 };
 
 export interface cursorPositions{

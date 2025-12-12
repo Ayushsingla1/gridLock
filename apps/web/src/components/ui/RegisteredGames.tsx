@@ -174,9 +174,9 @@ function MatchCard({ match, type, username }: { match: Match, type: 'sent' | 're
 
   // }, [])
   
-  const cancelEp = "/api/v1/cancelReq"
+  const cancelEp = "/api/v1/user/cancelReq"
   const router = useRouter();
-  const ep = `/api/v1/acceptChallenge`
+  const ep = `/api/v1/user/acceptChallenge`
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
   
   

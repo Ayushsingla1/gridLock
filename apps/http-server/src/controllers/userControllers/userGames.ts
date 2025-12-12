@@ -42,13 +42,14 @@ export const getChallengedMatches = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: "internal server error",
-            error
         })
     }
 }
 
 export const cancleReq = async (req: Request, res: Response) => {
+    console.log("hi there");
     const {username, matchId} = req.body;
+    console.log(req.body);
     try {
         const matchInfo = await prisma.match.findFirst({
             where: {
@@ -57,7 +58,7 @@ export const cancleReq = async (req: Request, res: Response) => {
         })
 
         if(!matchInfo){
-            res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 message: "match not found!"
             })
@@ -65,14 +66,14 @@ export const cancleReq = async (req: Request, res: Response) => {
 
 
         if(matchInfo?.user1_Id != username){
-            res.status(403).json({
+            return res.status(403).json({
                 success: false,
                 message: "unauthorized!"
             })
         }
 
         if(matchInfo?.status != "Pending"){
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: "No a pending request"
             })
@@ -86,23 +87,22 @@ export const cancleReq = async (req: Request, res: Response) => {
         })
 
         if(delRes == null){
-            res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 message: "something went wrong!"
             })
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: "Req deleted successfully",
             match: delRes
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Server Error',
-            error: error
         })        
     }
 }
@@ -207,7 +207,6 @@ export const acceptChallenge = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: 'Server Error',
-            error: error
         })
     }
 }
@@ -255,6 +254,7 @@ export const getAllScheduledMatches = async (req: Request, res: Response) => {
         })
         
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             success: false,
             message: "something went wrong"

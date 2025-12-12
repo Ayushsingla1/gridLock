@@ -79,7 +79,7 @@ export default function GamePage() {
     setIsModalOpen(false);
     setTwitterUsername("");
   }
-  const postEndPoint = "/api/v1/createMatch"
+  const postEndPoint = "/api/v1/room/createMatch"
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
 
   const handleSendChallenge = async (e: React.FormEvent) => {

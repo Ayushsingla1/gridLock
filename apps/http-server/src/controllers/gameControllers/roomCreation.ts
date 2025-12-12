@@ -1,25 +1,54 @@
 import prisma from '@repo/db/dbClient'
 import { Request, Response } from 'express'
 import { postTweet } from '../twitterControllers/post.controllers'
+import words from "../../../typingData.json"
 
 interface createRoomProps {
     gameId: string,
     userId_1: string,
     userId_2: string,
-    startTime: Date
+    startTime: any
 }
 
 export const createRoom = async ({gameId, userId_1, userId_2, startTime} : createRoomProps) => {
 
+    console.log("create room", startTime)
     try {
-        const createdMatch = await prisma.match.create({
+        const createdMatch = await prisma.$transaction(async(tx) => {       
+            const createdMatch = await tx.match.create({
             data: {
                 gameId,
                 user1_Id: userId_1,
                 user2_Id: userId_2,
-                ExpiresAt: startTime
-            } 
-        })   
+                ExpiresAt: startTime,
+                }
+            })
+
+            if(!createdMatch){
+                return createdMatch
+            }
+
+            let text = "";
+
+            for(let i = 0; i < 100; i++){
+                let ind = Math.floor(Math.random() * words.length);
+                text += words[ind];
+                if(i != 99) text += " ";
+            }
+
+            const result = await tx.game.update({
+                where : {
+                    id : createdMatch.gameId
+                },
+                data : {
+                    GameText : text
+                }
+            })
+
+            if(!result) return null;
+
+            return createdMatch;
+    })
 
         if(createdMatch == null){
             return {
@@ -42,18 +71,20 @@ export const createRoom = async ({gameId, userId_1, userId_2, startTime} : creat
             }
         }
     } catch (error) {
+        console.log(error)
         return {
             status: 500,
             success: false,
-            error: error,
             message: "server error"
-        }       
+        }
     }
      
 }
 
 export const fetchUser = async (user1: string, user2: string) => {
     console.log("user1: ", user1, " user2: ", user2)
+
+    if(user2[0] === '@') user2 = user2.substring(1);
     try {
         const challengerId = await prisma.user.findFirst({
             where: {
@@ -104,11 +135,10 @@ export const fetchUser = async (user1: string, user2: string) => {
         }
         
     } catch (error) {
-        console.log('server in fetch user error!')
+        console.log(error)
         return {
             status: 500,
             success: false,
-            error: error,
             message: "server error"
         } 
     }
@@ -116,9 +146,9 @@ export const fetchUser = async (user1: string, user2: string) => {
 
 export const createMatch = async (req: Request, res: Response) => {
     const { challenger, challenged, game, gameId, startTime } = req.body;
-    try {
 
-        //fetch users
+    console.log(req.body)
+    try {
         const usersResponse = await fetchUser(challenger, challenged); 
         if(usersResponse.status == 403){
             res.status(403).json(usersResponse)
@@ -131,7 +161,7 @@ export const createMatch = async (req: Request, res: Response) => {
         console.log(userId_1, userId_2);
         
         //room creation
-        const roomResponse = await createRoom({gameId, startTime, userId_1, userId_2});
+        const roomResponse = await createRoom({gameId, userId_1, userId_2, startTime});
         
         if(roomResponse.status == 400){
             res.status(400).json(roomResponse);

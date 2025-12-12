@@ -13,18 +13,18 @@ import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { mantleSepoliaTestnet } from 'viem/chains';
 
-const U2U = {
-  id: 39,
-  name: 'U2U',
-  iconBackground: '#fff',
-  nativeCurrency: { name: 'U2U Solaris Mainnet', symbol: 'U2U', decimals: 18 },
-  rpcUrls: {
-    default: { http: ['https://rpc-mainnet.u2u.xyz'] },
-  },
-  blockExplorers: {
-    default: { name: 'u2uScan', url: 'https://u2uscan.xyz' },
-  }
-} as const satisfies Chain;
+// const U2U = {
+//   id: 39,
+//   name: 'U2U',
+//   iconBackground: '#fff',
+//   nativeCurrency: { name: 'U2U Solaris Mainnet', symbol: 'U2U', decimals: 18 },
+//   rpcUrls: {
+//     default: { http: ['https://rpc-mainnet.u2u.xyz'] },
+//   },
+//   blockExplorers: {
+//     default: { name: 'u2uScan', url: 'https://u2uscan.xyz' },
+//   }
+// } as const satisfies Chain;
 
 
 export const config = createConfig({

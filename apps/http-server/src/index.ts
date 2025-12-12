@@ -1,12 +1,7 @@
 import express from "express";
 import { configDotenv } from "dotenv";
 import cors from 'cors'
-import XRouter from './controllers/twitterRouters' 
-import roomsRouter from "./controllers/roomRouters";
-import userRouter from "./controllers/userRouters";
-// import { middleware } from "./middleware";
-import { clerkHandler } from "./controllers/clerkHandler";
-import { createGame } from "./controllers/resultAnnounce";
+import mainRouter from "./controllers/mainRouter";
 
 configDotenv();
 const app = express();
@@ -17,10 +12,7 @@ app.use(cors({
 }))
 // app.use(middleware);
 
-app.use('/api/v1',XRouter);
-app.use('/api/v1',roomsRouter);
-app.use('/api/v1', userRouter);
-app.use('/api/v1',clerkHandler);
+app.use('/api/v1',mainRouter);
 
 const PORT = 3001;
 

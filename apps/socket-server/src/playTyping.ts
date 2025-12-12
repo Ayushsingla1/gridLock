@@ -5,6 +5,7 @@ import { AES } from "crypto-js";
 import prisma from "@repo/db/dbClient";
 import { announceResult } from "./contractFn";
 
+// announce winner for the match
 const logWinnerDB = async (matchId: String, userId: String) => {
     try {
         const result = await prisma.match.update({
@@ -29,14 +30,15 @@ const logWinnerDB = async (matchId: String, userId: String) => {
             ...result
         }
     } catch (error) {
+        console.log(error)
         return {
             success: false,
-            error,
             message: "error while updating the db"
         }
     }
 }
 
+// send message to everyone
 export const distributionHandler = async(info : message, wss : WebSocket) => {
 
     const { gameId, challengeId, msg, userId } = info;

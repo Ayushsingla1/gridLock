@@ -40,8 +40,6 @@ export type message = {
     password? : string
 }
 
-const PASSWORD = "HALLA@MADRID";
-
 server.on("connection",(wss) => {
     wss.on("message",async(data) => {
         const decrtyptedMsgBytes = AES.decrypt(data.toString(), secretKey);

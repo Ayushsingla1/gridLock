@@ -60,7 +60,7 @@ export default function ScheduledMatches(props: LiveMatchesProps) {
   // Endpoint for fetching live matches. 
   // For production, this should be in a .env file.
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
-  const ep = "/api/v1/getScheduledMatches"
+  const ep = "/api/v1/user/getScheduledMatches"
   const API_ENDPOINT = `${HTTP_URL}${ep}`;
 
   useEffect(() => {
