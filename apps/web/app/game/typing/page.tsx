@@ -67,7 +67,7 @@ export default function typing() {
     //         axios.get(`${HTTP_URL}/room/getMatchInfo`).then(result => {
     //             if(result.data.success){
     //                 console.log(result);
-    //                 setPara(result.data.roomDetails.gameText);
+    //                 setPara(result.data.roomDetails.roomDetails.gameText);
     //             }
     //         })
     //     }
