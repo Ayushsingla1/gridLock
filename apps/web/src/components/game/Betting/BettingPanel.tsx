@@ -148,13 +148,11 @@ const BettingPanel = ({
     if (confirmation) {
       console.log(betShares);
       const _dbConfirmation = await axios.post(`${HTTP_URL}${ep}`, {
-        params: {
-          userId: userId,
-          matchId: matchId,
-          bet: bet,
-          amountTokens: betShares,
-          // userId : user
-        },
+        userId: userId,
+        matchId: matchId,
+        bet: bet,
+        amountTokens: betShares,
+        // userId : user
       });
 
       if (_dbConfirmation.data.success) alert("success");

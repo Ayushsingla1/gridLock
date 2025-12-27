@@ -50,14 +50,15 @@ model Game {
 }
 
 model Stake {
-  id           String  @id @default(uuid())
-  matchId      String
-  match        Match   @relation(references: [id], fields: [id])
-  yesTokens    Int     @default(0)
-  noTokens     Int     @default(0)
-  user         User    @relation(fields: [userUsername], references: [username])
-  userUsername String
-  isClaimed    Boolean @default(false)
+  matchId   String
+  match     Match   @relation(references: [id], fields: [matchId])
+  yesTokens Int     @default(0)
+  noTokens  Int     @default(0)
+  user      User    @relation(fields: [userId], references: [username])
+  userId    String
+  isClaimed Boolean @default(false)
+
+  @@unique([matchId, userId])
 }
 
 enum GameType {

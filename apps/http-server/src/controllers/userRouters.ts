@@ -17,7 +17,7 @@ userRouter.post("/acceptChallenge", acceptChallenge);
 userRouter.post("/cancelReq", cancleReq);
 userRouter.get("/getScheduledMatches", getAllScheduledMatches);
 userRouter.get("/userProfile", getUserProfile);
-userRouter.get("/stake", stakeAmount);
-userRouter.get("/redeem", redeemAmount);
+userRouter.post("/stake", stakeAmount);
+userRouter.post("/redeem", redeemAmount);
 
 export default userRouter;

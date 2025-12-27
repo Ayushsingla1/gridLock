@@ -140,7 +140,7 @@ export default function SpectateMatch({
             player2={matchDetails?.user2_Id || "Player 2"}
             gameId={roomId}
             userId={userRef.current!}
-            matchId={matchDetails.id!}
+            matchId={roomId}
           />
         </div>
       </main>

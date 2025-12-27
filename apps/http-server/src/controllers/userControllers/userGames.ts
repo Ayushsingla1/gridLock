@@ -263,6 +263,7 @@ export const getAllScheduledMatches = async (req: Request, res: Response) => {
 
 export const stakeAmount = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
     const { matchId, userId, amountTokens, bet } = req.body;
     if (
       !matchId ||
@@ -292,8 +293,10 @@ export const stakeAmount = async (req: Request, res: Response) => {
         noTokens: noTokens,
       },
       where: {
-        matchId: matchId,
-        userId: userId,
+        matchId_userId: {
+          matchId: matchId,
+          userId: userId,
+        },
       },
       update: {
         yesTokens: { increment: yesTokens },
@@ -301,7 +304,7 @@ export const stakeAmount = async (req: Request, res: Response) => {
       },
     });
 
-    if (_createOrUpdateStake.id) {
+    if (_createOrUpdateStake) {
       return res.status(200).json({
         success: true,
         msg: "successfully done!",
@@ -336,12 +339,14 @@ export const redeemAmount = async (req: Request, res: Response) => {
         isClaimed: true,
       },
       where: {
-        userId: userId,
-        matchId: matchId,
+        matchId_userId: {
+          matchId: matchId,
+          userId: userId,
+        },
       },
     });
 
-    if (_claimed.id) {
+    if (_claimed) {
       return res.status(200).json({
         success: true,
       });
