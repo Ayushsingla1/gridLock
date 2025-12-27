@@ -145,7 +145,7 @@ export const acceptChallenge = async (req: Request, res: Response) => {
 
         if (match?.status != "Pending") {
           return {
-            stats: 401,
+            status: 401,
             success: false,
             message: "status not pending",
           };
@@ -167,6 +167,11 @@ export const acceptChallenge = async (req: Request, res: Response) => {
           console.log(updateMatch.id);
           contractResponse = await createGame(updateMatch.id, updateMatch);
           console.log("contract Res: ", contractResponse);
+        } else {
+          return res.status(200).json({
+            success: true,
+            msg: "match rejected",
+          });
         }
 
         if (!contractResponse.success) {
@@ -192,19 +197,19 @@ export const acceptChallenge = async (req: Request, res: Response) => {
 
     if (result.status != 200) {
       console.log(result);
-      res.status(parseInt(result.status) | 401).json({
+      return res.status(parseInt(result.status) | 401).json({
         ...result,
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Match updated",
       details: result,
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
@@ -357,7 +362,7 @@ export const redeemAmount = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    return res.json(500).json({
+    return res.status(500).json({
       success: false,
       msg: "Internal server error.",
     });
