@@ -18,7 +18,8 @@ model User {
   username       String  @unique
   matchesAsUser1 Match[] @relation("challenger")
   matchesAsUser2 Match[] @relation("challenged")
-  winner Match[] @relation("winner")
+  winner         Match[] @relation("winner")
+  stakes         Stake[]
 }
 
 model Match {
@@ -27,13 +28,14 @@ model Match {
   user1_Id  String
   user2     User     @relation("challenged", fields: [user2_Id], references: [username])
   user2_Id  String
-  winner    User?     @relation("winner", fields: [winnerId], references: [username]) 
-  winnerId  String?  
+  winner    User?    @relation("winner", fields: [winnerId], references: [username])
+  winnerId  String?
   createdAt DateTime @default(now())
   status    Status   @default(Pending)
   ExpiresAt DateTime
   gameId    String
   game      Game     @relation(fields: [gameId], references: [id])
+  stakes    Stake[]
 }
 
 model Game {
@@ -45,6 +47,18 @@ model Game {
   Matches         Match[]
   GameType        GameType
   GameText        String?
+}
+
+model Stake {
+  matchId   String
+  match     Match   @relation(references: [id], fields: [matchId])
+  yesTokens Int     @default(0)
+  noTokens  Int     @default(0)
+  user      User    @relation(fields: [userId], references: [username])
+  userId    String
+  isClaimed Boolean @default(false)
+
+  @@unique([matchId, userId])
 }
 
 enum GameType {
