@@ -10,6 +10,13 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
+/**
+ * Renders the application's top navigation bar with brand, route links, and a wallet connect control.
+ *
+ * Shows or hides specific navigation items based on the environment username, the authenticated user state, and the connected wallet address (e.g., Live Matches, Challenges, Profile or SignUp, Redeem).
+ *
+ * @returns The navigation bar JSX element.
+ */
 export default function Nav() {
   const router = useRouter();
   const [walletAddress, setWalletAddress] = useState<`0x${string}` | undefined>(
