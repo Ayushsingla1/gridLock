@@ -5,11 +5,13 @@ import { motion } from "motion/react";
 import { ArrowRight, Gamepad2, Ticket } from "lucide-react";
 import { redeemAmount } from "../../utils/functions";
 import { useAccount } from "wagmi";
+import { useUser } from "@clerk/nextjs";
 
 export default function RedeemComp() {
   const [redeemCode, setRedeemCode] = useState("");
   const [status, setStatus] = useState({ message: "", type: "" });
   const { address } = useAccount();
+  const { user } = useUser();
 
   const handleRedeem = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +27,10 @@ export default function RedeemComp() {
         setStatus({ message: "Wallet not connected", type: "error" });
         return;
       }
-      const result = await redeemAmount(redeemCode.trim().toLowerCase());
+      const result = await redeemAmount(
+        redeemCode.trim().toLowerCase(),
+        user?.username || "",
+      );
       // const
       if (result.success) {
         setStatus({
