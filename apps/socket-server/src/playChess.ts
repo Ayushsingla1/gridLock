@@ -68,6 +68,14 @@ const isValid = (
 
   if (chessPiece === "K") {
     // single move but inital can be double
+    return kingMovement(
+      color,
+      initialRow,
+      initialCol,
+      finalRow,
+      finalCol,
+      chessState,
+    );
   } else if (chessPiece === "Q") {
     // all move possible
     return queenMovement(
@@ -90,6 +98,14 @@ const isValid = (
     );
   } else if (chessPiece === "H") {
     // 2.5 steps can jump over others
+    return knightMovement(
+      color,
+      initialRow,
+      initialCol,
+      finalRow,
+      finalPos,
+      chessState,
+    );
   } else if (chessPiece === "B") {
     // can move diagonally
     return bishopMovement(
@@ -122,37 +138,20 @@ const pawnMovement = (
   finalCol: number,
   chessState: Record<number, string>,
 ) => {
-  if (initialRow === 2 && color === "W") {
-    // single step forward or two step forward
+  if (Math.abs(finalRow - initialRow) === 2) {
+    if (finalCol !== initialCol) return false;
     if (
-      finalCol === initialCol &&
-      (finalRow === initialRow + 1 || finalRow === initialRow + 2) &&
-      !chessState[finalRow * 10 + finalCol] &&
-      !chessState[(initialRow + 1) * 10 + finalCol]
+      color === "B" &&
+      initialRow === 7 &&
+      !chessState[(initialRow - 1) * 10 + initialCol] &&
+      !chessState[(initialRow - 2) * 10 + initialCol]
     )
       return true;
-    // diagonal move
     if (
-      (finalCol === initialCol - 1 || finalCol === initialCol + 1) &&
-      finalRow === initialRow + 1 &&
-      chessState[finalRow * 10 + finalCol]
-    )
-      return true;
-    return false;
-  } else if (initialRow === 7 && color === "B") {
-    // single step forward or two step forward
-    if (
-      finalCol === initialCol &&
-      (finalRow === initialRow + 1 || finalRow === initialRow + 2) &&
-      !chessState[finalRow * 10 + finalCol] &&
-      !chessState[(initialRow + 1) * 10 + finalCol]
-    )
-      return true;
-    // diagonal move
-    if (
-      (finalCol === initialCol - 1 || finalCol === initialCol + 1) &&
-      finalRow === initialRow + 1 &&
-      chessState[finalRow * 10 + finalCol]
+      color === "W" &&
+      initialRow === 2 &&
+      !chessState[(initialRow + 1) * 10 + initialCol] &&
+      !chessState[(initialRow + 2) * 10 + initialCol]
     )
       return true;
     return false;
@@ -165,8 +164,8 @@ const pawnMovement = (
       return true;
     if (
       (finalCol === initialCol - 1 || finalCol === initialCol + 1) &&
-      finalRow === initialRow + 1 &&
-      chessState[finalRow * 10 + finalCol]
+      finalRow === initialRow - 1 &&
+      chessState[finalRow * 10 + finalCol]![1] === "W"
     )
       return true;
     return false;
@@ -180,7 +179,7 @@ const pawnMovement = (
     if (
       (finalCol === initialCol - 1 || finalCol === initialCol + 1) &&
       finalRow === initialRow + 1 &&
-      chessState[finalRow * 10 + finalCol]
+      chessState[finalRow * 10 + finalCol]![1] === "B"
     )
       return true;
     return false;
@@ -205,7 +204,7 @@ const rookMovement = (
     ) {
       if (chessState[i * 10 + initialCol]) return false;
     }
-    if (chessState[finalRow * 10 + finalCol]![0] !== color) return true;
+    if (chessState[finalRow * 10 + finalCol]![1] !== color) return true;
     return false;
   } else if (initialRow === finalRow) {
     for (
@@ -215,7 +214,7 @@ const rookMovement = (
     ) {
       if (chessState[initialRow * 10 + i]) return false;
     }
-    if (chessState[finalRow * 10 + finalCol]![0] !== color) return true;
+    if (chessState[finalRow * 10 + finalCol]![1] !== color) return true;
   }
   return false;
 };
@@ -228,7 +227,7 @@ const bishopMovement = (
   finalCol: number,
   chessState: Record<number, string>,
 ): boolean => {
-  if (chessState[finalRow * 10 + finalCol]![0] === color) return false;
+  if (chessState[finalRow * 10 + finalCol]![1] === color) return false;
   if (Math.abs(finalCol - initialCol) !== Math.abs(finalRow - initialRow))
     return false;
 
@@ -240,7 +239,7 @@ const bishopMovement = (
     if (chessState[(initialRow + rowDir * i) * 10 + (initialCol + colDir * i)])
       return false;
   }
-  if (chessState[finalRow * 10 + finalCol]![0] === color) return false;
+  if (chessState[finalRow * 10 + finalCol]![1] === color) return false;
   return true;
 };
 
@@ -263,4 +262,42 @@ const queenMovement = (
     ) ||
     rookMovement(color, initialRow, initialCol, finalRow, finalCol, chessState)
   );
+};
+
+const knightMovement = (
+  color: string,
+  initialRow: number,
+  initialCol: number,
+  finalRow: number,
+  finalCol: number,
+  chessState: Record<number, string>,
+) => {
+  if (chessState[finalRow * 10 + finalCol]![1] === color) return false;
+
+  const rowMovement = Math.abs(finalRow - initialRow);
+  const colMovement = Math.abs(finalCol - initialCol);
+
+  if (
+    (rowMovement === 2 && colMovement === 1) ||
+    (rowMovement === 1 && colMovement === 2)
+  )
+    return true;
+  return false;
+};
+
+const kingMovement = (
+  color: string,
+  initialRow: number,
+  initialCol: number,
+  finalRow: number,
+  finalCol: number,
+  chessState: Record<number, string>,
+) => {
+  if (chessState[finalRow * 10 + finalCol]![1] === color) return false;
+
+  const rowMovement = Math.abs(finalRow - initialRow);
+  const colMovement = Math.abs(finalCol - initialCol);
+
+  if (rowMovement < 2 && colMovement < 2) return true;
+  return false;
 };
