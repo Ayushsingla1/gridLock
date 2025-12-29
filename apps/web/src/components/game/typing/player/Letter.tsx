@@ -1,15 +1,17 @@
-'use client'
+"use client";
 
 export default function Letter({
-    letter,
-    makeGreen
+  letter,
+  makeGreen,
 }: {
-    letter: string,
-    makeGreen: boolean
+  letter: string;
+  makeGreen: boolean;
 }) {
-    return <div 
-     className={`${makeGreen ? "text-green-400" : "text-inherit"} inline font-mono`}
+  return (
+    <div
+      className={`${makeGreen ? "text-green-400" : "text-inherit"} inline font-mono`}
     >
-        {letter}
+      {letter}
     </div>
+  );
 }

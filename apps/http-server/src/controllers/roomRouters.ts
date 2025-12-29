@@ -5,7 +5,7 @@ import { middleware } from "../middleware";
 
 const roomsRouter: Router = Router();
 
-roomsRouter.post('/createMatch', createMatch);
-roomsRouter.get('/getMatchInfo', fetchMatchInfo);
+roomsRouter.post("/createMatch", createMatch);
+roomsRouter.get("/getMatchInfo", fetchMatchInfo);
 
 export default roomsRouter;
