@@ -1,54 +1,87 @@
-import { message, role, Rooms } from ".";
+import { AES } from "crypto-js";
+import { message, role, Rooms, secretKey } from ".";
 import { initializeChess } from "./chessInitialize";
+import { WebSocket } from "ws";
+import { logWinnerDB } from "./announceWinner";
+import { announceResult } from "./contractFn";
 
 export const chessHandler = async (info: message, wss: WebSocket) => {
-  const { gameId, challengeId, msg, userId, password } = info;
+  try {
+    const { gameId, challengeId, msg, userId } = info;
 
-  const decodedMessage = JSON.parse(msg);
+    const decodedMessage = JSON.parse(msg);
 
-  if (
-    info.role !== role.Player ||
-    !gameId ||
-    !userId ||
-    !Rooms.has(challengeId)
-  ) {
-    console.log("unintended message by a user");
-    wss.close();
-    return;
-  }
+    if (
+      info.role !== role.Player ||
+      !gameId ||
+      !userId ||
+      !Rooms.has(challengeId)
+    ) {
+      console.log("unintended message by a user");
+      wss.close();
+      return;
+    }
 
-  const state = Rooms.get(challengeId);
-  let chessState = state?.chessState;
+    const room = Rooms.get(challengeId)!;
+    let chessState = room?.chessState;
 
-  if (!chessState) {
-    chessState = initializeChess();
-    Rooms.set(challengeId, {
-      ...state!,
-      chessState: chessState,
-    });
-  }
+    if (!chessState) {
+      chessState = initializeChess();
+      Rooms.set(challengeId, {
+        ...room!,
+        chessState: chessState,
+      });
+    }
 
-  const piece = decodedMessage.piece;
-  const color = piece[0];
-  const initialPos: number = decodedMessage.initialPos;
-  const finalPos: number = decodedMessage.finalPos;
-  const currPiece: string = chessState[initialPos]!;
-  if (currPiece !== piece) {
-    return;
-  }
-  const validMove = isValid(piece, initialPos!, finalPos, chessState);
-  if (!validMove) {
-    wss.close();
-    return;
-  }
-  if (
-    (color === "W" && userId === "user1") ||
-    (color === "B" && userId === "user2")
-  ) {
-    chessState[finalPos] = piece;
-    delete chessState[initialPos];
-  } else {
-    wss.close();
+    const piece = decodedMessage.piece;
+    const color = piece[0];
+    const initialPos: number = decodedMessage.initialPos;
+    const finalPos: number = decodedMessage.finalPos;
+    const currPiece: string = chessState[initialPos]!;
+    const sender = userId === room.user1 ? 1 : 0;
+    if (currPiece !== piece) {
+      return;
+    }
+    const validMove = isValid(piece, initialPos!, finalPos, chessState);
+    if (!validMove) {
+      wss.close();
+      return;
+    }
+    if (
+      (color === "W" && userId === "user1") ||
+      (color === "B" && userId === "user2")
+    ) {
+      if (chessState[finalPos]![1] === "K") {
+        const response = await logWinnerDB(challengeId, userId);
+        const annouceWinnerResponse = await announceResult(
+          info.challengeId,
+          sender,
+        );
+      }
+      chessState[finalPos] = piece;
+      delete chessState[initialPos];
+
+      const msg = {
+        chessState,
+        timestamp: Date.now(),
+        player: userId,
+        gameId,
+        challengeId,
+        isCompleted: chessState[finalPos]![1] === "K",
+      };
+      const encryptedMsg = AES.encrypt(
+        JSON.stringify(msg),
+        secretKey,
+      ).toString();
+      room?.spectators.forEach((socket) => socket.send(encryptedMsg));
+      room?.user1_socket?.send(encryptedMsg);
+      room?.user2_socket?.send(encryptedMsg);
+    } else {
+      wss.close();
+      return;
+    }
+  } catch (error) {
+    console.log(error);
     return;
   }
 };

@@ -5,13 +5,13 @@ import "dotenv/config";
 import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
 import { configDotenv } from "dotenv";
+import { chessHandler } from "./playChess";
 
 configDotenv();
 
 const privateKey = process.env.PRIVATE_KEY!;
 const server = new WebSocketServer({ port: 8080 });
-// export const secretKey = process.env.ECRYPTION_SECRET || "SECRET";
-export const secretKey = "SECRET";
+export const secretKey = process.env.ECRYPTION_SECRET!;
 console.log(privateKey);
 
 export type roomInfo = {
@@ -49,9 +49,9 @@ server.on("connection", (wss) => {
     if (info.msg === "Join Room") {
       await room_join(info, wss);
     } else {
-      // if (info.gameId === "chess") {
-      //   await chessHandler(info, wss);
-      // }
+      if (info.gameId === "chess") {
+        await chessHandler(info, wss);
+      }
       await distributionHandler(info, wss);
     }
   });
