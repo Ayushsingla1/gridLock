@@ -9,6 +9,6 @@ const mainRouter: Router = Router();
 mainRouter.use("/room", roomsRouter);
 mainRouter.use("/twitter", XRouter);
 mainRouter.use("/user", userRouter);
-mainRouter.use("/clerk", clerkHandler);
+mainRouter.use("/auth", clerkHandler);
 
 export default mainRouter;
