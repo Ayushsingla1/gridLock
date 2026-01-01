@@ -4,7 +4,6 @@ import useSocket from "@/hooks/socket";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef } from "react";
-import { message } from "../typing/page";
 import { AES } from "crypto-js";
 
 const Chess = () => {
@@ -58,17 +57,20 @@ const Chess = () => {
   const socketRef = useRef<WebSocket>(null);
   const router = useRouter();
   const { socket, loading } = useSocket(url, socketRef);
+  const [turn, setTurn] = useState<string>("W");
+  const [color, setColor] = useState<string>("W");
+  const [clicked, setClicked] = useState<number | undefined>();
 
-  console.log(arr);
+  // console.log(arr);
 
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     if (!isSignedIn) {
-  //       console.log("not signed in!");
-  //       router.push("/");
-  //     }
-  //   }
-  // }, [isLoaded, isSignedIn]);
+  useEffect(() => {
+    if (isLoaded) {
+      if (!isSignedIn) {
+        console.log("not signed in!");
+        router.push("/");
+      }
+    }
+  }, [isLoaded, isSignedIn]);
 
   // useEffect(() => {
   //   if (isLoaded && isSignedIn && socket && !loading) {
@@ -83,14 +85,20 @@ const Chess = () => {
   //   }
   // }, [isLoaded, socket, loading, isSignedIn]);
 
-  // if (socketRef.current) {
-  //   socketRef.current.onmessage = async (ev: MessageEvent) => {
-  //     const decryptedMsg = JSON.parse(
-  //       await AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
-  //     );
-  //     setChessState(decryptedMsg.chessState);
-  //   };
-  // }
+  if (socketRef.current) {
+    socketRef.current.onmessage = async (ev: MessageEvent) => {
+      const decryptedMsg = JSON.parse(
+        AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
+      );
+      if (decryptedMsg.color) {
+        setColor(decryptedMsg.color);
+      }
+      if (decryptedMsg.turn) {
+        setTurn(decryptedMsg.turn);
+      }
+      setChessState(decryptedMsg.chessState);
+    };
+  }
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
@@ -101,6 +109,14 @@ const Chess = () => {
             boxNumber={item}
             chessBoxState={chessState![item]?.substring(0, 2) || "P"}
             socketRef={socketRef}
+            clicked={clicked}
+            setClicked={setClicked}
+            enabled={
+              turn === color &&
+              (chessState![item] === undefined
+                ? false
+                : chessState[item]![0] === color)
+            }
           />
         ))}
       </div>

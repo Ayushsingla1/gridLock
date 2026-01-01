@@ -1,18 +1,12 @@
 "use client";
 
-import { RefObject } from "react";
+import React, { Dispatch, RefObject, SetStateAction, useState } from "react";
 import {
   TbChessBishopFilled,
-  TbChessBishop,
-  TbChess,
   TbChessFilled,
-  TbChessKing,
   TbChessKingFilled,
-  TbChessQueen,
   TbChessQueenFilled,
-  TbChessRook,
   TbChessRookFilled,
-  TbChessKnight,
   TbChessKnightFilled,
 } from "react-icons/tb";
 
@@ -20,15 +14,27 @@ const ChessBox = ({
   boxNumber,
   chessBoxState,
   socketRef,
+  clicked,
+  setClicked,
+  enabled,
 }: {
   boxNumber: number;
   chessBoxState: string;
   socketRef: RefObject<WebSocket | null>;
+  clicked: number | undefined;
+  setClicked: Dispatch<SetStateAction<number | undefined>>;
+  enabled: boolean;
 }) => {
-  console.log(boxNumber, chessBoxState);
+  console.log(boxNumber, enabled);
+  const clickHandler = () => {
+    if (enabled) {
+      setClicked(boxNumber);
+    }
+  };
   return (
     <div
-      className={`px-0 mx-0 flex justify-center items-center ${(Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-[#EBEDD1]"} relative`}
+      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-300" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative`}
+      onClick={(e) => clickHandler(e)}
     >
       {chessBoxState === "P" ? (
         <></>
