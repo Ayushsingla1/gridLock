@@ -18,7 +18,40 @@ const Chess = () => {
     return elements;
   }, []);
 
-  const [chessState, setChessState] = useState<Record<number, string>>();
+  const [chessState, setChessState] = useState<Record<number, string>>({
+    85: "BK",
+    14: "WK",
+    84: "BQ",
+    15: "WQ",
+    11: "WR1",
+    18: "WR2",
+    13: "WB1",
+    16: "WB2",
+    12: "WH1",
+    17: "WH2",
+    81: "BR1",
+    88: "BR2",
+    83: "BB1",
+    86: "BB2",
+    82: "BH1",
+    87: "BH2",
+    21: "WP1",
+    71: "BP1",
+    22: "WP2",
+    72: "BP2",
+    23: "WP3",
+    73: "BP3",
+    24: "WP4",
+    74: "BP4",
+    25: "WP5",
+    75: "BP5",
+    26: "WP6",
+    76: "BP6",
+    27: "WP7",
+    77: "BP7",
+    28: "WP8",
+    78: "BP8",
+  });
   const { user, isLoaded, isSignedIn } = useUser();
   const WSS_URL = process.env.NEXT_PUBLIC_WSS_SERVER;
   const url = `${WSS_URL}`;
@@ -26,36 +59,38 @@ const Chess = () => {
   const router = useRouter();
   const { socket, loading } = useSocket(url, socketRef);
 
-  useEffect(() => {
-    if (isLoaded) {
-      if (!isSignedIn) {
-        console.log("not signed in!");
-        router.push("/");
-      }
-    }
-  }, [isLoaded, isSignedIn]);
+  console.log(arr);
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn && socket && !loading) {
-      const msg: message = {
-        userId: user.username!,
-        gameId: "chess",
-        role: "Player",
-        challengeId: "",
-        msg: "Join Room",
-      };
-      socket?.send(JSON.stringify(msg));
-    }
-  }, [isLoaded, socket, loading, isSignedIn]);
+  // useEffect(() => {
+  //   if (isLoaded) {
+  //     if (!isSignedIn) {
+  //       console.log("not signed in!");
+  //       router.push("/");
+  //     }
+  //   }
+  // }, [isLoaded, isSignedIn]);
 
-  if (socketRef.current) {
-    socketRef.current.onmessage = async (ev: MessageEvent) => {
-      const decryptedMsg = JSON.parse(
-        await AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
-      );
-      setChessState(decryptedMsg.chessState);
-    };
-  }
+  // useEffect(() => {
+  //   if (isLoaded && isSignedIn && socket && !loading) {
+  //     const msg: message = {
+  //       userId: user.username!,
+  //       gameId: "chess",
+  //       role: "Player",
+  //       challengeId: "",
+  //       msg: "Join Room",
+  //     };
+  //     socket?.send(JSON.stringify(msg));
+  //   }
+  // }, [isLoaded, socket, loading, isSignedIn]);
+
+  // if (socketRef.current) {
+  //   socketRef.current.onmessage = async (ev: MessageEvent) => {
+  //     const decryptedMsg = JSON.parse(
+  //       await AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
+  //     );
+  //     setChessState(decryptedMsg.chessState);
+  //   };
+  // }
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
@@ -64,7 +99,7 @@ const Chess = () => {
           <ChessBox
             key={index}
             boxNumber={item}
-            chessBoxState={chessState![index]}
+            chessBoxState={chessState![item]?.substring(0, 2) || "P"}
             socketRef={socketRef}
           />
         ))}
