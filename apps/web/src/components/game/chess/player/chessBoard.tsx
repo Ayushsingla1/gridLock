@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, RefObject, SetStateAction, useState } from "react";
+import React, { Dispatch, RefObject, SetStateAction } from "react";
 import {
   TbChessBishopFilled,
   TbChessFilled,
@@ -17,6 +17,8 @@ const ChessBox = ({
   clicked,
   setClicked,
   enabled,
+  userId,
+  turn,
 }: {
   boxNumber: number;
   chessBoxState: string;
@@ -24,17 +26,31 @@ const ChessBox = ({
   clicked: number | undefined;
   setClicked: Dispatch<SetStateAction<number | undefined>>;
   enabled: boolean;
+  userId: string;
+  turn: string;
 }) => {
   console.log(boxNumber, enabled);
   const clickHandler = () => {
+    if (!enabled && clicked) {
+      // this is a move... need to send a message to socket server
+      socketRef.current?.send(
+        JSON.stringify({
+          initialPos: clicked,
+          finalPos: boxNumber,
+          userId,
+          gameId: "",
+          challengeId: "",
+        }),
+      );
+    }
     if (enabled) {
       setClicked(boxNumber);
     }
   };
   return (
     <div
-      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-300" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative`}
-      onClick={(e) => clickHandler(e)}
+      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-300" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative ${turn === "W" && "rotate-180"}`}
+      onClick={clickHandler}
     >
       {chessBoxState === "P" ? (
         <></>

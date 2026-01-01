@@ -102,7 +102,9 @@ const Chess = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      <div className="w-[90vh] h-[90vh] grid grid-cols-8 m-0 p-0 gap-y-1 gap-x-1 bg-yellow-950">
+      <div
+        className={`w-[90vh] h-[90vh] grid grid-cols-8 m-0 p-0 gap-y-1 gap-x-1 bg-yellow-950 ${turn === "W" && "rotate-180"}`}
+      >
         {arr.map((item, index) => (
           <ChessBox
             key={index}
@@ -111,12 +113,14 @@ const Chess = () => {
             socketRef={socketRef}
             clicked={clicked}
             setClicked={setClicked}
+            turn={turn}
             enabled={
               turn === color &&
               (chessState![item] === undefined
                 ? false
                 : chessState[item]![0] === color)
             }
+            userId={user?.username!}
           />
         ))}
       </div>
