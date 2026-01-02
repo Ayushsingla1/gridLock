@@ -14,7 +14,8 @@
   "devDependencies": {
     "@repo/db": "workspace:*",
     "@repo/types": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "@repo/checks": "workspace:*"
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",

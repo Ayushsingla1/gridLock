@@ -1,6 +1,8 @@
 import prisma from "@repo/db/dbClient";
 import { message, role, Rooms } from "./index";
 import WebSocket from "ws";
+import { AES } from "crypto-js";
+import { JoinMsgHandler } from "./chessJoinMsg";
 
 export const room_join = async (info: message, wss: WebSocket) => {
   if (Rooms.has(info.challengeId)) {
@@ -13,6 +15,8 @@ export const room_join = async (info: message, wss: WebSocket) => {
           user1_joined: true,
           user1_socket: wss,
         });
+        if (info.gameId === "chess")
+          JoinMsgHandler(wss, info.userId, info.challengeId);
         console.log("user 1 joined: ", Rooms.get(info.challengeId));
       } else if (info.userId === roomInfo.user2) {
         Rooms.set(info.challengeId, {
@@ -20,6 +24,9 @@ export const room_join = async (info: message, wss: WebSocket) => {
           user2_joined: true,
           user2_socket: wss,
         });
+        if (info.gameId === "chess")
+          if (Rooms.get(info.challengeId)?.chessState)
+            JoinMsgHandler(wss, info.userId, info.challengeId);
         console.log("user 2 joined: ", Rooms.get(info.challengeId));
       } else wss.close();
     } else if (info.role === role.Spectator) {
@@ -69,6 +76,8 @@ export const room_join = async (info: message, wss: WebSocket) => {
           user1_joined: true,
           user1_socket: wss,
         });
+        if (info.gameId === "chess")
+          JoinMsgHandler(wss, info.userId, info.challengeId);
         console.log("user 1 joined: ", Rooms.get(info.challengeId));
       } else if (
         info.role === role.Player &&
@@ -80,6 +89,8 @@ export const room_join = async (info: message, wss: WebSocket) => {
           user2_joined: true,
           user2_socket: wss,
         });
+        if (info.gameId === "chess")
+          JoinMsgHandler(wss, info.userId, info.challengeId);
         console.log("user 2 joined: ", Rooms.get(info.challengeId));
       } else if (
         info.role === role.Spectator &&

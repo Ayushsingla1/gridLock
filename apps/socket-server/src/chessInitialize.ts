@@ -1,9 +1,9 @@
 export const initializeChess = () => {
   const chessState: Record<number, string> = {
-    15: "BK",
-    84: "WK",
-    14: "BQ",
-    85: "WQ",
+    85: "BK",
+    14: "WK",
+    84: "BQ",
+    15: "WQ",
     11: "WR1",
     18: "WR2",
     13: "WB1",

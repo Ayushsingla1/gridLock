@@ -39,8 +39,8 @@ const games: Game[] = [
   {
     id: "2",
     name: "Chess",
-    description: "Coming soon...",
-    isAvailable: false,
+    description: "Participate in chess",
+    isAvailable: true,
   },
   {
     id: "3",

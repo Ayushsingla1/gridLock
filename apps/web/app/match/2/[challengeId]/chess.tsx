@@ -5,8 +5,14 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { AES } from "crypto-js";
+import { message } from "../../1/[challengeId]/gameLogic";
+import { role } from "@/types/gameTypes";
+import CryptoJS from "crypto-js";
 
-const Chess = () => {
+const Chess = ({ roomId }: { roomId: string }) => {
+  // const { challengeId, gameId } = params;
+
+  console.log(roomId);
   const arr = useMemo(() => {
     const elements = [];
     for (let i = 1; i <= 8; i++) {
@@ -61,8 +67,6 @@ const Chess = () => {
   const [color, setColor] = useState<string>("W");
   const [clicked, setClicked] = useState<number | undefined>();
 
-  // console.log(arr);
-
   useEffect(() => {
     if (isLoaded) {
       if (!isSignedIn) {
@@ -72,38 +76,52 @@ const Chess = () => {
     }
   }, [isLoaded, isSignedIn]);
 
-  // useEffect(() => {
-  //   if (isLoaded && isSignedIn && socket && !loading) {
-  //     const msg: message = {
-  //       userId: user.username!,
-  //       gameId: "chess",
-  //       role: "Player",
-  //       challengeId: "",
-  //       msg: "Join Room",
-  //     };
-  //     socket?.send(JSON.stringify(msg));
-  //   }
-  // }, [isLoaded, socket, loading, isSignedIn]);
+  useEffect(() => {
+    if (isLoaded && isSignedIn && socket && !loading) {
+      const socketMsg: message = {
+        userId: user.username!,
+        gameId: "chess",
+        role: role.Player,
+        challengeId: roomId,
+        msg: "Join Room",
+      };
+      const encryptedMsg = AES.encrypt(
+        JSON.stringify(socketMsg),
+        "SECRET",
+      ).toString();
+
+      if (socket.readyState === socket.OPEN) {
+        console.log("sending room joining message");
+        socket.send(encryptedMsg);
+      }
+    }
+  }, [isLoaded, socket, loading, isSignedIn, socket?.readyState, user, roomId]);
 
   if (socketRef.current) {
     socketRef.current.onmessage = async (ev: MessageEvent) => {
-      const decryptedMsg = JSON.parse(
-        AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
+      console.log("message aa gya");
+      // console.log(ev.data);
+      const decryptedMsg = await JSON.parse(
+        AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8) as string,
       );
-      if (decryptedMsg.color) {
+      // console.log(decryptedMsg);
+      if (decryptedMsg.status && decryptedMsg.status === "Joined") {
         setColor(decryptedMsg.color);
+        setChessState(decryptedMsg.chessState);
+        setClicked(undefined);
+        setTurn(decryptedMsg.turn);
+        return;
       }
       if (decryptedMsg.turn) {
         setTurn(decryptedMsg.turn);
       }
-      setChessState(decryptedMsg.chessState);
+      if (decryptedMsg.chessState) setChessState(decryptedMsg.chessState);
     };
   }
-
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <div
-        className={`w-[90vh] h-[90vh] grid grid-cols-8 m-0 p-0 gap-y-1 gap-x-1 bg-yellow-950 ${turn === "W" && "rotate-180"}`}
+        className={`w-[90vh] h-[90vh] grid grid-cols-8 m-0 p-0 gap-y-1 gap-x-1 bg-yellow-950 ${color === "W" && "rotate-180"}`}
       >
         {arr.map((item, index) => (
           <ChessBox
@@ -113,7 +131,7 @@ const Chess = () => {
             socketRef={socketRef}
             clicked={clicked}
             setClicked={setClicked}
-            turn={turn}
+            turn={color}
             enabled={
               turn === color &&
               (chessState![item] === undefined
@@ -121,6 +139,8 @@ const Chess = () => {
                 : chessState[item]![0] === color)
             }
             userId={user?.username!}
+            chessState={chessState}
+            challengeId={roomId}
           />
         ))}
       </div>

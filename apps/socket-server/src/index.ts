@@ -12,6 +12,7 @@ configDotenv();
 const privateKey = process.env.PRIVATE_KEY!;
 const server = new WebSocketServer({ port: 8080 });
 export const secretKey = process.env.ECRYPTION_SECRET!;
+console.log(secretKey);
 console.log(privateKey);
 
 export type roomInfo = {
@@ -23,6 +24,7 @@ export type roomInfo = {
   user1_socket: WebSocket | null;
   user2_socket: WebSocket | null;
   chessState?: Record<number, string>;
+  turn?: string;
 };
 
 export const Rooms: Map<string, roomInfo> = new Map();
@@ -43,13 +45,16 @@ export type message = {
 
 server.on("connection", (wss) => {
   wss.on("message", async (data) => {
+    // console.log("message received");
     const decrtyptedMsgBytes = AES.decrypt(data.toString(), secretKey);
     const decrtyptedMsg = decrtyptedMsgBytes.toString(CryptoJS.enc.Utf8);
     const info: message = JSON.parse(decrtyptedMsg as string);
+    // console.log(info);
     if (info.msg === "Join Room") {
       await room_join(info, wss);
     } else {
       if (info.gameId === "chess") {
+        // console.log("hi tehre");
         await chessHandler(info, wss);
       }
       await distributionHandler(info, wss);

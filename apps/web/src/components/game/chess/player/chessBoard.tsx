@@ -9,6 +9,9 @@ import {
   TbChessRookFilled,
   TbChessKnightFilled,
 } from "react-icons/tb";
+import { isValid } from "@repo/checks";
+import { AES } from "crypto-js";
+import { role } from "@/types/gameTypes";
 
 const ChessBox = ({
   boxNumber,
@@ -19,6 +22,8 @@ const ChessBox = ({
   enabled,
   userId,
   turn,
+  chessState,
+  challengeId,
 }: {
   boxNumber: number;
   chessBoxState: string;
@@ -28,20 +33,39 @@ const ChessBox = ({
   enabled: boolean;
   userId: string;
   turn: string;
+  chessState: Record<number, string>;
+  challengeId: string;
 }) => {
-  console.log(boxNumber, enabled);
+  // console.log(boxNumber, enabled);
   const clickHandler = () => {
-    if (!enabled && clicked) {
+    if (
+      !enabled &&
+      clicked &&
+      chessState[clicked] &&
+      isValid(chessState[clicked]!, clicked, boxNumber, chessState)
+    ) {
+      console.log("possible move, moving");
       // this is a move... need to send a message to socket server
-      socketRef.current?.send(
-        JSON.stringify({
+      //
+      setClicked(undefined);
+      const socketMsg = JSON.stringify({
+        role: role.Player,
+        gameId: "chess",
+        challengeId: challengeId,
+        userId: userId,
+        msg: JSON.stringify({
           initialPos: clicked,
           finalPos: boxNumber,
-          userId,
-          gameId: "",
-          challengeId: "",
+          piece: chessState[clicked]!,
         }),
-      );
+      });
+      console.log("sending message : ", socketMsg);
+
+      const encryptedMsg = AES.encrypt(socketMsg, "SECRET").toString();
+
+      if (socketRef.current?.readyState === socketRef.current?.OPEN) {
+        socketRef.current?.send(encryptedMsg);
+      }
     }
     if (enabled) {
       setClicked(boxNumber);
