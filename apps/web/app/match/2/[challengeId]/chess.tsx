@@ -66,6 +66,7 @@ const Chess = ({ roomId }: { roomId: string }) => {
   const [turn, setTurn] = useState<string>("W");
   const [color, setColor] = useState<string>("W");
   const [clicked, setClicked] = useState<number | undefined>();
+  const [possibleMoves, setPossibleMoves] = useState<Set<number> | undefined>();
 
   useEffect(() => {
     if (isLoaded) {
@@ -141,6 +142,8 @@ const Chess = ({ roomId }: { roomId: string }) => {
             userId={user?.username!}
             chessState={chessState}
             challengeId={roomId}
+            possibleMove={possibleMoves?.has(item) || false}
+            setPossibleMove={setPossibleMoves}
           />
         ))}
       </div>

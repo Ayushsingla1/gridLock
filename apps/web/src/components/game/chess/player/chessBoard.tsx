@@ -12,6 +12,7 @@ import {
 import { isValid } from "@repo/checks";
 import { AES } from "crypto-js";
 import { role } from "@/types/gameTypes";
+import { getPossibleMoves } from "./possibleMoves";
 
 const ChessBox = ({
   boxNumber,
@@ -24,6 +25,8 @@ const ChessBox = ({
   turn,
   chessState,
   challengeId,
+  possibleMove,
+  setPossibleMove,
 }: {
   boxNumber: number;
   chessBoxState: string;
@@ -35,6 +38,8 @@ const ChessBox = ({
   turn: string;
   chessState: Record<number, string>;
   challengeId: string;
+  possibleMove: boolean;
+  setPossibleMove: Dispatch<SetStateAction<Set<number> | undefined>>;
 }) => {
   // console.log(boxNumber, enabled);
   const clickHandler = () => {
@@ -66,14 +71,18 @@ const ChessBox = ({
       if (socketRef.current?.readyState === socketRef.current?.OPEN) {
         socketRef.current?.send(encryptedMsg);
       }
+
+      setClicked(undefined);
+      setPossibleMove(undefined);
     }
     if (enabled) {
       setClicked(boxNumber);
+      setPossibleMove(getPossibleMoves(boxNumber, chessState));
     }
   };
   return (
     <div
-      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-300" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative ${turn === "W" && "rotate-180"}`}
+      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-400" : possibleMove ? "bg-blue-200" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative ${turn === "W" && "rotate-180"}`}
       onClick={clickHandler}
     >
       {chessBoxState === "P" ? (
