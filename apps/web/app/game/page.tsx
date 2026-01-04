@@ -1,13 +1,21 @@
-'use client'
-import axios from 'axios'
+"use client";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Nav from "@/components/ui/nav";
-import { ArrowRight, Eye, Send, Wallet, X, AtSign, Calendar } from "lucide-react";
+import {
+  ArrowRight,
+  Eye,
+  Send,
+  Wallet,
+  X,
+  AtSign,
+  Calendar,
+} from "lucide-react";
 import { motion, AnimatePresence, Variants } from "motion/react";
-import { useAuth, useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // Define the type for game names for better type safety
 export type GameName = "Typing" | "Chess" | "Pictionary";
@@ -24,14 +32,15 @@ const games: Game[] = [
   {
     id: "1",
     name: "Typing",
-    description: "Participate in a fast-paced typing competition to see who comes out on top!",
+    description:
+      "Participate in a fast-paced typing competition to see who comes out on top!",
     isAvailable: true,
   },
   {
     id: "2",
     name: "Chess",
-    description: "Coming soon...",
-    isAvailable: false,
+    description: "Participate in chess",
+    isAvailable: true,
   },
   {
     id: "3",
@@ -42,56 +51,60 @@ const games: Game[] = [
 ];
 
 interface gameSelectedProps {
-  id: string,
-  name: string
+  id: string;
+  name: string;
 }
 
 export default function GamePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [twitterUsername, setTwitterUsername] = useState("");
   const [scheduledDate, setScheduledDate] = useState<string>("");
-  const [selectedGame, setSelectedGame] = useState<gameSelectedProps | null>(null);
-  const {getToken, userId} = useAuth();
+  const [selectedGame, setSelectedGame] = useState<gameSelectedProps | null>(
+    null,
+  );
+  const { getToken, userId } = useAuth();
   const router = useRouter();
-  const {user, isLoaded} = useUser();
-  const username = process.env.NEXT_PUBLIC_USERNAME
+  const { user, isLoaded } = useUser();
+  const username = process.env.NEXT_PUBLIC_USERNAME;
 
   useEffect(() => {
-    if(isLoaded){
-      if(!user){
-        router.push('/');
+    if (isLoaded) {
+      if (!user) {
+        router.push("/");
         // console.log(username)
-      }else{
+      } else {
         console.log(user?.username);
       }
     }
-  }, [isLoaded])
+  }, [isLoaded]);
 
   const handleChallengeClick = (gameId: string, gameName: string) => {
     setSelectedGame({
       id: gameId,
-      name: gameName
+      name: gameName,
     });
     setIsModalOpen(true);
   };
-  
+
   const closeModal = () => {
     setIsModalOpen(false);
     setTwitterUsername("");
-  }
-  const postEndPoint = "/api/v1/room/createMatch"
-  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
+  };
+  const postEndPoint = "/api/v1/room/createMatch";
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
 
   const handleSendChallenge = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(`Challenge sent to ${twitterUsername} for the game: ${selectedGame}`);
+    console.log(
+      `Challenge sent to ${twitterUsername} for the game: ${selectedGame}`,
+    );
 
     const token = await getToken();
     const response = await axios({
-      method: 'POST',
+      method: "POST",
       url: `${HTTP_URL}${postEndPoint}`,
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
       data: {
         userId: userId,
@@ -99,14 +112,14 @@ export default function GamePage() {
         challenged: twitterUsername.toLowerCase(),
         gameId: selectedGame?.id,
         game: selectedGame?.name,
-        startTime: new Date(scheduledDate) 
-      }
-    })
+        startTime: new Date(scheduledDate),
+      },
+    });
     console.log(response.data);
-    if(response.data.success){
-      alert('challenge sent!');
-    }else{
-      alert('err occoured')
+    if (response.data.success) {
+      alert("challenge sent!");
+    } else {
+      alert("err occoured");
     }
 
     closeModal();
@@ -117,12 +130,12 @@ export default function GamePage() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2, 
+        staggerChildren: 0.2,
       },
     },
   };
 
-  const itemVariants : Variants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -137,7 +150,7 @@ export default function GamePage() {
   return (
     <div>
       <Nav />
-      
+
       <section className="relative overflow-hidden py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center">
@@ -152,14 +165,14 @@ export default function GamePage() {
                   Compete
                 </span>
               </h1>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 items-center">
-                <ConnectButton showBalance/>
+                <ConnectButton showBalance />
                 <Button
                   size="lg"
                   variant="outline"
                   className="border-primary/50 text-primary hover:bg-primary/10 text-lg px-8 py-6 bg-transparent"
-                  onClick={() => router.push('/scheduledMatches')}
+                  onClick={() => router.push("/scheduledMatches")}
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   Watch Live Games
@@ -180,13 +193,17 @@ export default function GamePage() {
                     className="bg-card/50 flex flex-col justify-between backdrop-blur-sm border border-border/50 rounded-xl p-6 text-center glow-hover-card"
                   >
                     <div>
-                      <h3 className="text-2xl font-bold text-glow mb-2">{game.name}</h3>
-                      <p className="text-sm text-muted-foreground min-h-[40px]">{game.description}</p>
+                      <h3 className="text-2xl font-bold text-glow mb-2">
+                        {game.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground min-h-[40px]">
+                        {game.description}
+                      </p>
                     </div>
                     <Button
                       id={game.name}
                       onClick={() => handleChallengeClick(game.id, game.name)}
-                      size='default'
+                      size="default"
                       className="mt-4 w-full"
                       disabled={!game.isAvailable}
                     >
@@ -216,18 +233,35 @@ export default function GamePage() {
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="bg-card border border-border/50 rounded-xl shadow-2xl p-6 w-full max-w-md relative"
-              onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLElement>) =>
+                e.stopPropagation()
+              }
             >
-              <button onClick={closeModal} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
-                <X size={20}/>
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X size={20} />
               </button>
 
-              <h2 className="text-2xl font-bold text-center mb-2">Challenge a Player</h2>
-              <p className="text-muted-foreground text-center mb-6">Enter your friend&apos s Twitter username to send a challenge for <span className="font-semibold text-primary">{selectedGame?.name}</span>.</p>
+              <h2 className="text-2xl font-bold text-center mb-2">
+                Challenge a Player
+              </h2>
+              <p className="text-muted-foreground text-center mb-6">
+                Enter your friend&apos s Twitter username to send a challenge
+                for{" "}
+                <span className="font-semibold text-primary">
+                  {selectedGame?.name}
+                </span>
+                .
+              </p>
 
               <form onSubmit={handleSendChallenge}>
                 <div className="relative mb-4">
-                  <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                  <AtSign
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    size={20}
+                  />
                   <input
                     type="text"
                     value={twitterUsername}
@@ -237,10 +271,13 @@ export default function GamePage() {
                     required
                   />
                 </div>
-                <div className='relative mb-4'>
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
+                <div className="relative mb-4">
+                  <Calendar
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                    size={20}
+                  />
                   <input
-                    type='datetime-local'
+                    type="datetime-local"
                     value={scheduledDate}
                     onChange={(e) => setScheduledDate(e.target.value)}
                     placeholder="scheduledDate"
@@ -249,7 +286,8 @@ export default function GamePage() {
                   />
                 </div>
                 <Button type="submit" className="w-full group">
-                  Send Challenge <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  Send Challenge{" "}
+                  <Send className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </form>
             </motion.div>
@@ -257,5 +295,5 @@ export default function GamePage() {
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }

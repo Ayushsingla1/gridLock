@@ -4,11 +4,11 @@ import XRouter from "./twitterRouters";
 import userRouter from "./userRouters";
 import { clerkHandler } from "./clerkHandler";
 
-const mainRouter : Router = Router();
+const mainRouter: Router = Router();
 
-mainRouter.use('/room', roomsRouter);
-mainRouter.use('/twitter',XRouter);
-mainRouter.use('/user',userRouter);
-mainRouter.use('/clerk',clerkHandler)
+mainRouter.use("/room", roomsRouter);
+mainRouter.use("/twitter", XRouter);
+mainRouter.use("/user", userRouter);
+mainRouter.use("/auth", clerkHandler);
 
 export default mainRouter;

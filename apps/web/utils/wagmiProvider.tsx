@@ -1,17 +1,11 @@
-"use client"
-import '@rainbow-me/rainbowkit/styles.css';
-import {
-  Chain,
-  RainbowKitProvider,
-} from '@rainbow-me/rainbowkit';
-import { createConfig, http, WagmiProvider } from 'wagmi';
-import {
-  QueryClientProvider,
-  QueryClient,
-} from "@tanstack/react-query";
-import React from 'react';
-import { ClerkProvider } from '@clerk/nextjs';
-import { mantleSepoliaTestnet } from 'viem/chains';
+"use client";
+import "@rainbow-me/rainbowkit/styles.css";
+import { Chain, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { createConfig, http, WagmiProvider } from "wagmi";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import React from "react";
+import { ClerkProvider } from "@clerk/nextjs";
+import { mantleSepoliaTestnet } from "viem/chains";
 
 // const U2U = {
 //   id: 39,
@@ -26,13 +20,12 @@ import { mantleSepoliaTestnet } from 'viem/chains';
 //   }
 // } as const satisfies Chain;
 
-
 export const config = createConfig({
   chains: [mantleSepoliaTestnet],
   transports: {
     // [U2U.id]: http(),
-    [mantleSepoliaTestnet.id] : http()
-  }
+    [mantleSepoliaTestnet.id]: http(),
+  },
 });
 
 const queryClient = new QueryClient();
@@ -42,9 +35,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
     <ClerkProvider>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
-            {children}
-          </RainbowKitProvider>
+          <RainbowKitProvider>{children}</RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </ClerkProvider>

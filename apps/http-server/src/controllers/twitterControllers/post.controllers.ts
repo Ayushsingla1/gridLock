@@ -1,45 +1,51 @@
 // import { TwitterApi } from 'twitter-api-v2';
-import { accessSecret, accessToken } from '../../config';
-import { XUserName, GameZod } from '../../zodTypes';
-import axios from 'axios';
-import { oauth } from './twtterOAuthConfig';
+import { accessSecret, accessToken } from "../../config";
+import { XUserName, GameZod } from "../../zodTypes";
+import axios from "axios";
+import { oauth } from "./twtterOAuthConfig";
 
 interface postTweetProps {
-  challenger: string,
-  challenged: string,
-  game: string,
-  matchId: string | undefined,
-  gameId: string | undefined
+  challenger: string;
+  challenged: string;
+  game: string;
+  matchId: string | undefined;
+  gameId: string | undefined;
 }
 
-export async function postTweet({challenger, challenged, game, gameId, matchId} : postTweetProps) {
+export async function postTweet({
+  challenger,
+  challenged,
+  game,
+  gameId,
+  matchId,
+}: postTweetProps) {
   console.log(challenged, challenger, game, gameId, matchId);
 
-  if(matchId == undefined || gameId == undefined) {
+  if (matchId == undefined || gameId == undefined) {
     return {
       status: 404,
       succes: false,
-      message: `matchId undefined`
-    }
+      message: `matchId undefined`,
+    };
   }
 
   const parsedData1 = XUserName.safeParse(challenger);
   const parsedData2 = XUserName.safeParse(challenged);
   const parsedData3 = GameZod.safeParse(game);
 
-  if(!parsedData1.success || !parsedData2.success){
+  if (!parsedData1.success || !parsedData2.success) {
     return {
       status: 403,
       success: false,
-      message: `invalid usernames`
-    }
+      message: `invalid usernames`,
+    };
   }
-  if(!parsedData3.success){
+  if (!parsedData3.success) {
     return {
       status: 403,
       success: false,
-      message: `invalid Game`
-    }
+      message: `invalid Game`,
+    };
   }
   const challengerUser = parsedData1.data;
   const challengedUser = parsedData2.data;
@@ -49,17 +55,19 @@ export async function postTweet({challenger, challenged, game, gameId, matchId} 
     // const response = await client.v2.tweet("Hello world! This is a tweet from my app 🚀");
     // const response = await client.post('tweet', {"first tweet"})
     const requestForSignature = {
-      url: 'https://api.x.com/2/tweets',
-      method: 'POST',
+      url: "https://api.x.com/2/tweets",
+      method: "POST",
     };
-    const frontEnd = process.env.FRONT_END
+    const frontEnd = process.env.FRONT_END;
     const payload = {
-      text: `challenger @${challengerUser} has challenged @${challengedUser} at ${parsedGame}, View The match here : ${frontEnd}/spectate/${gameId}/${matchId} !!`
-    }
+      text: `challenger @${challengerUser} has challenged @${challengedUser} at ${parsedGame}, View The match here : ${frontEnd}/spectate/${gameId}/${matchId} !!`,
+    };
     const authHeader = oauth.toHeader(
-      oauth.authorize(requestForSignature, { key: accessToken!, secret: accessSecret! })
+      oauth.authorize(requestForSignature, {
+        key: accessToken!,
+        secret: accessSecret!,
+      }),
     );
-
 
     const response = await axios({
       url: requestForSignature.url,
@@ -76,14 +84,13 @@ export async function postTweet({challenger, challenged, game, gameId, matchId} 
       status: 200,
       success: true,
       message: "post done!",
-      data: response.data
-    }
-    
+      data: response.data,
+    };
   } catch (error) {
     console.error("Error posting tweet:", error);
     return {
       status: 500,
       success: false,
-    }
+    };
   }
 }

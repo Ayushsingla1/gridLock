@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react"; // Note: 'motion/react' is often an alias for 'framer-motion'
@@ -45,7 +45,7 @@ const itemVariants: Variants = {
     y: 0,
     opacity: 1,
     transition: {
-      type: 'spring',
+      type: "spring",
       stiffness: 100,
     },
   },
@@ -57,10 +57,10 @@ export default function ScheduledMatches(props: LiveMatchesProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Endpoint for fetching live matches. 
+  // Endpoint for fetching live matches.
   // For production, this should be in a .env file.
-  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER
-  const ep = "/api/v1/user/getScheduledMatches"
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
+  const ep = "/api/v1/user/getScheduledMatches";
   const API_ENDPOINT = `${HTTP_URL}${ep}`;
 
   useEffect(() => {
@@ -84,48 +84,52 @@ export default function ScheduledMatches(props: LiveMatchesProps) {
     if (isLoading) {
       return (
         <div className="flex flex-col items-center justify-center gap-4 py-16 text-gray-400">
-            <Loader2 className="animate-spin" size={32} />
-            <p className="font-semibold">Loading Live Matches...</p>
+          <Loader2 className="animate-spin" size={32} />
+          <p className="font-semibold">Loading Live Matches...</p>
         </div>
       );
     }
 
     if (error) {
-        return (
-            <div className="text-center py-16 px-6 bg-red-900/20 border border-dashed border-red-700/50 rounded-xl">
-                <AlertCircle className="mx-auto text-red-500 mb-4" size={40} />
-                <h3 className="text-xl font-semibold mb-2 text-red-400">An Error Occurred</h3>
-                <p className="text-red-400/80">{error}</p>
-            </div>
-        );
+      return (
+        <div className="text-center py-16 px-6 bg-red-900/20 border border-dashed border-red-700/50 rounded-xl">
+          <AlertCircle className="mx-auto text-red-500 mb-4" size={40} />
+          <h3 className="text-xl font-semibold mb-2 text-red-400">
+            An Error Occurred
+          </h3>
+          <p className="text-red-400/80">{error}</p>
+        </div>
+      );
     }
 
     if (matches.length === 0) {
       return (
         <div className="text-center py-16 px-6 bg-gray-900/50 border border-dashed border-gray-700 rounded-xl">
-            <Zap className="mx-auto text-primary mb-4" size={40} />
-            <h3 className="text-xl font-semibold mb-2">No Live Matches Right Now</h3>
-            <p className="text-gray-400">
-                It's a bit quiet... Why not start a new match to get the action going?
-            </p>
+          <Zap className="mx-auto text-primary mb-4" size={40} />
+          <h3 className="text-xl font-semibold mb-2">
+            No Live Matches Right Now
+          </h3>
+          <p className="text-gray-400">
+            It's a bit quiet... Why not start a new match to get the action
+            going?
+          </p>
         </div>
       );
     }
 
     return (
-        <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-            {matches.map((match) => (
-            <LiveMatchCard key={match.id} match={match} />
-            ))}
-        </motion.div>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        {matches.map((match) => (
+          <LiveMatchCard key={match.id} match={match} />
+        ))}
+      </motion.div>
     );
   };
-
 
   return (
     <section className="bg-gray-950 text-gray-200">
@@ -135,22 +139,24 @@ export default function ScheduledMatches(props: LiveMatchesProps) {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-          <h1 className="text-4xl font-bold text-center mb-4 text-glow">Live Action</h1>
+          <h1 className="text-4xl font-bold text-center mb-4 text-glow">
+            Live Action
+          </h1>
           <p className="text-gray-400 text-center mb-12">
             Games currently in progress. Jump in and spectate!
           </p>
         </motion.div>
-        
+
         <AnimatePresence mode="wait">
-            <motion.div
-                key={isLoading ? 'loading' : 'content'}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-            >
-                {renderContent()}
-            </motion.div>
+          <motion.div
+            key={isLoading ? "loading" : "content"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderContent()}
+          </motion.div>
         </AnimatePresence>
       </div>
     </section>
@@ -162,7 +168,7 @@ function LiveMatchCard({ match }: { match: any }) {
   const router = useRouter();
   const gameName = match.game.GameName;
 
-  console.log("gn", gameName)
+  console.log("gn", gameName);
 
   return (
     <motion.div
@@ -181,19 +187,25 @@ function LiveMatchCard({ match }: { match: any }) {
           <div className="flex items-center gap-2">
             <Users size={14} className="text-primary" />
             <span>
-                <span className="font-medium text-gray-200">{match.user1_Id}</span> vs. <span className="font-medium text-gray-200">{match.user2_Id}</span>
+              <span className="font-medium text-gray-200">
+                {match.user1_Id}
+              </span>{" "}
+              vs.{" "}
+              <span className="font-medium text-gray-200">
+                {match.user2_Id}
+              </span>
             </span>
           </div>
         </div>
       </div>
-      
+
       {/* Action Button */}
       <div className="flex gap-2 mt-2">
-        <button 
-            onClick={() => router.push(`/spectate/${match.gameId}/${match.id}`)} 
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors"
+        <button
+          onClick={() => router.push(`/spectate/${match.gameId}/${match.id}`)}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 text-sm font-semibold rounded-md flex items-center justify-center gap-2 transition-colors"
         >
-            <Gamepad2 size={16} /> Spectate Match
+          <Gamepad2 size={16} /> Spectate Match
         </button>
       </div>
     </motion.div>

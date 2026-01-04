@@ -1,27 +1,28 @@
-"use client"
-import { SignUp} from "@clerk/nextjs";
+"use client";
+import { SignUp } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const App = () => {
+  const { isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
 
-   const {isLoaded, isSignedIn} = useUser();
-   const router = useRouter();
+  useEffect(() => {
+    if (isSignedIn) {
+      return router.push("/");
+    }
+  }, [isLoaded]);
 
-   useEffect(() => {
-      if(isSignedIn){
-         return router.push('/');
-      }
-   }, [isLoaded])
+  if (!isLoaded) {
+    return <div>loading...</div>;
+  }
 
-   if(!isLoaded) {
-      return <div>loading...</div>
-   }
-   
-   return <div className="flex bg-black w-screen h-screen justify-center items-center">
-         <SignUp/>   
-   </div>
-}
+  return (
+    <div className="flex bg-black w-screen h-screen justify-center items-center">
+      <SignUp />
+    </div>
+  );
+};
 
 export default App;

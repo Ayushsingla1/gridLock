@@ -1,1 +1,1 @@
-{"root":["./src/contractfn.ts","./src/index.ts","./src/join_room.ts","./src/playtyping.ts","./src/utils/contractinfo.ts"],"version":"5.9.2"}
+{"root":["./src/announcewinner.ts","./src/chessinitialize.ts","./src/chessjoinmsg.ts","./src/contractfn.ts","./src/index.ts","./src/join_room.ts","./src/playchess.ts","./src/playtyping.ts","./src/utils/contractinfo.ts"],"version":"5.9.2"}

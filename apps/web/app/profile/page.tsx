@@ -1,46 +1,60 @@
-"use client"
+"use client";
 
-import { motion } from "motion/react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Gamepad2, Trophy, Target, Zap, Crown, Clock, TrendingUp, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { useUser } from "@clerk/nextjs"
-import { use, useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import axios from "axios"
+import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Gamepad2,
+  Trophy,
+  Target,
+  Zap,
+  Crown,
+  Clock,
+  TrendingUp,
+  ArrowLeft,
+} from "lucide-react";
+import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function ProfilePage() {
-
-  const [userData,setUserData] = useState({
-    success : true,
-    matchPlayed : 0,
-    matchWon : 0,
-    matchLost : 0,
-    winPercentage : 0
+  const [userData, setUserData] = useState({
+    success: true,
+    matchPlayed: 0,
+    matchWon: 0,
+    matchLost: 0,
+    winPercentage: 0,
   });
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
 
-  const {user, isSignedIn, isLoaded} = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const [username, setUsername] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
-    const getUserProfile = async() => {
-      if(!user?.username) return;
+    const getUserProfile = async () => {
+      if (!user?.username) return;
       const result = await axios.get(`${HTTP_URL}/api/v1/user/userProfile`, {
-        params : {
-          username : user?.username
-        }
-      })
+        params: {
+          username: user?.username,
+        },
+      });
       console.log(result);
       setUserData(result.data);
-    }
+    };
     getUserProfile();
-  },[user,isLoaded])
+  }, [user, isLoaded]);
 
   const stats = [
     {
@@ -67,7 +81,7 @@ export default function ProfilePage() {
       icon: <TrendingUp className="w-6 h-6" />,
       color: "from-chart-4/20 to-chart-4/5",
     },
-  ]
+  ];
 
   const ongoingChallenges = [
     {
@@ -91,17 +105,17 @@ export default function ProfilePage() {
       timeLeft: "Live",
       avatar: "/developer-avatar.png",
     },
-  ]
+  ];
 
   useEffect(() => {
-    if(isLoaded){
-      if(!isSignedIn){
-        router.push('/');
-      }else{
+    if (isLoaded) {
+      if (!isSignedIn) {
+        router.push("/");
+      } else {
         setUsername(user.username!);
       }
     }
-  }, [isLoaded])
+  }, [isLoaded]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,7 +130,11 @@ export default function ProfilePage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-primary"
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Home
                 </Button>
@@ -129,10 +147,15 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
+              <Button
+                variant="ghost"
+                className="text-foreground hover:text-primary"
+              >
                 Settings
               </Button>
-              <Button className="glow-hover bg-primary text-primary-foreground">New Challenge</Button>
+              <Button className="glow-hover bg-primary text-primary-foreground">
+                New Challenge
+              </Button>
             </div>
           </div>
         </div>
@@ -150,10 +173,14 @@ export default function ProfilePage() {
               <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                 <Avatar className="w-24 h-24 border-2 border-primary glow">
                   <AvatarImage src="/gamer-profile.png" />
-                  <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">{user?.username![0]?.toUpperCase() || 'G'}</AvatarFallback>
+                  <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">
+                    {user?.username![0]?.toUpperCase() || "G"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-3xl font-bold mb-2 text-glow">{user ? user.fullName : "XXXXX"}</h1>
+                  <h1 className="text-3xl font-bold mb-2 text-glow">
+                    {user ? user.fullName : "XXXXX"}
+                  </h1>
                   <p className="text-xl text-primary mb-4">{username}</p>
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                     <Badge className="bg-primary/10 text-primary border-primary/20">
@@ -170,8 +197,8 @@ export default function ProfilePage() {
                     </Badge>
                   </div>
                   <p className="text-muted-foreground max-w-md">
-                    Competitive gamer and developer. Always up for a challenge! Specializing in speed typing and trivia
-                    battles.
+                    Competitive gamer and developer. Always up for a challenge!
+                    Specializing in speed typing and trivia battles.
                   </p>
                 </div>
               </div>
@@ -185,7 +212,9 @@ export default function ProfilePage() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-bold mb-6 text-glow">Gaming Statistics</h2>
+          <h2 className="text-2xl font-bold mb-6 text-glow">
+            Gaming Statistics
+          </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((stat, index) => (
               <motion.div
@@ -202,8 +231,12 @@ export default function ProfilePage() {
                     >
                       <div className="text-primary">{stat.icon}</div>
                     </div>
-                    <div className="text-3xl font-bold mb-2 text-glow">{stat.value}</div>
-                    <div className="text-sm text-muted-foreground">{stat.title}</div>
+                    <div className="text-3xl font-bold mb-2 text-glow">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {stat.title}
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -223,7 +256,9 @@ export default function ProfilePage() {
                 <TrendingUp className="w-5 h-5 text-primary" />
                 <span>Performance Overview</span>
               </CardTitle>
-              <CardDescription>Your gaming performance over time</CardDescription>
+              <CardDescription>
+                Your gaming performance over time
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -256,7 +291,9 @@ export default function ProfilePage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <h2 className="text-2xl font-bold mb-6 text-glow">Ongoing Challenges</h2>
+          <h2 className="text-2xl font-bold mb-6 text-glow">
+            Ongoing Challenges
+          </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {ongoingChallenges.map((challenge, index) => (
               <motion.div
@@ -270,14 +307,20 @@ export default function ProfilePage() {
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4 mb-4">
                       <Avatar className="border border-primary/50">
-                        <AvatarImage src={challenge.avatar || "/placeholder.svg"} />
+                        <AvatarImage
+                          src={challenge.avatar || "/placeholder.svg"}
+                        />
                         <AvatarFallback className="bg-primary/20 text-primary">
                           {challenge.opponent.slice(1, 3).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="font-semibold">{challenge.opponent}</div>
-                        <div className="text-sm text-muted-foreground">{challenge.game}</div>
+                        <div className="font-semibold">
+                          {challenge.opponent}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {challenge.game}
+                        </div>
                       </div>
                     </div>
                     <div className="flex justify-between items-center mb-4">
@@ -299,9 +342,13 @@ export default function ProfilePage() {
                     </div>
                     <Button
                       className="w-full glow-hover"
-                      variant={challenge.status === "Your Turn" ? "default" : "outline"}
+                      variant={
+                        challenge.status === "Your Turn" ? "default" : "outline"
+                      }
                     >
-                      {challenge.status === "Your Turn" ? "Play Now" : "View Game"}
+                      {challenge.status === "Your Turn"
+                        ? "Play Now"
+                        : "View Game"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -311,5 +358,5 @@ export default function ProfilePage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
