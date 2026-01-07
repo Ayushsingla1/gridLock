@@ -6,6 +6,13 @@ import { useEffect, useState } from "react";
 import RegisteredGames from "@/components/ui/registeredGames";
 import { Match } from "@/types/gameTypes";
 
+/**
+ * Render the current user's sent and received match challenges alongside navigation.
+ *
+ * Fetches matches for the authenticated user when available and passes the received data to RegisteredGames.
+ *
+ * @returns The component's JSX element containing a Nav and a RegisteredGames component with `username`, `sentMatches`, and `recMatches` props.
+ */
 export default function MyGames() {
   const ep = "/api/v1/user/getMatches";
   const { user } = useUser();

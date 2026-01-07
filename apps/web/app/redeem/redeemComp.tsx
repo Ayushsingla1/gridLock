@@ -7,6 +7,11 @@ import { redeemAmount } from "../../utils/functions";
 import { useAccount } from "wagmi";
 import { useUser } from "@clerk/nextjs";
 
+/**
+ * Render a redeem-code form that validates input, verifies wallet connection, invokes the redemption flow, and displays loading, success, or error messages.
+ *
+ * @returns The component UI for entering a code, submitting redemption, and viewing status messages.
+ */
 export default function RedeemComp() {
   const [redeemCode, setRedeemCode] = useState("");
   const [status, setStatus] = useState({ message: "", type: "" });

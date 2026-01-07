@@ -15,6 +15,16 @@ import MatchOngoingStatus from "@/components/ui/noWinner";
 import LoadingDetails from "@/components/ui/loadingDetails";
 import MatchWinnerDec from "@/components/ui/matchWinnerDec";
 
+/**
+ * Render the spectate match interface for a specific room and game.
+ *
+ * Fetches match details, redirects unauthenticated users to auth, joins the match WebSocket as a spectator,
+ * and conditionally renders loading, no-match, timer, ongoing status, winner, or the main match view with betting panel.
+ *
+ * @param roomId - Identifier of the spectated room
+ * @param gameId - Identifier of the game being spectated
+ * @returns A JSX element that renders the spectate match UI for the given room and game
+ */
 export default function SpectateMatch({
   roomId,
   gameId,

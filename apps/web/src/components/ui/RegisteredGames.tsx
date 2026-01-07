@@ -75,6 +75,14 @@ const itemVariants: Variants = {
   },
 };
 
+/**
+ * Render a tabbed view that displays sent and received match cards with animated transitions.
+ *
+ * @param sentMatches - Matches the current user has sent, shown under the "Sent Challenges" tab
+ * @param recMatches - Matches the current user has received, shown under the "Received Challenges" tab
+ * @param username - The current user's username (passed down to match cards)
+ * @returns The rendered section containing toggle buttons and an animated grid or empty state for matches
+ */
 export default function RegisteredGames({
   sentMatches,
   recMatches,
@@ -172,7 +180,19 @@ export default function RegisteredGames({
   );
 }
 
-// A separate component for rendering a single match card
+/**
+ * Renders a single match card showing game info, opponent, dates, status, and contextual action buttons.
+ *
+ * The card redirects to "/auth" if `username` is null/undefined. Action buttons perform API calls:
+ * - For received pending matches: "Accept" and "Decline" send accept/decline requests.
+ * - For sent pending matches: "Cancel" sends a cancel request.
+ * - For scheduled or completed matches: a single button navigates to the match page.
+ *
+ * @param match - Match object containing data to display (game id, participants, status, timestamps, id).
+ * @param type - Either `"sent"` or `"received"`; determines which participant is shown as the opponent and which actions are available.
+ * @param username - Current user's username; used in API payloads and causes a redirect to authentication when missing.
+ * @returns The JSX element for the match card.
+ */
 function MatchCard({
   match,
   type,
