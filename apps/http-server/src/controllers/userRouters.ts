@@ -4,6 +4,7 @@ import {
   cancleReq,
   getAllScheduledMatches,
   getChallengedMatches,
+  getStakedMatches,
   redeemAmount,
   stakeAmount,
 } from "./userControllers/userGames";
@@ -19,5 +20,6 @@ userRouter.get("/getScheduledMatches", getAllScheduledMatches);
 userRouter.get("/userProfile", getUserProfile);
 userRouter.post("/stake", stakeAmount);
 userRouter.post("/redeem", redeemAmount);
+userRouter.get("/stakedMatches", getStakedMatches);
 
 export default userRouter;

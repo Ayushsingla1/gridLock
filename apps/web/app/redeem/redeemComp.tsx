@@ -1,150 +1,240 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Gamepad2, Ticket } from "lucide-react";
-import { redeemAmount } from "../../utils/functions";
-import { useAccount } from "wagmi";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, TrendingDown, Loader2, ArrowRight } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useAccount } from "wagmi";
+import axios from "axios";
+import { redeemAmount } from "../../utils/functions";
 
-export default function RedeemComp() {
-  const [redeemCode, setRedeemCode] = useState("");
-  const [status, setStatus] = useState({ message: "", type: "" });
+interface StakedMatch {
+  matchId: string;
+  userId: string;
+  yesTokens: number;
+  noTokens: number;
+  isClaimed: boolean;
+  status?: "pending" | "completed" | "cancelled";
+}
+
+const RedeemStake = () => {
+  const [data, setData] = useState<StakedMatch[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [claiming, setClaiming] = useState<string | null>(null);
+  const { user, isLoaded, isSignedIn } = useUser();
   const { address } = useAccount();
-  const { user } = useUser();
 
-  const handleRedeem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (redeemCode.trim() === "") {
-      setStatus({ message: "Please enter a valid code.", type: "error" });
-      return;
-    }
-
-    setStatus({ message: "Redeeming your code...", type: "loading" });
-
-    try {
-      if (!address) {
-        setStatus({ message: "Wallet not connected", type: "error" });
-        return;
-      }
-      const result = await redeemAmount(
-        redeemCode.trim().toLowerCase(),
-        user?.username || "",
+  const clickHandler = async (gameId: string) => {
+    if (!address || !user?.username || !gameId) return;
+    setClaiming(gameId);
+    const result = await redeemAmount(gameId, user?.username);
+    if (result.success) {
+      alert("Amount withdrawn successfully");
+      setData((prev) =>
+        prev.map((item) =>
+          item.matchId === gameId ? { ...item, isClaimed: true } : item,
+        ),
       );
-      // const
-      if (result.success) {
-        setStatus({
-          message: "Success! Your reward has been claimed.",
-          type: "success",
-        });
-      } else {
-        setStatus({
-          message: "Invalid code. Please try again.",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      setStatus({ message: "something went wrong", type: "error" });
+    } else {
+      alert("Unable to withdraw amount at the moment");
     }
+    setClaiming(null);
   };
 
-  const StatusMessage = () => {
-    if (!status.message) return null;
+  const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
+  const ep = "/api/v1/user/stakedMatches";
 
-    const colorClasses: any = {
-      error: "text-red-400",
-      success: "text-green-400",
-      loading: "text-blue-400",
+  useEffect(() => {
+    const getStakedMatches = async () => {
+      if (!user) return;
+
+      try {
+        setLoading(true);
+        const result = await axios.get(`${HTTP_URL}${ep}`, {
+          params: {
+            username: user.username,
+          },
+        });
+
+        if (result.data.success) {
+          setData(result.data.stakedMatches);
+        }
+      } catch (error) {
+        console.error("Error fetching staked matches:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    return (
-      <motion.p
-        key={status.message}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className={`mt-4 text-center text-sm ${colorClasses[status.type] || "text-gray-400"}`}
-      >
-        {status.message}
-      </motion.p>
-    );
+    if (isLoaded && isSignedIn && user?.username) {
+      getStakedMatches();
+    }
+  }, [isSignedIn, isLoaded, user]);
+
+  const totalStaked = data.reduce(
+    (sum, item) => sum + item.yesTokens + item.noTokens,
+    0,
+  );
+  const claimableMatches = data.filter((item) => !item.isClaimed).length;
+
+  const getStatusText = (item: StakedMatch) => {
+    if (item.status === "pending") return "Pending Result";
+    if (item.isClaimed) return "Claimed";
+    return "Not Claimed";
   };
 
+  const getStatusColor = (item: StakedMatch) => {
+    if (item.status === "pending") return "text-yellow-600";
+    if (item.isClaimed) return "text-green-600";
+    return "text-blue-600";
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-foreground/40" />
+      </div>
+    );
+  }
+
   return (
-    <main className="flex items-center justify-center h-[90%] bg-gray-950 text-gray-100 font-sans p-4 relative overflow-hidden">
-      {/* Background Grid Pattern */}
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-      <div className="absolute inset-0 z-10 bg-gradient-to-br from-gray-950 via-gray-950/80 to-black"></div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative z-20 w-full max-w-md p-8 space-y-6 bg-gray-900/50 backdrop-blur-md rounded-2xl border border-cyan-500/20 shadow-2xl shadow-cyan-500/10"
-      >
-        <div className="text-center">
+    <div className="min-h-screen bg-background">
+      {/* Minimal Header */}
+      <section className="py-16 border-b border-border/50">
+        <div className="max-w-5xl mx-auto px-6">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{
-              delay: 0.2,
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-            }}
-            className="inline-block p-3 bg-cyan-500/10 rounded-full mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Gamepad2 className="w-8 h-8 text-cyan-400" />
-          </motion.div>
-          <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-300">
-            Redeem Your Code
-          </h1>
-          <p className="mt-2 text-sm text-gray-400">
-            Enter your game ID or special code below to claim your reward.
-          </p>
-        </div>
-
-        <form onSubmit={handleRedeem} className="space-y-6">
-          <div className="relative">
-            <label htmlFor="redeem-code" className="sr-only">
-              Redeem Code
-            </label>
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Ticket className="w-5 h-5 text-gray-500" />
+            <h1 className="text-4xl font-light tracking-tight mb-3">
+              Your Stakes
+            </h1>
+            <div className="flex items-baseline gap-8 text-sm text-muted-foreground">
+              <span>{totalStaked.toLocaleString()} tokens staked</span>
+              <span>{claimableMatches} available to claim</span>
             </div>
-            <input
-              id="redeem-code"
-              type="text"
-              value={redeemCode}
-              onChange={(e) => {
-                setRedeemCode(e.target.value);
-                setStatus({ message: "", type: "" });
-              }}
-              placeholder="ENTER MATCH ID"
-              className="w-full pl-10 pr-4 py-3 text-lg bg-gray-800/60 border-2 border-gray-700 rounded-lg text-cyan-300 placeholder-gray-500 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500"
-              autoComplete="off"
-            />
-          </div>
+          </motion.div>
+        </div>
+      </section>
 
-          <motion.button
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 20px rgba(45, 212, 191, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            type="submit"
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 text-lg font-bold text-gray-900 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-lg shadow-lg cursor-pointer transition-transform duration-200 ease-in-out hover:from-cyan-300 hover:to-teal-300 focus:outline-none focus:ring-4 focus:ring-cyan-300/50"
-            disabled={status.type === "loading"}
-          >
-            {status.type === "loading" ? "Verifying..." : "Redeem Now"}
-            {status.type !== "loading" && <ArrowRight className="w-6 h-6" />}
-          </motion.button>
-        </form>
+      {/* Clean List */}
+      <section className="py-12">
+        <div className="max-w-5xl mx-auto px-6">
+          {data.length === 0 ? (
+            <div className="text-center py-24 text-muted-foreground">
+              <p>No staked matches found</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {data.map((item, index) => (
+                <motion.div
+                  key={item.matchId}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <Card className="border border-border/50 hover:border-border transition-colors bg-card/50">
+                    <CardHeader className="pb-0">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">
+                            Match ID
+                          </p>
+                          <p className="font-mono text-sm">{item.matchId}</p>
+                        </div>
+                        <div
+                          className={`text-xs font-medium ${getStatusColor(item)}`}
+                        >
+                          {getStatusText(item)}
+                        </div>
+                      </div>
+                    </CardHeader>
 
-        <StatusMessage />
-      </motion.div>
-    </main>
+                    <CardContent className="pt-6">
+                      <div className="grid grid-cols-3 gap-6 mb-6">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <TrendingUp className="w-4 h-4 text-foreground/60" />
+                            <span className="text-xs text-muted-foreground">
+                              Yes
+                            </span>
+                          </div>
+                          <p className="text-2xl font-light">
+                            {item.yesTokens}
+                          </p>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <TrendingDown className="w-4 h-4 text-foreground/60" />
+                            <span className="text-xs text-muted-foreground">
+                              No
+                            </span>
+                          </div>
+                          <p className="text-2xl font-light">{item.noTokens}</p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Total
+                          </p>
+                          <p className="text-2xl font-light">
+                            {item.yesTokens + item.noTokens}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button
+                        variant={
+                          item.isClaimed || item.status === "pending"
+                            ? "ghost"
+                            : "default"
+                        }
+                        size="lg"
+                        className={`w-full justify-between group ${
+                          item.isClaimed || item.status === "pending"
+                            ? "cursor-not-allowed opacity-50"
+                            : ""
+                        }`}
+                        disabled={
+                          item.isClaimed ||
+                          item.status === "pending" ||
+                          claiming === item.matchId
+                        }
+                        onClick={() => clickHandler(item.matchId)}
+                      >
+                        <span>
+                          {claiming === item.matchId ? (
+                            <span className="flex items-center gap-2">
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Processing
+                            </span>
+                          ) : item.status === "pending" ? (
+                            "Match in Progress"
+                          ) : item.isClaimed ? (
+                            "Already Claimed"
+                          ) : (
+                            "Claim Reward"
+                          )}
+                        </span>
+                        {!item.isClaimed &&
+                          item.status !== "pending" &&
+                          claiming !== item.matchId && (
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                          )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
   );
-}
+};
+
+export default RedeemStake;

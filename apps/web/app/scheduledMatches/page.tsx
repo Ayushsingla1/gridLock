@@ -5,7 +5,6 @@ import { motion, AnimatePresence, Variants } from "motion/react"; // Note: 'moti
 import { Zap, Gamepad2, Users, AlertCircle, Loader2 } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-
 // Define a type for a single live match for better type safety
 interface LiveMatch {
   id: string;

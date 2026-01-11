@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "@repo/db/dbClient";
 import { createGame } from "../resultAnnounce/index.js";
+import { string } from "zod/v3";
 
 export const getChallengedMatches = async (req: Request, res: Response) => {
   console.log(req.query);
@@ -364,6 +365,47 @@ export const redeemAmount = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       msg: "Internal server error.",
+    });
+  }
+};
+
+export const getStakedMatches = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.query;
+    console.log(username);
+
+    if (typeof username !== "string") {
+      return res.status(400).json({
+        success: false,
+        stakedMatches: "Error while fetching Staked Matches",
+      });
+    }
+    const result = await prisma.user.findFirst({
+      where: {
+        username: username as string,
+      },
+      include: {
+        stakes: true,
+      },
+    });
+
+    console.log(result);
+
+    if (result !== undefined || result !== null) {
+      return res.status(200).json({
+        success: true,
+        stakedMatches: result?.stakes,
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      stakedMatches: "Error while fetching Staked Matches",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      stakedMatches: "Error while fetching Staked Matches",
     });
   }
 };
