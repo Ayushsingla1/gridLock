@@ -30,7 +30,8 @@ interface gameLogicProps {
 }
 
 export default function GameLogic({ roomId, gameId }: gameLogicProps) {
-  const secretKey = process.env.ENCRYPTION_SECRET || "SECRET";
+  console.log("roomId", roomId, "gameId : ", gameId);
+  const secretKey = "SECRET"; // process.env.NEXT_PUBLIC_ENCRYPTION_SECRET ||
   const [pointerPos, setPointerPos] = useState<number>(0);
   const [currentWord, setCurrentWord] = useState<number>(0);
   const [prevLetters, setPrevLetter] = useState<number>(0);

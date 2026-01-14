@@ -27,6 +27,7 @@ const ChessBox = ({
   challengeId,
   possibleMove,
   setPossibleMove,
+  boardRotation,
 }: {
   boxNumber: number;
   chessBoxState: string;
@@ -40,8 +41,8 @@ const ChessBox = ({
   challengeId: string;
   possibleMove: boolean;
   setPossibleMove: Dispatch<SetStateAction<Set<number> | undefined>>;
+  boardRotation: string;
 }) => {
-  // console.log(boxNumber, enabled);
   const clickHandler = () => {
     if (
       !enabled &&
@@ -49,10 +50,6 @@ const ChessBox = ({
       chessState[clicked] &&
       isValid(chessState[clicked]!, clicked, boxNumber, chessState)
     ) {
-      console.log("possible move, moving");
-      // this is a move... need to send a message to socket server
-      //
-      setClicked(undefined);
       const socketMsg = JSON.stringify({
         role: role.Player,
         gameId: "chess",
@@ -64,14 +61,10 @@ const ChessBox = ({
           piece: chessState[clicked]!,
         }),
       });
-      console.log("sending message : ", socketMsg);
-
       const encryptedMsg = AES.encrypt(socketMsg, "SECRET").toString();
-
       if (socketRef.current?.readyState === socketRef.current?.OPEN) {
         socketRef.current?.send(encryptedMsg);
       }
-
       setClicked(undefined);
       setPossibleMove(undefined);
     }
@@ -80,38 +73,54 @@ const ChessBox = ({
       setPossibleMove(getPossibleMoves(boxNumber, chessState));
     }
   };
+
+  const isDark = (Math.floor(boxNumber / 10) + boxNumber) % 2 !== 0;
+  const isSelected = clicked === boxNumber;
+
+  const renderPiece = () => {
+    const colorClass = chessBoxState.startsWith("W")
+      ? "text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+      : "text-gray-900";
+    const iconProps = {
+      className: `w-[85%] h-[85%] ${colorClass} transition-all duration-200`,
+    };
+    const rotationStyle = boardRotation === "W" ? "rotate-180" : "";
+
+    return (
+      <div
+        className={`w-full h-full flex items-center justify-center ${rotationStyle}`}
+      >
+        {chessBoxState.includes("K") ? (
+          <TbChessKingFilled {...iconProps} />
+        ) : chessBoxState.includes("Q") ? (
+          <TbChessQueenFilled {...iconProps} />
+        ) : chessBoxState.includes("R") ? (
+          <TbChessRookFilled {...iconProps} />
+        ) : chessBoxState.includes("H") ? (
+          <TbChessKnightFilled {...iconProps} />
+        ) : chessBoxState.includes("B") ? (
+          <TbChessBishopFilled {...iconProps} />
+        ) : chessBoxState !== "P" ? (
+          <TbChessFilled {...iconProps} />
+        ) : null}
+      </div>
+    );
+  };
+
   return (
     <div
-      className={`px-0 mx-0 flex justify-center items-center ${boxNumber === clicked ? "bg-blue-400" : possibleMove ? "bg-blue-200" : (Math.floor(boxNumber / 10) + (boxNumber % 10)) % 2 === 0 ? "bg-[#779457]" : "bg-red-400"} relative ${turn === "W" && "rotate-180"}`}
       onClick={clickHandler}
+      className={`
+        relative flex items-center justify-center aspect-square cursor-pointer select-none transition-all
+        ${isDark ? "bg-[#769656]" : "bg-[#eeeed2]"}
+        ${isSelected ? "ring-inset ring-8 ring-yellow-400/50" : ""}
+        ${enabled ? "hover:brightness-105 active:scale-95" : ""}
+      `}
     >
-      {chessBoxState === "P" ? (
-        <></>
-      ) : chessBoxState === "BK" ? (
-        <TbChessKingFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : chessBoxState === "WK" ? (
-        <TbChessKingFilled className="fill-[#F9F9F9] absolute w-full h-full" />
-      ) : chessBoxState === "BR" ? (
-        <TbChessRookFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : chessBoxState === "WR" ? (
-        <TbChessRookFilled className="fill-[#F9F9F9] absolute w-full h-full" />
-      ) : chessBoxState === "BH" ? (
-        <TbChessKnightFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : chessBoxState === "WH" ? (
-        <TbChessKnightFilled className="fill-[#F9F9F9] absolute w-full h-full" />
-      ) : chessBoxState === "BQ" ? (
-        <TbChessQueenFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : chessBoxState === "WQ" ? (
-        <TbChessQueenFilled className="fill-[#F9F9F9] absolute w-full h-full" />
-      ) : chessBoxState === "BB" ? (
-        <TbChessBishopFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : chessBoxState === "WB" ? (
-        <TbChessBishopFilled className="fill-[#F9F9F9] absolute w-full h-full" />
-      ) : chessBoxState === "BP" ? (
-        <TbChessFilled className="fill-[#565452] absolute w-full h-full" />
-      ) : (
-        <TbChessFilled className="fill-[#F9F9F9] absolute w-full h-full" />
+      {possibleMove && (
+        <div className="absolute z-10 w-1/3 h-1/3 rounded-full bg-black/10 backdrop-blur-sm border-2 border-black/5" />
       )}
+      {renderPiece()}
     </div>
   );
 };
