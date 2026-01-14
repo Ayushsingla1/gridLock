@@ -3,19 +3,18 @@ import GameLogic from "./gameLogic";
 
 type TypeParams = {
   params: Promise<{
-    gameId: string;
-    roomId: string;
+    challengeId: string;
   }>;
 };
 
 export default async function TypingPage({ params }: TypeParams) {
-  const gameId = (await params).gameId;
-  const roomId = (await params).roomId;
+  // const gameId = (await params).gameId;
+  const roomId = (await params).challengeId;
 
   return (
     <div className="min-h-screen w-screen flex flex-col gap-y-4">
       <Nav />
-      <GameLogic gameId={gameId} roomId={roomId} />
+      <GameLogic gameId="chess" roomId={roomId} />
     </div>
   );
 }
