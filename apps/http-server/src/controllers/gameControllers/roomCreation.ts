@@ -34,10 +34,10 @@ export const createRoom = async ({
 
       let text = "";
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 30; i++) {
         let ind = Math.floor(Math.random() * words.length);
         text += words[ind];
-        if (i != 99) text += " ";
+        if (i != 29) text += " ";
       }
 
       const result = await tx.game.update({

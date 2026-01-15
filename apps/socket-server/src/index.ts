@@ -47,7 +47,7 @@ server.on("connection", (wss) => {
     const decrtyptedMsgBytes = AES.decrypt(data.toString(), secretKey);
     const decrtyptedMsg = decrtyptedMsgBytes.toString(CryptoJS.enc.Utf8);
     const info: message = JSON.parse(decrtyptedMsg as string);
-    // console.log(info);
+    console.log(info);
     if (info.msg === "Join Room") {
       await room_join(info, wss);
     } else {

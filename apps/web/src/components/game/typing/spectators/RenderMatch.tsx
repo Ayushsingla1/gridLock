@@ -19,6 +19,7 @@ export default function RenderMatch({
   setMatchDetails: Dispatch<SetStateAction<Match | null>>;
   socketRef: RefObject<WebSocket | null>;
 }) {
+  // console.log(matchDetails.r);
   const [user1Positions, setUser1Position] = useState<cursorPositions>({
     currentWord: 0,
     pointerPos: 0,
