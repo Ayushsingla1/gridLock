@@ -14,7 +14,7 @@ export default async function TypingPage({ params }: TypeParams) {
   return (
     <div className="min-h-screen w-screen flex flex-col gap-y-4">
       <Nav />
-      <GameLogic gameId="chess" roomId={roomId} />
+      <GameLogic gameId="typing" roomId={roomId} />
     </div>
   );
 }

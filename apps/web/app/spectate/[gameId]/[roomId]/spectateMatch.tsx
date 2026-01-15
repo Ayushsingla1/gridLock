@@ -29,7 +29,7 @@ export default function SpectateMatch({
   const router = useRouter();
   const ep = "/api/v1/room/getMatchInfo";
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
-  const secretKey = process.env.NEXT_ENCRYPTION_SECRET || "SECRET";
+  const secretKey = "SECRET";
   const url = process.env.NEXT_PUBLIC_WSS_SERVER!;
   const socketRef = useRef<WebSocket>(null);
   const { socket, loading } = useSocket(url, socketRef);
@@ -46,7 +46,7 @@ export default function SpectateMatch({
         .then((res) => {
           console.log(res.data);
           if (res.data.success) {
-            setMatchDetails(res.data.roomDetails);
+            setMatchDetails(res.data.roomDetails.roomDetails);
           }
         })
         .catch((error) => {
@@ -79,6 +79,7 @@ export default function SpectateMatch({
             msg: "Join Room",
             userId: userRef.current,
           };
+          console.log(socketMsg);
           const encryptedMsg = AES.encrypt(
             JSON.stringify(socketMsg),
             secretKey,

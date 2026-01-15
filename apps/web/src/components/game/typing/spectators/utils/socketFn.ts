@@ -21,6 +21,7 @@ export const listenTypingSocket = (
     const decryptedMsgBytes = AES.decrypt(ev.data, secretKey);
     const decryptedMsg = decryptedMsgBytes.toString(CryptoJS.enc.Utf8);
     const recMsg = JSON.parse(decryptedMsg as string) as typingRecMsg;
+    console.log(recMsg);
     if (recMsg.user == matchDetails?.user1_Id) {
       setUser1Position({
         pointerPos: recMsg.pointerPos,
