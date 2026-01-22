@@ -2,7 +2,6 @@ import { WebSocket } from "ws";
 import { message, role, Rooms } from "./index";
 import { secretKey } from "./index";
 import { AES } from "crypto-js";
-import prisma from "@repo/db/dbClient";
 import { announceResult } from "./contractFn";
 import { logWinnerDB } from "./announceWinner";
 // send message to everyone
@@ -18,9 +17,11 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
   const room = Rooms.get(challengeId)!;
   const parsedMsg = JSON.parse(msg);
 
+  console.log(parsedMsg);
+
   const sender = userId === room.user1 ? 1 : 0;
 
-  if (userId === room.user1) {
+  if (userId === room.user1 || userId === room.user2) {
     const msgToUser = {
       ...parsedMsg,
       user: userId,
@@ -31,10 +32,7 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
     const encryptedMsg = AES.encrypt(sendMsg, secretKey).toString();
     if (parsedMsg.isComplete) {
       const response = await logWinnerDB(challengeId, userId);
-      const annouceWinnerResponse = await announceResult(
-        info.challengeId,
-        sender,
-      );
+      const annouceWinnerResponse = await announceResult(challengeId, sender);
     }
     room.spectators.forEach((ws) => ws.send(encryptedMsg));
     if (parsedMsg.isComplete) {
