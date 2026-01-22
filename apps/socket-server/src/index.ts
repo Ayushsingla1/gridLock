@@ -6,12 +6,20 @@ import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
 import { configDotenv } from "dotenv";
 import { chessHandler } from "./playChess";
+import { ethers } from "ethers";
+import { abi, contractAddress } from "./utils/contractInfo";
 
 configDotenv();
 
-const privateKey = process.env.PRIVATE_KEY!;
+// const privateKey = process.env.PRIVATE_KEY!;
 const server = new WebSocketServer({ port: 8080 });
 export const secretKey = process.env.ECRYPTION_SECRET!;
+const privateKey = process.env.PRIVATE_KEY!;
+// console.log(privateKey);
+const provider = new ethers.JsonRpcProvider("https://rpc.sepolia.mantle.xyz");
+const wallet = new ethers.Wallet(privateKey, provider);
+export const contract = new ethers.Contract(contractAddress, abi, wallet);
+console.log(contract);
 
 export type roomInfo = {
   user1: string;

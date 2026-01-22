@@ -1,4 +1,4 @@
-import Letter from "./letter";
+import Letter from "./Letter";
 export default function Word({
   word,
   wordIdx,

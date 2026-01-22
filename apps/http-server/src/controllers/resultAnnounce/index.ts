@@ -11,7 +11,8 @@ const contract = new ethers.Contract(contractAddress, abi, wallet);
 export const announceResult = async (gameId: string, winner: number) => {
   try {
     const tx = await contract.resultAnnounced!(gameId, winner);
-    const res = await tx.waitForTransactionReceipt();
+    const res = await tx.wait();
+    console.log(res);
     if (res) return { success: true };
   } catch (e) {
     console.log(e);
