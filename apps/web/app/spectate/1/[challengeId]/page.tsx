@@ -3,14 +3,13 @@ import SpectateMatch from "./spectateMatch";
 
 type pageProp = {
   params: Promise<{
-    roomId: string;
-    gameId: string;
+    challengeId: string;
   }>;
 };
 
 export default async function Spectate({ params }: pageProp) {
-  const roomId = (await params).roomId;
-  const gameId = (await params).gameId;
+  const roomId = (await params).challengeId;
+  const gameId = "typing";
   console.log(roomId, " ", gameId);
   return (
     <div className="w-screen flex flex-col gap-y-10 h-screen">

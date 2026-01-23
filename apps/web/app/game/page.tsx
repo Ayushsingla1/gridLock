@@ -65,7 +65,7 @@ export default function GamePage() {
   const { getToken, userId } = useAuth();
   const router = useRouter();
   const { user, isLoaded } = useUser();
-  const username = process.env.NEXT_PUBLIC_USERNAME;
+  // const username = process.env.NEXT_PUBLIC_USERNAME;
 
   useEffect(() => {
     if (isLoaded) {
