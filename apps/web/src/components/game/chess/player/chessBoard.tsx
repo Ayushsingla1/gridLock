@@ -28,6 +28,7 @@ const ChessBox = ({
   possibleMove,
   setPossibleMove,
   boardRotation,
+  isSpectator,
 }: {
   boxNumber: number;
   chessBoxState: string;
@@ -42,8 +43,11 @@ const ChessBox = ({
   possibleMove: boolean;
   setPossibleMove: Dispatch<SetStateAction<Set<number> | undefined>>;
   boardRotation: string;
+  isSpectator: boolean;
 }) => {
   const clickHandler = () => {
+    console.log(isSpectator);
+    if (isSpectator) return;
     if (
       !enabled &&
       clicked &&
@@ -52,7 +56,7 @@ const ChessBox = ({
     ) {
       const socketMsg = JSON.stringify({
         role: role.Player,
-        gameId: "chess",
+        gameId: 2,
         challengeId: challengeId,
         userId: userId,
         msg: JSON.stringify({
@@ -90,15 +94,15 @@ const ChessBox = ({
       <div
         className={`w-full h-full flex items-center justify-center ${rotationStyle}`}
       >
-        {chessBoxState.includes("K") ? (
+        {chessBoxState[1] === "K" ? (
           <TbChessKingFilled {...iconProps} />
-        ) : chessBoxState.includes("Q") ? (
+        ) : chessBoxState[1] === "Q" ? (
           <TbChessQueenFilled {...iconProps} />
-        ) : chessBoxState.includes("R") ? (
+        ) : chessBoxState[1] === "R" ? (
           <TbChessRookFilled {...iconProps} />
-        ) : chessBoxState.includes("H") ? (
+        ) : chessBoxState[1] === "H" ? (
           <TbChessKnightFilled {...iconProps} />
-        ) : chessBoxState.includes("B") ? (
+        ) : chessBoxState[1] === "B" ? (
           <TbChessBishopFilled {...iconProps} />
         ) : chessBoxState !== "P" ? (
           <TbChessFilled {...iconProps} />
@@ -107,7 +111,7 @@ const ChessBox = ({
     );
   };
 
-  return (
+  return !isSpectator ? (
     <div
       onClick={clickHandler}
       className={`
@@ -120,6 +124,15 @@ const ChessBox = ({
       {possibleMove && (
         <div className="absolute z-10 w-1/3 h-1/3 rounded-full bg-black/10 backdrop-blur-sm border-2 border-black/5" />
       )}
+      {renderPiece()}
+    </div>
+  ) : (
+    <div
+      className={`
+          relative flex items-center justify-center aspect-square cursor-pointer select-none transition-all
+          ${isDark ? "bg-[#769656]" : "bg-[#eeeed2]"}
+        `}
+    >
       {renderPiece()}
     </div>
   );

@@ -3,7 +3,7 @@ import { Rooms } from ".";
 import { initializeChess } from "./chessInitialize";
 import { AES } from "crypto-js";
 
-export const JoinMsgHandler = (
+export const chessStateHandler = (
   socket: WebSocket,
   userId: string,
   challengeId: string,

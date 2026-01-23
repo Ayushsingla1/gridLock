@@ -1,25 +1,19 @@
 import { WebSocket, WebSocketServer } from "ws";
-import { room_join } from "./join_room";
-import { distributionHandler } from "./playTyping";
 import "dotenv/config";
 import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
 import { configDotenv } from "dotenv";
-import { chessHandler } from "./playChess";
 import { ethers } from "ethers";
 import { abi, contractAddress } from "./utils/contractInfo";
+import { mainHandler } from "./joinHandler";
 
 configDotenv();
-
-// const privateKey = process.env.PRIVATE_KEY!;
 const server = new WebSocketServer({ port: 8080 });
 export const secretKey = process.env.ECRYPTION_SECRET!;
 const privateKey = process.env.PRIVATE_KEY!;
-// console.log(privateKey);
 const provider = new ethers.JsonRpcProvider("https://rpc.sepolia.mantle.xyz");
 const wallet = new ethers.Wallet(privateKey, provider);
 export const contract = new ethers.Contract(contractAddress, abi, wallet);
-console.log(contract);
 
 export type roomInfo = {
   user1: string;
@@ -31,6 +25,7 @@ export type roomInfo = {
   user2_socket: WebSocket | null;
   chessState?: Record<number, string>;
   turn?: string;
+  isCompleted?: boolean;
 };
 
 export const Rooms: Map<string, roomInfo> = new Map();
@@ -42,7 +37,7 @@ export enum role {
 
 export type message = {
   role: role;
-  gameId: string;
+  gameId: number;
   challengeId: string;
   msg: string;
   userId: string;
@@ -56,16 +51,6 @@ server.on("connection", (wss) => {
     const decrtyptedMsg = decrtyptedMsgBytes.toString(CryptoJS.enc.Utf8);
     const info: message = JSON.parse(decrtyptedMsg as string);
     console.log(info);
-    if (info.msg === "Join Room") {
-      await room_join(info, wss);
-    } else {
-      if (info.gameId === "chess") {
-        // console.log("hi tehre");
-        await chessHandler(info, wss);
-      } else if (info.gameId === "typing") {
-        console.log("hi there");
-        await distributionHandler(info, wss);
-      }
-    }
+    await mainHandler(info, wss);
   });
 });

@@ -17,7 +17,7 @@ import Timer from "@/components/ui/Timer";
 
 export type message = {
   role: role;
-  gameId: string;
+  gameId: number;
   challengeId: string;
   msg: string;
   userId: string;
@@ -26,7 +26,7 @@ export type message = {
 
 interface gameLogicProps {
   roomId: string;
-  gameId: string;
+  gameId: number;
 }
 
 export default function GameLogic({ roomId, gameId }: gameLogicProps) {

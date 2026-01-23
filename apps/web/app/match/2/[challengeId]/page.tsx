@@ -7,14 +7,12 @@ type TypeParams = {
   }>;
 };
 
-export default async function TypingPage({ params }: TypeParams) {
-  // const gameId = (await params).gameId;
+export default async function ChessPage({ params }: TypeParams) {
   const roomId = (await params).challengeId;
 
   return (
     <div className="min-h-screen w-screen flex flex-col gap-y-4">
-      <Nav />
-      <Chess roomId={roomId} />
+      <Chess roomId={roomId} isSpectator={false} />
     </div>
   );
 }
