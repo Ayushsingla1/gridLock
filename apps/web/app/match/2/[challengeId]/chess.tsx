@@ -71,7 +71,7 @@ const CapturedBar = ({
       </span>
       <div className="flex flex-col gap-3 mt-4 overflow-y-auto no-scrollbar">
         {pieces.map((p, i) => {
-          const Icon = icons[p[1]] || TbChessFilled;
+          const Icon = icons[p[1]!] || TbChessFilled;
           return (
             <Icon
               key={i}
@@ -84,7 +84,13 @@ const CapturedBar = ({
   );
 };
 
-const Chess = ({ roomId }: { roomId: string }) => {
+const Chess = ({
+  roomId,
+  isSpectator,
+}: {
+  roomId: string;
+  isSpectator: boolean;
+}) => {
   const { user, isLoaded, isSignedIn } = useUser();
   const socketRef = useRef<WebSocket>(null);
   const router = useRouter();
@@ -157,8 +163,8 @@ const Chess = ({ roomId }: { roomId: string }) => {
       const msg = AES.encrypt(
         JSON.stringify({
           userId: user.username!,
-          gameId: "chess",
-          role: role.Player,
+          gameId: 2,
+          role: isSpectator ? role.Spectator : role.Player,
           challengeId: roomId,
           msg: "Join Room",
         }),
@@ -173,7 +179,9 @@ const Chess = ({ roomId }: { roomId: string }) => {
       const dec = JSON.parse(
         AES.decrypt(ev.data, "SECRET").toString(CryptoJS.enc.Utf8),
       );
-      if (dec.status === "Joined") {
+
+      console.log(dec);
+      if (dec.status == "Joined") {
         setColor(dec.color);
         setChessState(dec.chessState);
         setTurn(dec.turn);
@@ -233,6 +241,7 @@ const Chess = ({ roomId }: { roomId: string }) => {
                   challengeId={roomId}
                   possibleMove={possibleMoves?.has(item) || false}
                   setPossibleMove={setPossibleMoves}
+                  isSpectator={isSpectator}
                 />
               ))}
             </div>

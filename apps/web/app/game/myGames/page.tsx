@@ -3,7 +3,7 @@ import Nav from "@/components/ui/nav";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import RegisteredGames from "@/components/ui/registeredGames";
+import RegisteredGames from "@/components/ui/RegisteredGames";
 import { Match } from "@/types/gameTypes";
 
 export default function MyGames() {

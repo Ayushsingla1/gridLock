@@ -1,4 +1,4 @@
-import Word from "./word";
+import Word from "./Word";
 
 export default function RenderParagrah({
   paragraph,

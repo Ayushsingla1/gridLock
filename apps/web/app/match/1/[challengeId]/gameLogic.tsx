@@ -9,15 +9,15 @@ import { cursorPositions, Match, role, typingRecMsg } from "@/types/gameTypes";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import { motion } from "motion/react";
-import LoadingDetails from "@/components/ui/loadingDetails";
+import LoadingDetails from "@/components/ui/LoadingDetails";
 import NoMatchFound from "@/components/ui/noMatchFound";
 import MatchWinnerDec from "@/components/ui/matchWinnerDec";
 import MatchOngoingStatus from "@/components/ui/noWinner";
-import Timer from "@/components/ui/timer";
+import Timer from "@/components/ui/Timer";
 
 export type message = {
   role: role;
-  gameId: string;
+  gameId: number;
   challengeId: string;
   msg: string;
   userId: string;
@@ -26,7 +26,7 @@ export type message = {
 
 interface gameLogicProps {
   roomId: string;
-  gameId: string;
+  gameId: number;
 }
 
 export default function GameLogic({ roomId, gameId }: gameLogicProps) {
@@ -201,6 +201,7 @@ export default function GameLogic({ roomId, gameId }: gameLogicProps) {
         pointerPos: tempPointerPos,
         prevLetters: tempPrevLetters,
         currentWord: tempCurrentWord,
+        isComplete: false,
       };
       if (tempPointerPos == paragraph.length) {
         cursorJsonMsg.isComplete = true;

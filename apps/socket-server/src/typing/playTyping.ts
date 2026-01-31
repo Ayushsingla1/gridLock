@@ -1,14 +1,17 @@
 import { WebSocket } from "ws";
-import { message, role, Rooms } from "./index";
-import { secretKey } from "./index";
+import { message, role, Rooms, secretKey } from "../index";
 import { AES } from "crypto-js";
-import prisma from "@repo/db/dbClient";
-import { announceResult } from "./contractFn";
-import { logWinnerDB } from "./announceWinner";
+import { announceResult } from "../contractFn";
+import { logWinnerDB } from "../announceWinner";
+import { JoinHandler } from "../joinHandler";
 // send message to everyone
-export const distributionHandler = async (info: message, wss: WebSocket) => {
+export const typingHandler = async (info: message, wss: WebSocket) => {
   const { gameId, challengeId, msg, userId } = info;
 
+  if (msg == "Join Room") {
+    JoinHandler(challengeId, info.role, userId, wss);
+    return { success: true };
+  }
   if (info.role != role.Player || !Rooms.has(challengeId)) {
     console.log("closed in dist");
     wss.close();
@@ -18,9 +21,11 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
   const room = Rooms.get(challengeId)!;
   const parsedMsg = JSON.parse(msg);
 
+  console.log(parsedMsg);
+
   const sender = userId === room.user1 ? 1 : 0;
 
-  if (userId === room.user1 || userId == room.user2) {
+  if (userId === room.user1 || userId === room.user2) {
     const msgToUser = {
       ...parsedMsg,
       user: userId,
@@ -32,10 +37,7 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
     if (parsedMsg.isComplete) {
       console.log("hi there");
       const response = await logWinnerDB(challengeId, userId);
-      const annouceWinnerResponse = await announceResult(
-        info.challengeId,
-        sender,
-      );
+      const annouceWinnerResponse = await announceResult(challengeId, sender);
     }
     room.spectators.forEach((ws) => ws.send(encryptedMsg));
     if (parsedMsg.isComplete) {
