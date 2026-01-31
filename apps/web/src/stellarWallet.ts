@@ -1,12 +1,10 @@
 import {
   allowAllModules,
-  FREIGHTER_ID,
   StellarWalletsKit,
   WalletNetwork,
+  XBULL_ID,
 } from "@creit.tech/stellar-wallets-kit";
 
-const NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
-const SELECTED_WALLET_ID = NETWORK_PASSPHRASE;
 
 function getSelectedWalletId() {
   return localStorage.getItem('selectedWalletId');
@@ -18,7 +16,7 @@ const kit = new StellarWalletsKit({
   // StellarWalletsKit forces you to specify a wallet, even if the user didn't
   // select one yet, so we default to Freighter.
   // We'll work around this later in `getPublicKey`.
-  selectedWalletId: getSelectedWalletId() ?? FREIGHTER_ID,
+  selectedWalletId: XBULL_ID,
 });
 
 export const signTransaction = kit.signTransaction.bind(kit);
@@ -30,12 +28,12 @@ export async function getPublicKey() {
 }
 
 export async function setWallet(walletId: string) {
-  localStorage.setItem(SELECTED_WALLET_ID, walletId);
+  localStorage.setItem(`WALLET_ID`, walletId);
   kit.setWallet(walletId);
 }
 
 export async function disconnect(callback?: () => Promise<void>) {
-  localStorage.removeItem(SELECTED_WALLET_ID);
+  localStorage.removeItem(`WALLET_ID`);
   kit.disconnect();
   if (callback) await callback();
 }

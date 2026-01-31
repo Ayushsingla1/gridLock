@@ -12,12 +12,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@repo/checks": "workspace:*",
     "@repo/db": "workspace:*",
     "@repo/types": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@repo/checks": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
   },
   "dependencies": {
+    "@stellar/stellar-sdk": "^14.5.0",
     "@types/crypto-js": "^4.2.2",
     "@types/ws": "^8.18.1",
     "crypto-js": "^4.2.0",

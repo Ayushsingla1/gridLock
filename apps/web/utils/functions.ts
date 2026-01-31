@@ -9,27 +9,6 @@ import { Address } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import axios from "axios";
 
-export const createGame = async (gameId: string) => {
-  try {
-    const result = await writeContract(config, {
-      abi: contractABI,
-      address: contractAddress,
-      functionName: "createGame",
-      args: [gameId],
-    });
-
-    const confirmation = await waitForTransactionReceipt(config, {
-      hash: result,
-    });
-
-    if (confirmation.status === "success") return { success: true };
-    return { success: false };
-  } catch (error) {
-    console.log(error);
-    return { success: false };
-  }
-};
-
 export const getUserBet = async (gameId: string, userAddress: Address) => {
   try {
     const result = await readContract(config, {

@@ -9,19 +9,23 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { config } from "../../../../utils/wagmiProvider";
-import {
-  readContract,
-  waitForTransactionReceipt,
-  writeContract,
-} from "@wagmi/core";
-import {
-  contractABI,
-  contractAddress,
-  usdContractAddress,
-} from "../../../../utils/contractInfo";
-import { erc20Abi } from "viem";
-import { useAccount } from "wagmi";
+//import {
+//  readContract,
+//  waitForTransactionReceipt,
+//  writeContract,
+//} from "@wagmi/core";
+
+//import {
+//  contractABI,
+//  contractAddress,
+//  usdContractAddress,
+
+//import { erc20Abi } from "viem";
+//import { useAccount } from "wagmi";
 import axios from "axios";
+import { getPublicKey } from "@/stellarWallet";
+import { getAllowance, getAmount, getApproval, stakeAmount } from "../../../../utils/StellarFns/functions";
+import { getGame } from "../../../../utils/StellarFns/functions";
 
 const BettingPanel = ({
   player1,
@@ -40,12 +44,16 @@ const BettingPanel = ({
   const [betShares, setBetShares] = useState<number>(0);
   const [betYes, setBetYes] = useState<boolean>(true);
   const [gameContractDetails, setGameContractDetails] = useState<any>();
-  const { address } = useAccount();
+  const [address, setAddress] = useState<string>("");
   const HTTP_URL = process.env.NEXT_PUBLIC_HTTP_SERVER;
   const ep = "/api/v1/user/stake";
 
   useEffect(() => {
     getGameFromContract();
+    getPublicKey().then(addr => {
+      if(addr)
+        setAddress(addr!.toString());
+    })
   }, []);
 
   useEffect(() => {
@@ -56,18 +64,16 @@ const BettingPanel = ({
 
   const getPrice = async (gameId: string, amount: number, betYes: boolean) => {
     // console.log(gameId, amount , betYes);
-    const res: BigInt = (await readContract(config, {
-      abi: contractABI,
-      functionName: "getAmount",
-      args: [gameId, betYes, BigInt(String(amount))],
-      address: contractAddress,
-    })) as BigInt;
+    const res = await getAmount(gameId, amount, betYes ? 1 : 0);
 
-    // console.log(res);
+    if(!res?.success){
+      console.error("error while getting amount");
+    }
+    console.log(res?.amount);
 
     // console.log(parseInt(res.toString())/10**12)
-    setEstAmt(parseInt(res.toString()) / 10 ** 12);
-    return parseInt(res.toString());
+    setEstAmt(parseInt((res?.amount!).toString()));
+    return parseInt((res?.amount!).toString());
   };
 
   const getEstAmt = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,15 +83,13 @@ const BettingPanel = ({
   };
 
   const getGameFromContract = async () => {
-    const res = await readContract(config, {
-      abi: contractABI,
-      functionName: "getGame",
-      args: [gameId],
-      address: contractAddress,
-    });
+    const res = await getGame(gameId) 
     console.log(res);
-    setGameContractDetails(res);
-    console.log(parseInt((res as any)[6]) / 10 ** 12);
+    if(!res.success){
+      console.error("error while getting the game form the contract")
+      return
+    }
+    setGameContractDetails(res.response);
   };
 
   const purchaseHandler = async () => {
@@ -95,12 +99,14 @@ const BettingPanel = ({
       return;
     }
 
-    const result = await readContract(config, {
-      address: usdContractAddress,
-      abi: erc20Abi,
-      functionName: "allowance",
-      args: [address!, contractAddress],
-    });
+    const result = await getAllowance();
+    console.log(result)
+    console.log("amount: ", parseInt(result.amount?.toString()!))
+
+    if(!result.success){
+      console.error("err while getting the allowance");
+      return;
+    }
 
     const approveAmount = parseInt(result.toString());
 
@@ -114,38 +120,27 @@ const BettingPanel = ({
     if (approveAmount > finalPrice) {
       await buy(finalPrice);
     } else {
-      const allowResult = await writeContract(config, {
-        address: usdContractAddress,
-        abi: erc20Abi,
-        functionName: "approve",
-        args: [contractAddress, BigInt(finalPrice.toString())],
-      });
+      const allowResult = await getApproval(BigInt(finalPrice.toString()));
 
-      const confirmation = await waitForTransactionReceipt(config, {
-        hash: allowResult,
-      });
+      if(!allowResult.success){
+        console.error("error while getting approval")
+        return;
+      }
 
-      console.log("confirmation for allowance", confirmation);
-
-      if (confirmation) await buy(finalPrice);
+      if (allowResult.success) await buy(finalPrice);
     }
   };
 
   const buy = async (price: number) => {
     const bet = betYes === true;
     console.log(price);
-    const res = await writeContract(config, {
-      abi: contractABI,
-      address: contractAddress,
-      functionName: "stakeAmount",
-      args: [gameId, betShares, bet, BigInt(price.toString())],
-    });
+    const res = await stakeAmount(gameId, betShares, bet ? 1:0, address, price);
 
-    const confirmation = await waitForTransactionReceipt(config, {
-      hash: res,
-    });
+    if(!res.success){
+      console.error("err while staking!");
+    }
 
-    if (confirmation) {
+    if (res.success) {
       console.log(betShares);
       const _dbConfirmation = await axios.post(`${HTTP_URL}${ep}`, {
         userId: userId,

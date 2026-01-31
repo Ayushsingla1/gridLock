@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, Loader2, ArrowRight } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useAccount } from "wagmi";
 import axios from "axios";
-import { redeemAmount } from "../../utils/functions";
+import { redeemAmount } from "../../utils/StellarFns/functions";
 
 interface StakedMatch {
   matchId: string;
@@ -28,7 +28,7 @@ const RedeemStake = () => {
   const clickHandler = async (gameId: string) => {
     if (!address || !user?.username || !gameId) return;
     setClaiming(gameId);
-    const result = await redeemAmount(gameId, user?.username);
+    const result = await redeemAmount(gameId, user.username);
     if (result.success) {
       alert("Amount withdrawn successfully");
       setData((prev) =>
