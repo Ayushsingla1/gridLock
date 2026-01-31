@@ -7,21 +7,27 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+// import { ConnectButton } from "@rainbow-me/rainbowkit";
+// import { useAccount } from "wagmi";
+import ConnectBtnStellar from "../../components/stellarUi/connectBtnStellar"
+import { getPublicKey, setWallet } from "@/stellarWallet";
 
 export default function Nav() {
   const router = useRouter();
-  const [walletAddress, setWalletAddress] = useState<`0x${string}` | undefined>(
+  const [walletAddress, setWalletAddress] = useState<`${string}` | undefined>(
     undefined,
   );
-  const { address } = useAccount();
-  const { user, isLoaded, isSignedIn } = useUser();
-  const username = process.env.NEXT_PUBLIC_USERNAME;
 
   useEffect(() => {
-    setWalletAddress(address);
-  }, [address]);
+    getPublicKey().then(addr => {
+      if(addr){
+        setWalletAddress(addr as string);
+        setWallet(addr as string);
+      }
+    });
+  }, [])
+  const { user, isLoaded, isSignedIn } = useUser();
+  const username = process.env.NEXT_PUBLIC_USERNAME;
 
   useEffect(() => {
     if (isSignedIn) {
@@ -110,7 +116,7 @@ export default function Nav() {
                   </Button>
                 </Link>
               )}
-              <ConnectButton />
+              <ConnectBtnStellar/>
             </div>
           </div>
         </div>

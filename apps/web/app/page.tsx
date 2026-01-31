@@ -25,7 +25,8 @@ import {
   Play,
 } from "lucide-react";
 import { useState } from "react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+// import { ConnectButton } from "@rainbow-me/rainbowkit";
+import ConnectBtnStellar from "../src/components/stellarUi/connectBtnStellar"
 import Nav from "@/components/ui/nav";
 import { useRouter } from "next/navigation";
 
@@ -182,7 +183,6 @@ export default function HomePage() {
                 and let the world watch. Nothing like this exists — until now.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <ConnectButton />
                 <Button
                   size="lg"
                   variant="outline"

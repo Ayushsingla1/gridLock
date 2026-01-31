@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   name           String
-  username       String  @unique
+  username       String  @unique @id
   matchesAsUser1 Match[] @relation("challenger")
   matchesAsUser2 Match[] @relation("challenged")
   winner         Match[] @relation("winner")

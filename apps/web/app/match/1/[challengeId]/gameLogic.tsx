@@ -219,6 +219,7 @@ export default function GameLogic({ roomId, gameId }: gameLogicProps) {
         secretKey,
       ).toString();
       socketRef.current?.send(encryptedMsg);
+      console.log("send")
     }
   };
 
