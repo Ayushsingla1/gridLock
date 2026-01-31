@@ -9,11 +9,11 @@ import { cursorPositions, Match, role, typingRecMsg } from "@/types/gameTypes";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import { motion } from "motion/react";
-import LoadingDetails from "@/components/ui/LoadingDetails";
+import LoadingDetails from "@/components/ui/loadingDetails";
 import NoMatchFound from "@/components/ui/noMatchFound";
 import MatchWinnerDec from "@/components/ui/matchWinnerDec";
 import MatchOngoingStatus from "@/components/ui/noWinner";
-import Timer from "@/components/ui/Timer";
+import Timer from "@/components/ui/timer";
 
 export type message = {
   role: role;

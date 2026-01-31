@@ -3,17 +3,11 @@ import "dotenv/config";
 import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
 import { configDotenv } from "dotenv";
-import { ethers } from "ethers";
-import { abi, contractAddress } from "./utils/contractInfo";
 import { mainHandler } from "./joinHandler";
 
 configDotenv();
 const server = new WebSocketServer({ port: 8080 });
 export const secretKey = process.env.ECRYPTION_SECRET!;
-const privateKey = process.env.PRIVATE_KEY!;
-const provider = new ethers.JsonRpcProvider("https://rpc.sepolia.mantle.xyz");
-const wallet = new ethers.Wallet(privateKey, provider);
-export const contract = new ethers.Contract(contractAddress, abi, wallet);
 
 export type roomInfo = {
   user1: string;

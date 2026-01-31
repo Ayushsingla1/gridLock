@@ -1,1 +1,1 @@
-{"root":["./src/announcewinner.ts","./src/chessinitialize.ts","./src/chessjoinmsg.ts","./src/contractfn.ts","./src/index.ts","./src/joinhandler.ts","./src/join_room.ts","./src/chess/playchess.ts","./src/typing/playtyping.ts","./src/utils/contractinfo.ts"],"version":"5.9.2"}
+{"root":["./src/announcewinner.ts","./src/chessinitialize.ts","./src/chessjoinmsg.ts","./src/contractfn.ts","./src/index.ts","./src/joinhandler.ts","./src/chess/playchess.ts","./src/typing/playtyping.ts","./src/utils/contractinfo.ts"],"version":"5.9.2"}
