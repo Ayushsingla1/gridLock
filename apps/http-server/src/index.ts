@@ -4,7 +4,9 @@ import cors from "cors";
 import mainRouter from "./controllers/mainRouter";
 
 configDotenv();
+
 const app = express();
+
 app.use(express.json());
 
 app.use(
@@ -12,7 +14,6 @@ app.use(
     origin: process.env.FRONT_END,
   }),
 );
-// app.use(middleware);
 
 app.use("/api/v1", mainRouter);
 

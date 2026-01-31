@@ -6,14 +6,11 @@ import { configDotenv } from "dotenv";
 import { ethers } from "ethers";
 import { abi, contractAddress } from "./utils/contractInfo";
 import { mainHandler } from "./joinHandler";
+import { Keypair } from "@stellar/stellar-sdk";
 
 configDotenv();
 const server = new WebSocketServer({ port: 8080 });
 export const secretKey = process.env.ECRYPTION_SECRET!;
-const privateKey = process.env.PRIVATE_KEY!;
-const provider = new ethers.JsonRpcProvider("https://rpc.sepolia.mantle.xyz");
-const wallet = new ethers.Wallet(privateKey, provider);
-export const contract = new ethers.Contract(contractAddress, abi, wallet);
 
 export type roomInfo = {
   user1: string;
