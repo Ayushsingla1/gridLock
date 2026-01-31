@@ -20,7 +20,7 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
 
   const sender = userId === room.user1 ? 1 : 0;
 
-  if (userId === room.user1) {
+  if (userId === room.user1 || userId == room.user2) {
     const msgToUser = {
       ...parsedMsg,
       user: userId,
@@ -30,6 +30,7 @@ export const distributionHandler = async (info: message, wss: WebSocket) => {
     const sendMsg = JSON.stringify(msgToUser);
     const encryptedMsg = AES.encrypt(sendMsg, secretKey).toString();
     if (parsedMsg.isComplete) {
+      console.log("hi there");
       const response = await logWinnerDB(challengeId, userId);
       const annouceWinnerResponse = await announceResult(
         info.challengeId,

@@ -1,5 +1,5 @@
 export const isValid = (
-  piece: string,
+  piece : string,
   initialPos: number,
   finalPos: number,
   chessState: Record<number, string>,
