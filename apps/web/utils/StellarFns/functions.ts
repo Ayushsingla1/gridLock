@@ -42,8 +42,11 @@ const signTransactionXDR = async (xdr: string, address: string) => {
 };
 
 export const getApproval = async (amount: bigint) => {
-  const address = (await getAddress()).address;
-
+  const address = localStorage.getItem("WALLET_ADDRESS");
+  if(!address) {
+      console.log("address not found");
+      return;
+    }
   const contract = new USDClient.Client({
     rpcUrl: rpcUrl,
     publicKey: address,
@@ -80,7 +83,7 @@ export const getAmount = async (game_id: string, shares: number, bet: number) =>
       bet: bet,
       shares: BigInt(String(shares)),
     });
-    console.log(amount);
+    console.log("amount from getAmount is :" , amount);
       if(amount.isOk()){
         return { success: true, amount: amount.unwrap() };
       }
@@ -92,7 +95,7 @@ export const getAmount = async (game_id: string, shares: number, bet: number) =>
 
 export const tx = async (game_id: string, shares: number, bet: number) => {
   // game_id = "6a99edbd-a49a-4f3e-b3f5-160556b4f90c";
-  const address = (await getAddress()).address;
+  const address = localStorage.getItem("WALLET_ADDRESS");
 
   console.log(address);
   if (!address) {
@@ -231,7 +234,7 @@ export const getAllowance = async (): Promise<{success : boolean, amount? : bigi
       ...USDClient.networks.testnet,
     })
     
-    const account = (await getAddress()).address;
+    const account = localStorage.getItem("WALLET_ADDRESS");
     
     if (!account) return {success : false};
   

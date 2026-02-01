@@ -1,45 +1,33 @@
-import { connect, getPublicKey, setWallet } from "@/stellarWallet";
+import { connect, getStoredAddress } from "@/stellarWallet";
 import { useEffect, useState } from "react";
 
 export default function WalletConnectButton() {
-  const [localAddr, setLocalAddr] = useState<string>("");
-
-
-  const [connected, setConnected] = useState(false);
+  const [address, setAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState<string>("");
-  
-  const connectWalletCallBack = (id: string) => {
-    if(id) {
-      setConnected(true);
+
+  // On mount: just read localStorage
+  useEffect(() => {
+    const stored = getStoredAddress();
+    if (stored) {
+      setAddress(stored);
     }
-    return;
-  } 
+  }, []);
 
   const connectWallet = async () => {
-    setLoading(true);
-    await connect(connectWalletCallBack);
-    getPublicKey().then(addr => {
-      if(addr){
-        setWallet(addr);
+    try {
+      setLoading(true);
+      await connect((addr) => {
         setAddress(addr);
-      }
-    });
-    setLoading(false);
-  } 
-
-  useEffect(() => {
-    getPublicKey().then(addr => {
-      if(addr) {
-        setAddress(addr);
-      }
-    }); 
-  }, [])
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <button
       onClick={connectWallet}
-      disabled={loading || connected}
+      disabled={loading || !!address}
       className="
         bg-neutral-900 
         border border-neutral-800 
@@ -50,10 +38,14 @@ export default function WalletConnectButton() {
         hover:bg-neutral-800 
         transition
         flex items-center gap-2
+        disabled:opacity-50
       "
     >
-      {loading ? "Connecting..." : connected  && address ? `${address.slice(0, 5)}...${address.slice(-5)}` : "Connect Wallet"}
+      {loading
+        ? "Connecting..."
+        : address
+        ? `${address.slice(0, 5)}...${address.slice(-5)}`
+        : "Connect Wallet"}
     </button>
   );
 }
-

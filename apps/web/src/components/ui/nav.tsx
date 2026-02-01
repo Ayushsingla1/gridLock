@@ -19,13 +19,14 @@ export default function Nav() {
   );
 
   useEffect(() => {
-    getPublicKey().then(addr => {
-      if(addr){
-        setWalletAddress(addr as string);
-        setWallet(addr as string);
-      }
-    });
+    const address = localStorage.getItem('WALLET_ADDRESS') 
+    if(address?.length){
+      console.log("navAddr: ", address);
+      setWalletAddress(address);
+    }
+
   }, [])
+
   const { user, isLoaded, isSignedIn } = useUser();
   const username = process.env.NEXT_PUBLIC_USERNAME;
 
@@ -116,7 +117,7 @@ export default function Nav() {
                   </Button>
                 </Link>
               )}
-              <ConnectBtnStellar/>
+              <ConnectBtnStellar address={walletAddress}/>
             </div>
           </div>
         </div>

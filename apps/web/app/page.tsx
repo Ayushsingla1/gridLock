@@ -28,7 +28,6 @@ import { useState } from "react";
 // import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Nav from "@/components/ui/nav";
 import { useRouter } from "next/navigation";
-import { getAmount } from "../utils/StellarFns/functions";
 import { getGame } from "../utils/StellarFns/functions";
 
 
@@ -36,22 +35,6 @@ export default function HomePage() {
   const [hoveredGame, setHoveredGame] = useState<number | null>(null);
   const [activeFeature, setActiveFeature] = useState(0);
   const router = useRouter();
-
-  const contractCall = () => {
-
-    const getGameFromContract = async () => {
-      const res = await getGame("6a99edbd-a49a-4f3e-b3f5-160556b4f90c") 
-      console.log("Hi");
-      console.log(res);
-      if(!res.success){
-        console.error("error while getting the game form the contract")
-        return
-      }
-      // setGameContractDetails(res.resoponse);
-    };
-
-    getGameFromContract();
-  }
 
   const gameCards = [
     {
@@ -201,16 +184,6 @@ export default function HomePage() {
                 and let the world watch. Nothing like this exists — until now.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-primary/50 text-primary hover:bg-primary/10 text-lg px-8 py-6 bg-transparent"
-                  onClick={contractCall}
-                >
-                  contract call
-                </Button>
-                  
                 <Button
                   size="lg"
                   variant="outline"

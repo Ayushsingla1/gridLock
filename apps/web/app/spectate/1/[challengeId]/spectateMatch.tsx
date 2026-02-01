@@ -20,7 +20,7 @@ export default function SpectateMatch({
   gameId,
 }: {
   roomId: string;
-  gameId: string;
+  gameId: number;
 }) {
   const [loadingDetails, setLoadingDetails] = useState<boolean>(true);
   const [matchDetails, setMatchDetails] = useState<Match | null>(null);
